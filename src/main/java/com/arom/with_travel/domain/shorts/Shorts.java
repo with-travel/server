@@ -1,6 +1,7 @@
 package com.arom.with_travel.domain.shorts;
 
 import com.arom.with_travel.domain.member.Member;
+import com.arom.with_travel.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -14,7 +15,7 @@ import org.hibernate.annotations.SQLRestriction;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE shorts SET deleted = true where id = ?")
 @SQLRestriction("deleted is FALSE")
-public class Shorts {
+public class Shorts extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
