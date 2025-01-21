@@ -13,8 +13,8 @@ import org.hibernate.annotations.SQLRestriction;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE shorts SET deleted = true where id = ?")
-@SQLRestriction("deleted is FALSE")
+@SQLDelete(sql = "UPDATE shorts SET is_deleted = true, deleted_at = now() where id = ?")
+@SQLRestriction("is_deleted is FALSE")
 public class Shorts extends BaseEntity {
 
     @Id
@@ -25,7 +25,6 @@ public class Shorts extends BaseEntity {
     @NotNull private String title;
     @Lob private String caption;
     private Long views = 0L;
-    private boolean deleted = Boolean.FALSE;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
