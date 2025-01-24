@@ -1,6 +1,7 @@
 package com.arom.with_travel.domain.accompanies;
 
 import com.arom.with_travel.domain.member.Member;
+import com.arom.with_travel.domain.shorts.Shorts;
 import com.arom.with_travel.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -12,6 +13,8 @@ import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -36,5 +39,6 @@ public class Accompanies extends BaseEntity {
     @NotNull private LocalDate date;
     @NotNull private LocalTime time;
 
-    private boolean deleted = Boolean.FALSE;
+    @OneToMany(mappedBy = "accompanies")
+    private List<Accompanies> accompanyReviews = new ArrayList<>();
 }
