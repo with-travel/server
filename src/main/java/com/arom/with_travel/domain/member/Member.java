@@ -1,5 +1,6 @@
 package com.arom.with_travel.domain.member;
 
+import com.arom.with_travel.domain.accompanies.Accompanies;
 import com.arom.with_travel.domain.shorts.Shorts;
 import com.arom.with_travel.global.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -53,4 +54,7 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "member")
     private List<Shorts> shorts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<Accompanies> accompanies = new ArrayList<>();
 }
