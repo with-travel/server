@@ -1,6 +1,5 @@
 package com.arom.with_travel.domain.member;
 
-import com.arom.with_travel.domain.chat.ChatPart;
 import com.arom.with_travel.domain.shorts.Shorts;
 import com.arom.with_travel.global.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -54,5 +53,4 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "member")
     private List<Shorts> shorts = new ArrayList<>();
-    
 }
