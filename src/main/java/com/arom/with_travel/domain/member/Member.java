@@ -54,12 +54,5 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "member")
     private List<Shorts> shorts = new ArrayList<>();
-
-    @OneToMany(mappedBy = "member")
-    private List<ChatPart> chatParts = new ArrayList<>();
-
-    public void addChatPart(ChatPart chatPart) {
-        if(!chatParts.contains(chatPart)) this.chatParts.add(chatPart);
-        chatPart.setMember(this);
-    }
+    
 }
