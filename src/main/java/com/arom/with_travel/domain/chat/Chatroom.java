@@ -22,11 +22,19 @@ public class Chatroom extends BaseEntity {
     private boolean status = false;
     @NotNull private String roomName;
 
-    @OneToMany(mappedBy = "chat")
+    @OneToMany(mappedBy = "chatroom")
     private List<Chat> chats = new ArrayList<>();
+
+    @OneToMany(mappedBy = "chatroom")
+    private List<ChatPart> chatParts = new ArrayList<>();
 
     public void addChat(Chat chat){
         if(!this.chats.contains(chat)) this.chats.add(chat);
+        chat.setChatroom(this);
     }
 
+    public void addChatPart(ChatPart chatPart){
+        if(!this.chatParts.contains(chatPart)) this.chatParts.add(chatPart);
+        chatPart.setChatroom(this);
+    }
 }
