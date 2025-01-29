@@ -53,4 +53,5 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "member")
     private List<Shorts> shorts = new ArrayList<>();
+
 }
