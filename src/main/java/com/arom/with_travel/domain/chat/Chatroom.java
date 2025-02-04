@@ -7,7 +7,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +15,13 @@ import java.util.List;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Chatroom extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private boolean status = false;
+
+    private Boolean status = Boolean.FALSE;
+
     @NotNull private String roomName;
 
     @OneToMany(mappedBy = "chatroom")
@@ -27,14 +29,4 @@ public class Chatroom extends BaseEntity {
 
     @OneToMany(mappedBy = "chatroom")
     private List<ChatPart> chatParts = new ArrayList<>();
-
-    public void addChat(Chat chat){
-        if(!this.chats.contains(chat)) this.chats.add(chat);
-        chat.setChatroom(this);
-    }
-
-    public void addChatPart(ChatPart chatPart){
-        if(!this.chatParts.contains(chatPart)) this.chatParts.add(chatPart);
-        chatPart.setChatroom(this);
-    }
 }

@@ -1,5 +1,6 @@
 package com.arom.with_travel.domain.accompanies;
 
+import com.arom.with_travel.domain.accompanyReviews.AccompanyReviews;
 import com.arom.with_travel.domain.member.Member;
 import com.arom.with_travel.domain.shorts.Shorts;
 import com.arom.with_travel.global.entity.BaseEntity;
@@ -27,10 +28,6 @@ public class Accompanies extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
-
     @NotNull private int recruitmentCount;
     @NotNull private String destination;
     @NotNull private String continent;
@@ -39,6 +36,10 @@ public class Accompanies extends BaseEntity {
     @NotNull private LocalDate date;
     @NotNull private LocalTime time;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
     @OneToMany(mappedBy = "accompanies")
-    private List<Accompanies> accompanyReviews = new ArrayList<>();
+    private List<AccompanyReviews> accompanyReviews = new ArrayList<>();
 }
