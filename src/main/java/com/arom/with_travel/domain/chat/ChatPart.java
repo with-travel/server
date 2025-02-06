@@ -3,13 +3,13 @@ package com.arom.with_travel.domain.chat;
 import com.arom.with_travel.domain.member.Member;
 import com.arom.with_travel.global.entity.BaseEntity;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 public class ChatPart extends BaseEntity {
     @Id
@@ -23,4 +23,10 @@ public class ChatPart extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chatroom_id")
     private Chatroom chatroom;
+
+    @Builder
+    private ChatPart(Member member, Chatroom chatroom){
+        this.member = member;
+        this.chatroom = chatroom;
+    }
 }

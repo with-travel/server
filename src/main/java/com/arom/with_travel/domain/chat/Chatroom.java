@@ -4,10 +4,7 @@ import com.arom.with_travel.domain.member.Member;
 import com.arom.with_travel.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +27,14 @@ public class Chatroom extends BaseEntity {
 
     public void addChat(Chat chat){
         if(!this.chats.contains(chat)) this.chats.add(chat);
-        chat.setChatroom(this);
     }
 
     public void addChatPart(ChatPart chatPart){
         if(!this.chatParts.contains(chatPart)) this.chatParts.add(chatPart);
-        chatPart.setChatroom(this);
+    }
+
+    @Builder
+    private Chatroom(String roomName){
+        this.roomName = roomName;
     }
 }
