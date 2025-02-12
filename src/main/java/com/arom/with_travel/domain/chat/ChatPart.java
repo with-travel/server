@@ -12,6 +12,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class ChatPart extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
