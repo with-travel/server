@@ -1,10 +1,12 @@
 package com.arom.with_travel.domain.likes;
 
+import com.arom.with_travel.domain.accompanies.Accompanies;
 import com.arom.with_travel.domain.member.Member;
 import com.arom.with_travel.domain.shorts.Shorts;
 import com.arom.with_travel.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
@@ -29,4 +31,31 @@ public class Likes extends BaseEntity {
     @JoinColumn(name = "shorts_id")
     private Shorts shorts;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accompanies_id")
+    private Accompanies accompanies;
+
+    @Builder
+    public Likes(Member member, Accompanies accompanies) {
+        this.member = member;
+        this.accompanies = accompanies;
+    }
+
+    @Builder
+    public Likes(Member member, Shorts shorts) {
+        this.member = member;
+        this.shorts = shorts;
+    }
+
+    public void update(Member member, Accompanies accompanies){
+        this.member = member;
+        this.accompanies = accompanies;
+        accompanies.getLikes().add(this);
+        member.getLikes().add(this);
+    }
+
+    public static Likes init(){
+        return Likes.builder()
+                .build();
+    }
 }

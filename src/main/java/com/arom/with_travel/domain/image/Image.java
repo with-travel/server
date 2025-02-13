@@ -1,5 +1,6 @@
 package com.arom.with_travel.domain.image;
 
+import com.arom.with_travel.domain.accompanies.Accompanies;
 import com.arom.with_travel.domain.community.Community;
 import com.arom.with_travel.domain.member.Member;
 import com.arom.with_travel.global.entity.BaseEntity;
@@ -29,6 +30,10 @@ public class Image extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "community_id")
     private Community community;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accompanies_id")
+    private Accompanies accompanies;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
