@@ -1,6 +1,7 @@
 package com.arom.with_travel.domain.member;
 
 import com.arom.with_travel.domain.accompanies.Accompanies;
+import com.arom.with_travel.domain.accompanies.AccompanyApply;
 import com.arom.with_travel.domain.accompanyReviews.AccompanyReviews;
 import com.arom.with_travel.domain.chat.Chat;
 import com.arom.with_travel.domain.chat.ChatPart;
@@ -8,6 +9,7 @@ import com.arom.with_travel.domain.community.Community;
 import com.arom.with_travel.domain.community_reply.CommunityReply;
 import com.arom.with_travel.domain.image.Image;
 import com.arom.with_travel.domain.likes.Likes;
+import com.arom.with_travel.domain.notification.Notification;
 import com.arom.with_travel.domain.shorts.Shorts;
 import com.arom.with_travel.domain.shorts_reply.ShortsReply;
 import com.arom.with_travel.domain.survey.Survey;
@@ -70,6 +72,9 @@ public class Member extends BaseEntity {
     private List<Accompanies> accompanies = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
+    private List<AccompanyApply> accompanyApplies = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
     private List<AccompanyReviews> accompanyReviews = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
@@ -89,6 +94,9 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "member")
     private List<Survey> surveys = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<Notification> notifications = new ArrayList<>();
 
     @OneToOne(mappedBy = "member")
     private Image image;
