@@ -1,6 +1,7 @@
-package com.arom.with_travel.domain.accompanyReviews;
+package com.arom.with_travel.domain.image;
 
 import com.arom.with_travel.domain.accompanies.Accompanies;
+import com.arom.with_travel.domain.community.Community;
 import com.arom.with_travel.domain.member.Member;
 import com.arom.with_travel.global.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -14,22 +15,27 @@ import org.hibernate.annotations.SQLRestriction;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE member SET is_deleted = true, deleted_at = now() where id = ?")
+@SQLDelete(sql = "UPDATE image SET is_deleted = true, deleted_at = now() where id = ?")
 @SQLRestriction("is_deleted is FALSE")
-public class AccompanyReviews extends BaseEntity {
+public class Image extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull private Long writer;
-    @Lob private String content;
+    @NotNull private String imageName;
+    @NotNull private String imageUrl;
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "community_id")
+    private Community community;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accompanies_id")
     private Accompanies accompanies;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 }
