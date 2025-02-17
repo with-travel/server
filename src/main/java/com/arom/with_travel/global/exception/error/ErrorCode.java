@@ -22,6 +22,7 @@ public enum ErrorCode {
     // ACCOMPANY_ALREADY_CONFIRMED("ACC-0002", "참가 확정된 동행입니다.", ErrorDisplayType.POPUP)
     ;
 
+
     private final String code;
     private final String message;
     private final ErrorDisplayType displayType;
