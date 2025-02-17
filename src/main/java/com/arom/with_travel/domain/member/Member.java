@@ -47,6 +47,18 @@ public class Member extends BaseEntity {
     @NotNull @Lob private String introduction;
     @NotNull @Enumerated(EnumType.STRING) private TravelType travelType;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    public enum Role {
+        USER("USER"),
+        GUEST("GUEST");
+
+        Role(String type) {}
+
+        private String type;
+    }
+
     public enum TravelType {
         USER,
         ADMIN
@@ -60,6 +72,10 @@ public class Member extends BaseEntity {
     public enum LoginType {
         NAVER,
         KAKAO
+    }
+
+    public static Member create(String nickname, String email, Role role) {
+        return new Member(nickname, email, role);
     }
 
     @OneToMany(mappedBy = "member")
