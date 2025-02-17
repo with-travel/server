@@ -1,7 +1,18 @@
 package com.arom.with_travel.domain.member;
 
 import com.arom.with_travel.domain.accompanies.Accompanies;
+import com.arom.with_travel.domain.accompanies.AccompanyApply;
+import com.arom.with_travel.domain.accompanyReviews.AccompanyReviews;
+import com.arom.with_travel.domain.chat.Chat;
+import com.arom.with_travel.domain.chat.ChatPart;
+import com.arom.with_travel.domain.community.Community;
+import com.arom.with_travel.domain.community_reply.CommunityReply;
+import com.arom.with_travel.domain.image.Image;
+import com.arom.with_travel.domain.likes.Likes;
+import com.arom.with_travel.domain.notification.Notification;
 import com.arom.with_travel.domain.shorts.Shorts;
+import com.arom.with_travel.domain.shorts_reply.ShortsReply;
+import com.arom.with_travel.domain.survey.Survey;
 import com.arom.with_travel.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -35,7 +46,18 @@ public class Member extends BaseEntity {
     @NotNull private String nickname;
     @NotNull @Lob private String introduction;
     @NotNull @Enumerated(EnumType.STRING) private TravelType travelType;
-    private boolean deleted = Boolean.FALSE;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    public enum Role {
+        USER("USER"),
+        GUEST("GUEST");
+
+        Role(String type) {}
+
+        private String type;
+    }
 
     public enum TravelType {
         USER,
@@ -52,9 +74,47 @@ public class Member extends BaseEntity {
         KAKAO
     }
 
+    public static Member create(String nickname, String email, Role role) {
+        return new Member(nickname, email, role);
+    }
+
     @OneToMany(mappedBy = "member")
     private List<Shorts> shorts = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
+    private List<ShortsReply> shortsReply = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
     private List<Accompanies> accompanies = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<AccompanyApply> accompanyApplies = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<AccompanyReviews> accompanyReviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<Community> communities = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<CommunityReply> communityReplies = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<Likes> likes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<Chat> chats = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<ChatPart> chatParts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<Survey> surveys = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<Notification> notifications = new ArrayList<>();
+
+    @OneToOne(mappedBy = "member")
+    private Image image;
+
 }
