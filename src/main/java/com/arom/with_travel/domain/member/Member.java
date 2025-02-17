@@ -1,6 +1,7 @@
 package com.arom.with_travel.domain.member;
 
 import com.arom.with_travel.domain.accompanies.Accompanies;
+import com.arom.with_travel.domain.member.enums.Role;
 import com.arom.with_travel.domain.shorts.Shorts;
 import com.arom.with_travel.global.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -37,6 +38,10 @@ public class Member extends BaseEntity {
     @NotNull @Enumerated(EnumType.STRING) private TravelType travelType;
     private boolean deleted = Boolean.FALSE;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     public enum TravelType {
         USER,
         ADMIN
@@ -50,6 +55,10 @@ public class Member extends BaseEntity {
     public enum LoginType {
         NAVER,
         KAKAO
+    }
+
+    public static Member create(String nickname, String email, Role role) {
+        return new Member(nickname, email, role);
     }
 
     @OneToMany(mappedBy = "member")

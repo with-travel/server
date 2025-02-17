@@ -7,6 +7,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ErrorCode {
 
+    INVALID_TOKEN("INVALID_TOKEN", "Invalid refresh token", ErrorDisplayType.HIDE),
+    TOKEN_NOT_FOUND("TOKEN_NOT_FOUND", "Token not found", ErrorDisplayType.HIDE),
+    USER_NOT_FOUND("USER_NOT_FOUND", "User not found", ErrorDisplayType.TOAST),
     ;
 
     private final String code;
