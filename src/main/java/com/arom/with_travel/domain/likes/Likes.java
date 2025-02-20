@@ -1,6 +1,6 @@
 package com.arom.with_travel.domain.likes;
 
-import com.arom.with_travel.domain.accompanies.Accompanies;
+import com.arom.with_travel.domain.accompanies.model.Accompany;
 import com.arom.with_travel.domain.member.Member;
 import com.arom.with_travel.domain.shorts.Shorts;
 import com.arom.with_travel.global.entity.BaseEntity;
@@ -33,10 +33,10 @@ public class Likes extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accompanies_id")
-    private Accompanies accompanies;
+    private Accompany accompanies;
 
     @Builder
-    public Likes(Member member, Accompanies accompanies) {
+    public Likes(Member member, Accompany accompanies) {
         this.member = member;
         this.accompanies = accompanies;
     }
@@ -47,7 +47,7 @@ public class Likes extends BaseEntity {
         this.shorts = shorts;
     }
 
-    public void update(Member member, Accompanies accompanies){
+    public void update(Member member, Accompany accompanies){
         this.member = member;
         this.accompanies = accompanies;
         accompanies.getLikes().add(this);

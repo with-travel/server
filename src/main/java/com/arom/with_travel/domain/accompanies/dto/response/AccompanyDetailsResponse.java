@@ -9,7 +9,7 @@ import java.time.LocalTime;
 
 @Getter
 @Builder
-public class AccompaniesDetailsResponse {
+public class AccompanyDetailsResponse {
     private Continent continent;
     private Country country;
     private City city;
@@ -25,8 +25,8 @@ public class AccompaniesDetailsResponse {
     private Long views;
     private int likes;
 
-    public static AccompaniesDetailsResponse from(Accompany accompany){
-        return AccompaniesDetailsResponse.builder()
+    public static AccompanyDetailsResponse from(Accompany accompany){
+        return AccompanyDetailsResponse.builder()
                 .continent(accompany.getContinent())
                 .country(accompany.getCountry())
                 .city(accompany.getCity())

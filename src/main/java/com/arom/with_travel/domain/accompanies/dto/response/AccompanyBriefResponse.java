@@ -10,7 +10,7 @@ import java.time.LocalTime;
 
 @Getter
 @Builder
-public class AccompaniesBriefResponse {
+public class AccompanyBriefResponse {
     private Long accompanyId;
     private Country country;
     private LocalDate startDate;
@@ -19,8 +19,8 @@ public class AccompaniesBriefResponse {
     private int recruitmentCount;
     private String writer;
 
-    public static AccompaniesBriefResponse from(Accompany accompany){
-        return AccompaniesBriefResponse.builder()
+    public static AccompanyBriefResponse from(Accompany accompany){
+        return AccompanyBriefResponse.builder()
                 .accompanyId(accompany.getId())
                 .country(accompany.getCountry())
                 .startDate(accompany.getStartDate())

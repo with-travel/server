@@ -3,13 +3,18 @@ package com.arom.with_travel.domain.accompanies.controller;
 import com.arom.with_travel.domain.accompanies.dto.request.AccompanyPostRequest;
 import com.arom.with_travel.domain.accompanies.dto.response.AccompanyBriefResponse;
 import com.arom.with_travel.domain.accompanies.dto.response.AccompanyDetailsResponse;
+import com.arom.with_travel.domain.accompanies.model.City;
 import com.arom.with_travel.domain.accompanies.model.Continent;
-import com.arom.with_travel.domain.accompanies.service.AccompaniesService;
+import com.arom.with_travel.domain.accompanies.model.Country;
 import com.arom.with_travel.domain.accompanies.service.AccompanyService;
 import com.arom.with_travel.domain.accompanies.swagger.PostNewAccompany;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,10 +50,15 @@ public class AccompanyController {
         return accompanyService.applyAccompany(accompanyId, 1L);
     }
 
+    // TODO : 동적 쿼리를 활용해 검색 기능에 유연함 제공
+    // 아직은 대륙별 검색 기능만 제공
     @GetMapping("/search")
     public List<AccompanyBriefResponse> searchByContinent(
-            @RequestParam("continent") Continent continent){
-
+            @RequestParam(value = "continent", required = false) Continent continent,
+            @RequestParam(value = "country", required = false) Country country,
+            @RequestParam(value = "city", required = false) City city,
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable){
+        return accompanyService.searchByContinent(continent, pageable);
     }
 
 //    @PostMapping("/{accompanyId}/confirm")

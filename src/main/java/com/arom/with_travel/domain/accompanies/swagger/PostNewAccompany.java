@@ -1,6 +1,6 @@
 package com.arom.with_travel.domain.accompanies.swagger;
 
-import com.arom.with_travel.domain.accompanies.dto.response.AccompaniesDetailsResponse;
+import com.arom.with_travel.domain.accompanies.dto.response.AccompanyDetailsResponse;
 import com.arom.with_travel.global.exception.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,7 +16,7 @@ import java.lang.annotation.RetentionPolicy;
 @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "새로운 동행 생성을 성공적으로 마쳤습니다.",
                 content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                        schema = @Schema(implementation = AccompaniesDetailsResponse.class))),
+                        schema = @Schema(implementation = AccompanyDetailsResponse.class))),
         @ApiResponse(responseCode = "4xx", description = "요청 처리 실패",
                 content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                         schema = @Schema(implementation = ErrorResponse.class)))

@@ -1,10 +1,12 @@
 package com.arom.with_travel.domain.accompanies.service;
 
+import com.arom.with_travel.domain.accompanies.dto.response.AccompanyBriefResponse;
 import com.arom.with_travel.domain.accompanies.model.Accompany;
 import com.arom.with_travel.domain.accompanies.model.AccompanyApply;
-import com.arom.with_travel.domain.accompanies.dto.request.AccompaniesPostRequest;
-import com.arom.with_travel.domain.accompanies.dto.response.AccompaniesDetailsResponse;
-import com.arom.with_travel.domain.accompanies.repository.accompany.AccompaniesRepository;
+import com.arom.with_travel.domain.accompanies.dto.request.AccompanyPostRequest;
+import com.arom.with_travel.domain.accompanies.dto.response.AccompanyDetailsResponse;
+import com.arom.with_travel.domain.accompanies.model.Continent;
+import com.arom.with_travel.domain.accompanies.repository.accompany.AccompanyRepository;
 import com.arom.with_travel.domain.accompanies.repository.accompanyApply.AccompanyApplyRepository;
 import com.arom.with_travel.domain.likes.Likes;
 import com.arom.with_travel.domain.likes.repository.LikesRepository;
@@ -14,25 +16,33 @@ import com.arom.with_travel.global.exception.BaseException;
 import com.arom.with_travel.global.exception.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class AccompanyService {
 
-    private final AccompaniesRepository accompaniesRepository;
+    private final AccompanyRepository accompanyRepository;
     private final MemberRepository memberRepository;
     private final LikesRepository likesRepository;
     private final AccompanyApplyRepository applyRepository;
 
     @Transactional
-    public String save(AccompaniesPostRequest request, Long memberId) {
+    public String save(AccompanyPostRequest request, Long memberId) {
         Member member = findMember(memberId);
         Accompany accompany = Accompany.from(request);
         accompany.post(member);
-        accompaniesRepository.save(accompany);
+        accompanyRepository.save(accompany);
         return "등록 되었습니다";
     }
 
@@ -49,19 +59,21 @@ public class AccompanyService {
         return true;
     }
 
-    @Transactional
-    public AccompaniesDetailsResponse showDetails(Long accompanyId){
+    @Transactional(readOnly = true)
+    public AccompanyDetailsResponse showDetails(Long accompanyId){
         Accompany accompany = findAccompany(accompanyId);
         accompany.addView();
-        return AccompaniesDetailsResponse.from(accompany);
+        return AccompanyDetailsResponse.from(accompany);
     }
 
     // TODO : 동행 선택 알고리즘 구현
-//    @Transactional(readOnly = true)
-//    public List<AccompaniesBriefResponse> showBrief(){
-//        List<AccompaniesBriefResponse> briefResponses = new ArrayList<>();
-//
-//    }
+    @Transactional(readOnly = true)
+    public List<AccompanyBriefResponse> searchByContinent(Continent continent, Pageable pageable){
+        return accompanyRepository.findByContinent(continent, pageable)
+                .stream()
+                .map(AccompanyBriefResponse::from)
+                .collect(Collectors.toList());
+    }
 
     @Transactional
     public String applyAccompany(Long accompanyId, Long memberId){
@@ -85,7 +97,7 @@ public class AccompanyService {
     }
 
     private Accompany findAccompany(Long accompanyId){
-        return accompaniesRepository.findById(accompanyId)
+        return accompanyRepository.findById(accompanyId)
                 .orElseThrow(() -> BaseException.from(ErrorCode.ACCOMPANY_NOT_FOUND));
     }
 

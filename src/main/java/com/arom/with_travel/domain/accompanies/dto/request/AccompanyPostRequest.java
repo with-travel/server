@@ -12,7 +12,7 @@ import java.time.LocalTime;
 @Getter
 @NotNull
 @Builder
-public class AccompaniesPostRequest {
+public class AccompanyPostRequest {
 
     @Enum(target = Continent.class, message = "대륙을 입력해주세요")
     private Continent continentName;
