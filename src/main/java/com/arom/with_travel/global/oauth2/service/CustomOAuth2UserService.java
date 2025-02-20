@@ -35,7 +35,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         String loginEmail = oAuth2Response.getEmail();
 
-        Member loginUser = memberRepository.findByLoginEmail(loginEmail).orElse(null);
+        Member loginUser = memberRepository.findByEmail(loginEmail).orElse(null);
 
         // 신규 유저인 경우, DB에 저장
         if (loginUser == null) {

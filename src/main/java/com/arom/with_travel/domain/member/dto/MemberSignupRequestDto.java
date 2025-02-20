@@ -1,4 +1,4 @@
-package com.arom.with_travel.domain.member.signup.dto;
+package com.arom.with_travel.domain.member.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
