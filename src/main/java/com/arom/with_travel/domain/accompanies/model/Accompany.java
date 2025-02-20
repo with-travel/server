@@ -1,6 +1,6 @@
-package com.arom.with_travel.domain.accompanies;
+package com.arom.with_travel.domain.accompanies.model;
 
-import com.arom.with_travel.domain.accompanies.dto.request.AccompaniesPostRequest;
+import com.arom.with_travel.domain.accompanies.dto.request.AccompanyPostRequest;
 import com.arom.with_travel.domain.accompanyReviews.AccompanyReviews;
 import com.arom.with_travel.domain.image.Image;
 import com.arom.with_travel.domain.likes.Likes;
@@ -27,7 +27,7 @@ import java.util.List;
 //        })
 @SQLDelete(sql = "UPDATE member SET is_deleted = true, deleted_at = now() where id = ?")
 @SQLRestriction("is_deleted is FALSE")
-public class Accompanies extends BaseEntity {
+public class Accompany extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -73,39 +73,6 @@ public class Accompanies extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private City city;
 
-    @AllArgsConstructor
-    public enum Continent{
-        ASIA("AS")
-        ;
-        private final String continentCode;
-    }
-
-    @AllArgsConstructor
-    public enum Country{
-        // asia
-        JAPAN("JPN")
-        ;
-        private final String countryCode;
-    }
-
-    @AllArgsConstructor
-    public enum City{
-
-        TOKYO("TOK"),
-        OSAKA("OSA"),
-        KYOTO("KYO")
-        ;
-
-        private final String cityCode;
-    }
-
-    @AllArgsConstructor
-    public enum AccompanyType{
-        LUNCH,
-        DINNER,
-        TOTAL
-    }
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
@@ -123,17 +90,17 @@ public class Accompanies extends BaseEntity {
     private List<Likes> likes = new ArrayList<>();
 
     @Builder
-    public Accompanies(LocalTime startTime,
-                       LocalDate startDate,
-                       LocalDate endDate,
-                       String accompanyDescription,
-                       String accompanyTitle,
-                       AccompanyType accompanyType,
-                       String destination,
-                       int recruitmentCount,
-                       Continent continent,
-                       Country country,
-                       City city) {
+    public Accompany(LocalTime startTime,
+                     LocalDate startDate,
+                     LocalDate endDate,
+                     String accompanyDescription,
+                     String accompanyTitle,
+                     AccompanyType accompanyType,
+                     String destination,
+                     int recruitmentCount,
+                     Continent continent,
+                     Country country,
+                     City city) {
         this.startTime = startTime;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -169,8 +136,8 @@ public class Accompanies extends BaseEntity {
         return likes.size();
     }
 
-    public static Accompanies from(AccompaniesPostRequest request){
-        return Accompanies.builder()
+    public static Accompany from(AccompanyPostRequest request){
+        return Accompany.builder()
                 .startTime(request.getStartTime())
                 .startDate(request.getStartDate())
                 .endDate(request.getEndTime())

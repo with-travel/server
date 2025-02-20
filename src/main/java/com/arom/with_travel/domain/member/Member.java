@@ -1,7 +1,7 @@
 package com.arom.with_travel.domain.member;
 
-import com.arom.with_travel.domain.accompanies.Accompanies;
-import com.arom.with_travel.domain.accompanies.AccompanyApply;
+import com.arom.with_travel.domain.accompanies.model.Accompany;
+import com.arom.with_travel.domain.accompanies.model.AccompanyApply;
 import com.arom.with_travel.domain.accompanyReviews.AccompanyReviews;
 import com.arom.with_travel.domain.chat.Chat;
 import com.arom.with_travel.domain.chat.ChatPart;
@@ -85,7 +85,7 @@ public class Member extends BaseEntity {
     private List<ShortsReply> shortsReply = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
-    private List<Accompanies> accompanies = new ArrayList<>();
+    private List<Accompany> accompanies = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
     private List<AccompanyApply> accompanyApplies = new ArrayList<>();

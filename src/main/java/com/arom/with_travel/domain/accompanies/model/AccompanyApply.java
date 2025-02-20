@@ -1,4 +1,4 @@
-package com.arom.with_travel.domain.accompanies;
+package com.arom.with_travel.domain.accompanies.model;
 
 import com.arom.with_travel.domain.member.Member;
 import com.arom.with_travel.global.entity.BaseEntity;
@@ -26,19 +26,19 @@ public class AccompanyApply extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accompany_id")
-    private Accompanies accompanies;
+    private Accompany accompanies;
 
     // 신청 회원
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    private AccompanyApply(Accompanies accompanies, Member member) {
+    private AccompanyApply(Accompany accompanies, Member member) {
         this.accompanies = accompanies;
         this.member = member;
     }
 
-    public static AccompanyApply apply(Accompanies accompany, Member member){
+    public static AccompanyApply apply(Accompany accompany, Member member){
         return new AccompanyApply(accompany, member);
     }
 }

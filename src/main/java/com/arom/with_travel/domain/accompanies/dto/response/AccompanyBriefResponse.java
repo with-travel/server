@@ -1,6 +1,7 @@
 package com.arom.with_travel.domain.accompanies.dto.response;
 
-import com.arom.with_travel.domain.accompanies.Accompanies;
+import com.arom.with_travel.domain.accompanies.model.Accompany;
+import com.arom.with_travel.domain.accompanies.model.Country;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -9,17 +10,17 @@ import java.time.LocalTime;
 
 @Getter
 @Builder
-public class AccompaniesBriefResponse {
+public class AccompanyBriefResponse {
     private Long accompanyId;
-    private Accompanies.Country country;
+    private Country country;
     private LocalDate startDate;
     private LocalTime startTime;
     private String title;
     private int recruitmentCount;
     private String writer;
 
-    public static AccompaniesBriefResponse from(Accompanies accompany){
-        return AccompaniesBriefResponse.builder()
+    public static AccompanyBriefResponse from(Accompany accompany){
+        return AccompanyBriefResponse.builder()
                 .accompanyId(accompany.getId())
                 .country(accompany.getCountry())
                 .startDate(accompany.getStartDate())

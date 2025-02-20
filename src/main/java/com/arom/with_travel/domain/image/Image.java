@@ -1,6 +1,6 @@
 package com.arom.with_travel.domain.image;
 
-import com.arom.with_travel.domain.accompanies.Accompanies;
+import com.arom.with_travel.domain.accompanies.model.Accompany;
 import com.arom.with_travel.domain.community.Community;
 import com.arom.with_travel.domain.member.Member;
 import com.arom.with_travel.global.entity.BaseEntity;
@@ -33,7 +33,7 @@ public class Image extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accompanies_id")
-    private Accompanies accompanies;
+    private Accompany accompanies;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
