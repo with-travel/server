@@ -5,7 +5,7 @@ import com.arom.with_travel.global.exception.error.ErrorCode;
 import com.arom.with_travel.global.jwt.domain.RefreshToken;
 import com.arom.with_travel.global.jwt.repository.RefreshTokenRepository;
 import com.arom.with_travel.domain.member.Member;
-//import com.arom.with_travel.domain.member.service.MemberService;
+import com.arom.with_travel.domain.member.service.MemberSignupService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ public class TokenService {
 
     private final TokenProvider tokenProvider;
     private final RefreshTokenService refreshTokenService;
-    private final MemberService memberService;
+    private final MemberSignupService memberSignupService;
     private final RefreshTokenRepository refreshTokenRepository;
 
     // 새로운 액세스 토큰 생성
@@ -29,14 +29,14 @@ public class TokenService {
         validateRefreshTokenOrElseThrow(refreshToken);
 
         Long userId = refreshTokenService.findByRefreshToken(refreshToken).getMemberId();
-        Member member = memberService.getMemberByIdOrElseThrow(userId);
+        Member member = memberSignupService.getMemberByIdOrElseThrow(userId);
 
         return tokenProvider.generateToken(member.getId(), Duration.ofHours(2));
     }
 
     // 리프레시 토큰 삭제
     public void deleteRefreshToken(String loginEmail) {
-        Member member = memberService.getMemberByEmailOrElseThrow(loginEmail);
+        Member member = memberSignupService.getMemberByEmailOrElseThrow(loginEmail);
 
         RefreshToken refreshToken = refreshTokenRepository.findByMemberId(member.getId())
                 .orElseThrow(() -> BaseException.from(ErrorCode.REFRESH_TOKEN_NOT_FOUND));
@@ -46,7 +46,7 @@ public class TokenService {
 
     public void validateRefreshTokenOrElseThrow(String refreshToken) {
         if (!tokenProvider.validToken(refreshToken)) {
-            throw BaseException.from(ErrorCode.INVALID_TOKEN, "Invalid refresh token");
+            throw BaseException.from(ErrorCode.INVALID_TOKEN);
         }
     }
 }

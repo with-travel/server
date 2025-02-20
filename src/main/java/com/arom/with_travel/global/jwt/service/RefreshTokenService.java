@@ -1,5 +1,7 @@
 package com.arom.with_travel.global.jwt.service;
 
+import com.arom.with_travel.global.exception.BaseException;
+import com.arom.with_travel.global.exception.error.ErrorCode;
 import com.arom.with_travel.global.jwt.domain.RefreshToken;
 import com.arom.with_travel.global.jwt.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,11 +14,11 @@ import org.springframework.stereotype.Service;
 public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
-    private final TokenProvider tokenProvider; // Access Token 생성할 때 필요
+    private final TokenProvider tokenProvider;
 
     // 리프레시 토큰 조회
     public RefreshToken findByRefreshToken(String refreshToken) {
         return refreshTokenRepository.findByRefreshToken(refreshToken)
-                .orElseThrow(() -> new IllegalArgumentException("Unable to find refresh token"));
+                .orElseThrow(() -> BaseException.from(ErrorCode.REFRESH_TOKEN_NOT_FOUND));
     }
 }

@@ -1,5 +1,6 @@
 package com.arom.with_travel.global.oauth2.dto;
 
+import com.arom.with_travel.domain.member.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -12,7 +13,7 @@ import java.util.Map;
 public class CustomOAuth2User implements OAuth2User {
 
     private final OAuth2Response oAuth2Response;
-    private final String role;
+    private final Member.Role role;
 
     @Override
     public Map<String, Object> getAttributes() {
@@ -25,7 +26,7 @@ public class CustomOAuth2User implements OAuth2User {
         collection.add(new GrantedAuthority() {
             @Override
             public String getAuthority() {
-                return role;
+                return role.toString();
             }
         });
         return collection;
