@@ -1,7 +1,7 @@
 package com.arom.with_travel.domain.accompanies.service;
 
-import com.arom.with_travel.domain.accompanies.Accompanies;
-import com.arom.with_travel.domain.accompanies.AccompanyApply;
+import com.arom.with_travel.domain.accompanies.model.Accompany;
+import com.arom.with_travel.domain.accompanies.model.AccompanyApply;
 import com.arom.with_travel.domain.accompanies.dto.request.AccompaniesPostRequest;
 import com.arom.with_travel.domain.accompanies.dto.response.AccompaniesDetailsResponse;
 import com.arom.with_travel.domain.accompanies.repository.accompany.AccompaniesRepository;
@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class AccompaniesService {
+public class AccompanyService {
 
     private final AccompaniesRepository accompaniesRepository;
     private final MemberRepository memberRepository;
@@ -30,7 +30,7 @@ public class AccompaniesService {
     @Transactional
     public String save(AccompaniesPostRequest request, Long memberId) {
         Member member = findMember(memberId);
-        Accompanies accompany = Accompanies.from(request);
+        Accompany accompany = Accompany.from(request);
         accompany.post(member);
         accompaniesRepository.save(accompany);
         return "등록 되었습니다";
@@ -39,7 +39,7 @@ public class AccompaniesService {
     @Transactional
     public boolean pressLike(Long accompanyId, Long memberId){
         Member member = findMember(memberId);
-        Accompanies accompany = findAccompany(accompanyId);
+        Accompany accompany = findAccompany(accompanyId);
         if(accompany.isAlreadyLikedBy(memberId)) {
             return false;
         }
@@ -51,7 +51,7 @@ public class AccompaniesService {
 
     @Transactional
     public AccompaniesDetailsResponse showDetails(Long accompanyId){
-        Accompanies accompany = findAccompany(accompanyId);
+        Accompany accompany = findAccompany(accompanyId);
         accompany.addView();
         return AccompaniesDetailsResponse.from(accompany);
     }
@@ -65,7 +65,7 @@ public class AccompaniesService {
 
     @Transactional
     public String applyAccompany(Long accompanyId, Long memberId){
-        Accompanies accompany = findAccompany(accompanyId);
+        Accompany accompany = findAccompany(accompanyId);
         Member member = findMember(memberId);
         isAlreadyApplied(member, accompany);
         applyRepository.save(AccompanyApply.apply(accompany, member));
@@ -84,12 +84,12 @@ public class AccompaniesService {
                 .orElseThrow(() -> BaseException.from(ErrorCode.MEMBER_NOT_FOUND));
     }
 
-    private Accompanies findAccompany(Long accompanyId){
+    private Accompany findAccompany(Long accompanyId){
         return accompaniesRepository.findById(accompanyId)
                 .orElseThrow(() -> BaseException.from(ErrorCode.ACCOMPANY_NOT_FOUND));
     }
 
-    private void isAlreadyApplied(Member member, Accompanies accompany) {
+    private void isAlreadyApplied(Member member, Accompany accompany) {
         member.getAccompanyApplies()
                 .stream()
                 .map(accompanyApply ->{

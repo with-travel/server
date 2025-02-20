@@ -1,4 +1,4 @@
-package com.arom.with_travel.domain.accompanies;
+package com.arom.with_travel.domain.accompanies.model;
 
 import com.arom.with_travel.domain.accompanies.dto.request.AccompaniesPostRequest;
 import com.arom.with_travel.domain.accompanyReviews.AccompanyReviews;
@@ -72,39 +72,6 @@ public class Accompanies extends BaseEntity {
     @Column
     @Enumerated(EnumType.STRING)
     private City city;
-
-    @AllArgsConstructor
-    public enum Continent{
-        ASIA("AS")
-        ;
-        private final String continentCode;
-    }
-
-    @AllArgsConstructor
-    public enum Country{
-        // asia
-        JAPAN("JPN")
-        ;
-        private final String countryCode;
-    }
-
-    @AllArgsConstructor
-    public enum City{
-
-        TOKYO("TOK"),
-        OSAKA("OSA"),
-        KYOTO("KYO")
-        ;
-
-        private final String cityCode;
-    }
-
-    @AllArgsConstructor
-    public enum AccompanyType{
-        LUNCH,
-        DINNER,
-        TOTAL
-    }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
