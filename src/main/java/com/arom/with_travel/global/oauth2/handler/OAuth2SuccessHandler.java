@@ -40,15 +40,15 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         
-        Member user = memberService.getUserByLoginEmailOrElseThrow(oAuth2User.getAttributes().get("email").toString());
+        Member member = memberService.getUserByLoginEmailOrElseThrow(oAuth2User.getAttributes().get("email").toString());
 
         // 리프레시 토큰 생성 -> 저장 -> 쿠키에 저장
-        String refreshToken = tokenProvider.generateToken(user, REFRESH_TOKEN_DURATION);
-        saveRefreshToken(user.getId(), refreshToken);
+        String refreshToken = tokenProvider.generateToken(member.getId(), REFRESH_TOKEN_DURATION);
+        saveRefreshToken(member.getId(), refreshToken);
         addRefreshTokenToCookie(request, response, refreshToken);
 
         // 액세스 토큰 생성 -> 패스에 액세스 토큰 추가
-        String accessToken = tokenProvider.generateToken(user, ACCESS_TOKEN_DURATION);
+        String accessToken = tokenProvider.generateToken(member.getId(), ACCESS_TOKEN_DURATION);
         response.setHeader("Authorization", "Bearer " + accessToken);
 
         // 인증관련 설정 값, 쿠키 제거
