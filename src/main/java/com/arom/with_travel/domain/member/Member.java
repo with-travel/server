@@ -16,9 +16,7 @@ import com.arom.with_travel.domain.survey.Survey;
 import com.arom.with_travel.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -27,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@Setter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE member SET is_deleted = true, deleted_at = now() where id = ?")
@@ -43,20 +42,15 @@ public class Member extends BaseEntity {
     @NotNull @Enumerated(EnumType.STRING) private Gender gender;
     @NotNull private String phone;
     @NotNull @Enumerated(EnumType.STRING) private LoginType loginType;
+    @NotNull private String memberName;
     @NotNull private String nickname;
     @NotNull @Lob private String introduction;
     @NotNull @Enumerated(EnumType.STRING) private TravelType travelType;
-
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    @Enumerated(EnumType.STRING)private Role role;
 
     public enum Role {
-        USER("USER"),
-        GUEST("GUEST");
-
-        Role(String type) {}
-
-        private String type;
+        USER,
+        GUEST
     }
 
     public enum TravelType {
@@ -70,12 +64,15 @@ public class Member extends BaseEntity {
     }
 
     public enum LoginType {
-        NAVER,
         KAKAO
     }
 
-    public static Member create(String nickname, String email, Role role) {
-        return new Member(nickname, email, role);
+    public Member(String memberName, String email, Role role) {
+        super();
+    }
+
+    public static Member create(String memberName, String email, Role role) {
+        return new Member(memberName, email, role);
     }
 
     @OneToMany(mappedBy = "member")
@@ -117,4 +114,20 @@ public class Member extends BaseEntity {
     @OneToOne(mappedBy = "member")
     private Image image;
 
+    @Builder
+    public Member(Long id, String oauthId, String email, LocalDate birth, Gender gender,
+                  String phone, LoginType loginType, String nickname, String introduction,
+                  TravelType travelType, Role role) {
+        this.id = id;
+        this.oauthId = oauthId;
+        this.email = email;
+        this.birth = birth;
+        this.gender = gender;
+        this.phone = phone;
+        this.loginType = loginType;
+        this.nickname = nickname;
+        this.introduction = introduction;
+        this.travelType = travelType;
+        this.role = role;
+    }
 }

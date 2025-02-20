@@ -1,7 +1,6 @@
 package com.arom.with_travel.global.oauth2.service;
 
 import com.arom.with_travel.domain.member.Member;
-import com.arom.with_travel.domain.member.enums.Role;
 import com.arom.with_travel.domain.member.repository.MemberRepository;
 import com.arom.with_travel.global.oauth2.dto.CustomOAuth2User;
 import com.arom.with_travel.global.oauth2.dto.KakaoResponse;
@@ -39,10 +38,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         // 신규 유저인 경우, DB에 저장
         if (loginUser == null) {
-            Member user = Member.create(oAuth2Response.getName(), loginEmail, Role.USER);
+            Member user = Member.create(oAuth2Response.getName(), loginEmail, Member.Role.USER);
             memberRepository.save(user);
         }
 
-        return new CustomOAuth2User(oAuth2Response, Role.USER.getRole());
+        return new CustomOAuth2User(oAuth2Response, Member.Role.USER);
     }
 }
