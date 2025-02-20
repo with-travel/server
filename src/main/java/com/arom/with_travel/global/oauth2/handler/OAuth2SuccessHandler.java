@@ -1,10 +1,10 @@
 package com.arom.with_travel.global.oauth2.handler;
 
-import com.arom.with_travel.domain.jwt.entity.RefreshToken;
-import com.arom.with_travel.domain.jwt.repository.RefreshTokenRepository;
-import com.arom.with_travel.domain.jwt.service.TokenProvider;
 import com.arom.with_travel.domain.member.Member;
 import com.arom.with_travel.domain.member.service.MemberService;
+import com.arom.with_travel.global.jwt.domain.RefreshToken;
+import com.arom.with_travel.global.jwt.repository.RefreshTokenRepository;
+import com.arom.with_travel.global.jwt.service.TokenProvider;
 import com.arom.with_travel.global.oauth2.util.CookieUtil;
 import com.arom.with_travel.global.oauth2.util.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import jakarta.servlet.http.Cookie;
@@ -64,7 +64,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     // 리프레시 토큰 DB에 저장
     private void saveRefreshToken(Long userId, String newRefreshToken) {
-        RefreshToken refreshToken = refreshTokenRepository.findByUserId(userId)
+        RefreshToken refreshToken = refreshTokenRepository.findByMemberId(userId)
                 .map(entity -> entity.update(newRefreshToken))
                 .orElse(RefreshToken.create(userId, newRefreshToken));
 
