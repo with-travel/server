@@ -21,13 +21,13 @@ public class MemberServiceImpl implements MemberService {
     // userId로 유저 조회, 실패 시 에러 발생
     public Member getUserByUserIdOrElseThrow(Long userId) {
         return memberRepository.findById(userId)
-                .orElseThrow(() ->  BaseException.from(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() ->  BaseException.from(ErrorCode.MEMBER_NOT_FOUND));
     }
 
     @Override
     // loginEmail로 유저 조회, 실패 시 에러 발생
     public Member getUserByLoginEmailOrElseThrow(String loginEmail) {
-        return memberRepository.findByLoginEmail(loginEmail)
-                .orElseThrow(() -> BaseException.from(ErrorCode.USER_NOT_FOUND));
+        return memberRepository.findByEmail(loginEmail)
+                .orElseThrow(() -> BaseException.from(ErrorCode.MEMBER_NOT_FOUND));
     }
 }

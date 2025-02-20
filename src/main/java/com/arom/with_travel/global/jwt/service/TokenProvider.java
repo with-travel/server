@@ -1,6 +1,9 @@
 package com.arom.with_travel.global.jwt.service;
 
 import com.arom.with_travel.domain.member.Member;
+import com.arom.with_travel.domain.member.repository.MemberRepository;
+import com.arom.with_travel.global.exception.BaseException;
+import com.arom.with_travel.global.exception.error.ErrorCode;
 import com.arom.with_travel.global.jwt.config.JwtProperties;
 import com.arom.with_travel.domain.member.Member;
 import io.jsonwebtoken.Claims;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -26,12 +30,17 @@ public class TokenProvider {
     private final JwtProperties jwtProperties;
     private static final String HEADER_AUTHORIZATION = "Authorization";
     private static final String TOKEN_PREFIX = "Bearer ";
+    private static MemberRepository memberRepository;
 
     // 해당 유저의 정해진 기간으로 토큰 생성
-    public String generateToken(Member member, Duration expiredAt) {
+    public String generateToken(Long memberId, Duration expiredAt) {
         Date now = new Date();
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> BaseException.from(ErrorCode.MEMBER_NOT_FOUND));
+
         return makeToken(new Date(now.getTime() + expiredAt.toMillis()), member);
     }
+
 
     // 토큰 생성 메서드
     public String makeToken(Date expiry, Member member) {
@@ -74,7 +83,7 @@ public class TokenProvider {
     }
 
     // HttpServletRequest 에서 토큰을 파싱하여 로그인 이메일 반환
-    public String getUserLoginEmail(HttpServletRequest request) {
+    public String getMemberLoginEmail(HttpServletRequest request) {
         String authorizationHeader = request.getHeader(HEADER_AUTHORIZATION);
 
         String accessToken = null;
