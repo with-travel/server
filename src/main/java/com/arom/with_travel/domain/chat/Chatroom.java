@@ -3,10 +3,11 @@ package com.arom.with_travel.domain.chat;
 import com.arom.with_travel.domain.member.Member;
 import com.arom.with_travel.global.entity.BaseEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.antlr.v4.runtime.misc.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,11 +23,23 @@ public class Chatroom extends BaseEntity {
 
     private Boolean status = Boolean.FALSE;
 
-    @NotNull private String roomName;
+    @org.antlr.v4.runtime.misc.NotNull
+    private String roomId;
+    @NotNull
+    private String roomName;
 
-    @OneToMany(mappedBy = "chatroom")
-    private List<Chat> chats = new ArrayList<>();
 
     @OneToMany(mappedBy = "chatroom")
     private List<ChatPart> chatParts = new ArrayList<>();
+
+    @Builder
+    public Chatroom(String roomId, String roomName) {
+        this.roomId = roomId;
+        this.roomName = roomName;
+    }
+
+    public void setChatparts(ChatPart chatPart){
+        if(this.chatParts.contains(chatPart)) return;
+        chatParts.add(chatPart);
+    }
 }

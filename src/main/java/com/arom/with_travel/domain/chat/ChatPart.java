@@ -29,5 +29,6 @@ public class ChatPart extends BaseEntity {
     private ChatPart(Member member, Chatroom chatroom){
         this.member = member;
         this.chatroom = chatroom;
+        chatroom.setChatparts(this);
     }
 }

@@ -22,7 +22,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ChatServiceImpl implements ChatService{
 
-    @Autowired
     private final ChatPartRepository chatPartRepository;
     private final ChatRepository chatRepository;
     private final ChatroomRepository chatroomRepository;
