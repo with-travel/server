@@ -7,5 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ChatPartRepository extends JpaRepository<ChatPart,Long> {
-    List<ChatPart>findChatPartByMember(Member member);
+    List<ChatPart> getChatPartsByMember(Member member);
 }
+
