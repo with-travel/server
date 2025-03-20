@@ -1,9 +1,13 @@
 package com.arom.with_travel.global.config;
 
 import com.arom.with_travel.domain.member.service.MemberService;
+import com.arom.with_travel.global.jwt.filter.TokenAuthenticationFilter;
+import com.arom.with_travel.global.jwt.repository.RefreshTokenRepository;
+import com.arom.with_travel.global.jwt.service.TokenProvider;
 import com.arom.with_travel.global.oauth2.handler.OAuth2SuccessHandler;
 import com.arom.with_travel.global.oauth2.service.CustomOAuth2UserService;
 import com.arom.with_travel.global.oauth2.util.OAuth2AuthorizationRequestBasedOnCookieRepository;
+import jakarta.servlet.Filter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -34,7 +38,7 @@ public class SecurityConfig {
         return http
                 .cors(cors -> {
                     CorsConfiguration configuration = new CorsConfiguration();
-                    configuration.addAllowedOrigin("http://localhost:3000");
+                    configuration.addAllowedOrigin("http://localhost:8080");
                     configuration.addAllowedMethod("*");
                     configuration.addAllowedHeader("*");
                     configuration.setAllowCredentials(true);
@@ -77,7 +81,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public TokenAuthenticationFilter tokenAuthenticationFilter() {
+    public Filter tokenAuthenticationFilter() {
         return new TokenAuthenticationFilter(tokenProvider);
     }
 

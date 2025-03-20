@@ -36,17 +36,17 @@ public class Member extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull private String oauthId;
-    @NotNull private String email;
-    @NotNull private LocalDate birth;
-    @NotNull @Enumerated(EnumType.STRING) private Gender gender;
-    @NotNull private String phone;
-    @NotNull @Enumerated(EnumType.STRING) private LoginType loginType;
-    @NotNull private String memberName;
-    @NotNull private String nickname;
-    @NotNull @Lob private String introduction;
-    @NotNull @Enumerated(EnumType.STRING) private TravelType travelType;
-    @Enumerated(EnumType.STRING)private Role role;
+     private String oauthId;
+    private String email;
+    private LocalDate birth = LocalDate.now();
+    @Enumerated(EnumType.STRING) private Gender gender;
+    private String phone;
+    @Enumerated(EnumType.STRING) private LoginType loginType;
+    private String memberName;
+    private String nickname;
+    @Lob private String introduction;
+    @Enumerated(EnumType.STRING) private TravelType travelType;
+    @Enumerated(EnumType.STRING) private Role role;
 
     public enum Role {
         USER,
