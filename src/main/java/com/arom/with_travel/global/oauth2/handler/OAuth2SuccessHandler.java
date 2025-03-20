@@ -5,6 +5,7 @@ import com.arom.with_travel.domain.member.service.MemberService;
 import com.arom.with_travel.global.jwt.domain.RefreshToken;
 import com.arom.with_travel.global.jwt.repository.RefreshTokenRepository;
 import com.arom.with_travel.global.jwt.service.TokenProvider;
+import com.arom.with_travel.global.oauth2.dto.CustomOAuth2User;
 import com.arom.with_travel.global.oauth2.util.CookieUtil;
 import com.arom.with_travel.global.oauth2.util.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import jakarta.servlet.http.Cookie;
@@ -16,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -38,6 +40,16 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+
+        CustomOAuth2User tmpMember = (CustomOAuth2User) authentication.getPrincipal();
+        if(tmpMember.getRole().equals(Member.Role.GUEST)){
+            redirectToSignupWithUserInfo(request,
+                    response,
+                    tmpMember
+            );
+            return;
+        }
+
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         
         Member member = memberService.getUserByLoginEmailOrElseThrow(oAuth2User.getAttributes().get("email").toString());
@@ -83,5 +95,23 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private void clearAuthenticationAttributes(HttpServletRequest request, HttpServletResponse response) {
         super.clearAuthenticationAttributes(request);
         authorizationRequestRepository.removeAuthorizationRequestCookies(request, response);
+    }
+
+    private void redirectToSignupWithUserInfo(HttpServletRequest request,
+                                              HttpServletResponse response,
+                                              CustomOAuth2User member) throws IOException {
+        log.info("최초 로그인인 경우 추가 정보 입력을 위한 회원가입 페이지로 리다이렉트");
+        //response.addHeader(JWT_REFRESH_TOKEN_COOKIE_NAME, JWT_ACCESS_TOKEN_TYPE + accessToken);
+        String redirectURL = createRedirectUri(member);
+        getRedirectStrategy().sendRedirect(request, response, redirectURL);
+    }
+
+    private String createRedirectUri(CustomOAuth2User member) {
+        return UriComponentsBuilder.fromUriString("http://localhost:8080/home").toUriString();
+//                .queryParam("email", member.getEmail())
+//                .queryParam("name", member.getName())
+//                .build()
+//                .encode(StandardCharsets.UTF_8)
+//                .toUriString();
     }
 }

@@ -99,7 +99,7 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member")
     private List<Likes> likes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "sender")
+    @OneToMany(mappedBy = "member")
     private List<Chat> chats = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
