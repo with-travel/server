@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,7 @@ public class AccompanyController {
     private final AccompanyService accompanyService;
 
     @PostNewAccompany
-    @PostMapping("/create")
+    @PostMapping
     public String createNewAccompanyPost(@RequestBody AccompanyPostRequest request) {
         return accompanyService.save(request, 1L);
     }
@@ -40,7 +41,7 @@ public class AccompanyController {
         return accompanyService.showDetails(accompanyId);
     }
 
-    @PostMapping("/{accompanyId}/like")
+    @PatchMapping("/{accompanyId}/like")
     public boolean doLike(@PathVariable Long accompanyId){
         return accompanyService.pressLike(accompanyId, 1L);
     }
@@ -50,19 +51,12 @@ public class AccompanyController {
         return accompanyService.applyAccompany(accompanyId, 1L);
     }
 
-    // TODO : 동적 쿼리를 활용해 검색 기능에 유연함 제공
-    // 아직은 대륙별 검색 기능만 제공
-    @GetMapping("/search")
-    public List<AccompanyBriefResponse> searchByContinent(
-            @RequestParam(value = "continent", required = false) Continent continent,
+    @GetMapping
+    public Slice<AccompanyBriefResponse> showAccompaniesBrief(
             @RequestParam(value = "country", required = false) Country country,
-            @RequestParam(value = "city", required = false) City city,
-            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable){
-        return accompanyService.searchByContinent(continent, pageable);
+            @RequestParam(required = false) Long lastId,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        return accompanyService.getAccompaniesBrief(country, size, lastId);
     }
-
-//    @PostMapping("/{accompanyId}/confirm")
-//    public String doConfirm(@PathVariable Long accompanyId, Boolean isConfirmed){
-//        return accompaniesService.confirmApply(accompanyId, 1L, 2L);
-//    }
 }

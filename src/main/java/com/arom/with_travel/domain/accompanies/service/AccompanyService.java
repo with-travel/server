@@ -6,6 +6,7 @@ import com.arom.with_travel.domain.accompanies.model.AccompanyApply;
 import com.arom.with_travel.domain.accompanies.dto.request.AccompanyPostRequest;
 import com.arom.with_travel.domain.accompanies.dto.response.AccompanyDetailsResponse;
 import com.arom.with_travel.domain.accompanies.model.Continent;
+import com.arom.with_travel.domain.accompanies.model.Country;
 import com.arom.with_travel.domain.accompanies.repository.accompany.AccompanyRepository;
 import com.arom.with_travel.domain.accompanies.repository.accompanyApply.AccompanyApplyRepository;
 import com.arom.with_travel.domain.likes.Likes;
@@ -16,10 +17,7 @@ import com.arom.with_travel.global.exception.BaseException;
 import com.arom.with_travel.global.exception.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,20 +57,11 @@ public class AccompanyService {
         return true;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public AccompanyDetailsResponse showDetails(Long accompanyId){
         Accompany accompany = findAccompany(accompanyId);
         accompany.addView();
         return AccompanyDetailsResponse.from(accompany);
-    }
-
-    // TODO : 동행 선택 알고리즘 구현
-    @Transactional(readOnly = true)
-    public List<AccompanyBriefResponse> searchByContinent(Continent continent, Pageable pageable){
-        return accompanyRepository.findByContinent(continent, pageable)
-                .stream()
-                .map(AccompanyBriefResponse::from)
-                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -85,10 +74,12 @@ public class AccompanyService {
         return "참가 신청이 완료됐습니다.";
     }
 
-//    @Transactional
-//    public String confirmApply(Long accompanyId, Long writerId, Long applierId){
-//
-//    }
+    @Transactional(readOnly = true)
+    public Slice<AccompanyBriefResponse> getAccompaniesBrief(Country country, int size, Long lastId){
+        Pageable pageable = PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Slice<Accompany> accompanyList = accompanyRepository.findByCountry(country, lastId, pageable);
+        return accompanyList.map(AccompanyBriefResponse::from);
+    }
 
     // 임시 조회 코드
     private Member findMember(Long memberId){
