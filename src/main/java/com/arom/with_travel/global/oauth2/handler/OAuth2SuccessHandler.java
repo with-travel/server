@@ -43,12 +43,12 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         Member member = memberService.getUserByLoginEmailOrElseThrow(oAuth2User.getAttributes().get("email").toString());
 
         // 리프레시 토큰 생성 -> 저장 -> 쿠키에 저장
-        String refreshToken = tokenProvider.generateToken(member.getId(), REFRESH_TOKEN_DURATION);
+        String refreshToken = tokenProvider.generateToken(member, REFRESH_TOKEN_DURATION);
         saveRefreshToken(member.getId(), refreshToken);
         addRefreshTokenToCookie(request, response, refreshToken);
 
         // 액세스 토큰 생성 -> 패스에 액세스 토큰 추가
-        String accessToken = tokenProvider.generateToken(member.getId(), ACCESS_TOKEN_DURATION);
+        String accessToken = tokenProvider.generateToken(member, ACCESS_TOKEN_DURATION);
         response.setHeader("Authorization", "Bearer " + accessToken);
 
         // 인증관련 설정 값, 쿠키 제거
@@ -57,7 +57,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         // 리다이렉트
         Optional<String> redirectUri = CookieUtil.getCookie(request, "redirect_uri")
                 .map(Cookie::getValue);
-        String targetUrl = "http://localhost:3000/login/oauth2/code/kakao?token=" + accessToken;
+        String targetUrl = "http://localhost:8080/login/oauth2/code/kakao?token=" + accessToken;
 
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }

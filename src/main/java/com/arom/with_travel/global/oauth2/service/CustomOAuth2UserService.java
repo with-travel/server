@@ -38,6 +38,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         // 신규 유저인 경우, DB에 저장
         if (loginUser == null) {
+            log.info(loginEmail);
             Member user = Member.create(oAuth2Response.getName(), loginEmail, Member.Role.USER);
             memberRepository.save(user);
         }
