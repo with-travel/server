@@ -10,7 +10,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Getter
-@NotNull
 @Builder
 public class AccompanyPostRequest {
 

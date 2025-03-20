@@ -20,4 +20,8 @@ public class RefreshTokenService {
         return refreshTokenRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> BaseException.from(ErrorCode.TOKEN_NOT_FOUND));
     }
+
+    public String refreshAccessToken(String refreshToken) {
+        return "";
+    }
 }
