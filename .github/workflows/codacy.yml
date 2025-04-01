@@ -1,0 +1,42 @@
+name: Codacy Security Scan
+
+on:
+  pull_request:
+    branches: [ "develop" ]
+  schedule:
+    - cron: '29 20 * * 4'
+    
+permissions:
+  contents: read
+
+jobs:
+  codacy-quality-analysis:
+    name: Run Codacy Quality Analysis
+    runs-on: ubuntu-latest
+
+    # 추가 권한 설정 (SARIF 업로드 위해 필요)
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+
+    steps:
+      # 1단계: 저장소 코드 체크아웃
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      # 2단계: Codacy CLI 실행 - 코드 품질 분석 수행
+      - name: Run Codacy CLI
+        uses: codacy/codacy-analysis-cli-action@d840f886c4bd4edc059706d09c6a1586111c540b
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }} # Codacy 프로젝트 토큰 (비밀 값으로 저장 필요)
+          output: results.sarif       # 결과 파일명
+          format: sarif               # 결과 포맷: GitHub 보안 대시보드와 호환
+          verbose: true               # 자세한 로그 출력
+          max-allowed-issues: 100     # 이슈 100개 이상이면 실패 처리
+
+      # 3단계: SARIF 형식의 분석 결과를 GitHub 보안 대시보드에 업로드
+      - name: Upload SARIF results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: results.sarif
