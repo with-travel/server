@@ -5,6 +5,7 @@ import com.arom.with_travel.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
@@ -22,9 +23,19 @@ public class Survey extends BaseEntity {
     private Long id;
 
     @NotNull @Lob private String question;
-    @NotNull @Lob private String answer;
+    @NotNull @Lob private String answer1;
+    @NotNull @Lob private String answer2;
+    @NotNull @Lob private String answer3;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @Builder
+    public Survey(Member member, String answer1, String answer2, String answer3) {
+        this.member = member;
+        this.answer1 = answer1;
+        this.answer2 = answer2;
+        this.answer3 = answer3;
+    }
 }
