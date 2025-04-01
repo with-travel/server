@@ -14,6 +14,8 @@ import com.arom.with_travel.domain.shorts.Shorts;
 import com.arom.with_travel.domain.shorts_reply.ShortsReply;
 import com.arom.with_travel.domain.survey.Survey;
 import com.arom.with_travel.global.entity.BaseEntity;
+import com.arom.with_travel.global.exception.BaseException;
+import com.arom.with_travel.global.exception.error.ErrorCode;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -36,7 +38,7 @@ public class Member extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-     private String oauthId;
+    private String oauthId;
     private String email;
     private LocalDate birth = LocalDate.now();
     @Enumerated(EnumType.STRING) private Gender gender;
@@ -108,9 +110,6 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member")
     private List<Survey> surveys = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
-    private List<Notification> notifications = new ArrayList<>();
-
     @OneToOne(mappedBy = "member")
     private Image image;
 
@@ -129,5 +128,13 @@ public class Member extends BaseEntity {
         this.introduction = introduction;
         this.travelType = travelType;
         this.role = role;
+    }
+
+    public void validateNotAlreadyAppliedTo(Accompany accompany) {
+        boolean alreadyApplied = accompanyApplies.stream()
+                .anyMatch(apply -> apply.getAccompanies().equals(accompany));
+        if (alreadyApplied) {
+            throw BaseException.from(ErrorCode.TMP_ERROR);
+        }
     }
 }

@@ -128,7 +128,11 @@ public class Accompany extends BaseEntity {
         views++;
     }
 
-    private Long showViews(){
+    public Long getOwnerId(){
+        return member.getId();
+    }
+
+    public Long showViews(){
         return views;
     }
 
