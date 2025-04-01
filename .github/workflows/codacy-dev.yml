@@ -1,0 +1,44 @@
+name: Codacy Code Quality Check
+
+# 워크플로우 트리거: develop 브랜치에서 push 또는 PR 발생 시 자동 실행
+on:
+  push:
+    branches: [ "develop" ]
+  pull_request:
+    branches: [ "develop" ]
+
+# 기본 권한 설정
+permissions:
+  contents: read
+
+jobs:
+  codacy-quality-analysis:
+    name: Run Codacy Quality Analysis
+    runs-on: ubuntu-latest
+
+    # SARIF 업로드를 위해 필요한 권한 부여
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+
+    steps:
+      # 1단계: 저장소 코드 체크아웃
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      # 2단계: Codacy CLI 실행 - 코드 품질 분석
+      - name: Run Codacy CLI
+        uses: codacy/codacy-analysis-cli-action@d840f886c4bd4edc059706d09c6a1586111c540b
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          output: results.sarif
+          format: sarif
+          verbose: true
+          max-allowed-issues: 100
+
+      # 3단계: SARIF 결과 업로드 - GitHub 보안 대시보드에서 확인 가능
+      - name: Upload SARIF results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: results.sarif
