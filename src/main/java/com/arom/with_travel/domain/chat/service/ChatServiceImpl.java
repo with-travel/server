@@ -1,6 +1,5 @@
 package com.arom.with_travel.domain.chat.service;
 
-import com.arom.with_travel.domain.accompanies.Accompanies;
 import com.arom.with_travel.domain.chat.Chat;
 import com.arom.with_travel.domain.chat.ChatPart;
 import com.arom.with_travel.domain.chat.Chatroom;

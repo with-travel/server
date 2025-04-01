@@ -1,6 +1,9 @@
 package com.arom.with_travel.global.config;
 
 import com.arom.with_travel.domain.member.service.MemberService;
+import com.arom.with_travel.global.jwt.filter.TokenAuthenticationFilter;
+import com.arom.with_travel.global.jwt.repository.RefreshTokenRepository;
+import com.arom.with_travel.global.jwt.service.TokenProvider;
 import com.arom.with_travel.global.oauth2.handler.OAuth2SuccessHandler;
 import com.arom.with_travel.global.oauth2.service.CustomOAuth2UserService;
 import com.arom.with_travel.global.oauth2.util.OAuth2AuthorizationRequestBasedOnCookieRepository;

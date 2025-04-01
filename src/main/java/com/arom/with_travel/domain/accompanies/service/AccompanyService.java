@@ -23,6 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -101,6 +102,7 @@ public class AccompanyService {
                 .orElseThrow(() -> BaseException.from(ErrorCode.ACCOMPANY_NOT_FOUND));
     }
 
+
     private void isAlreadyApplied(Member member, Accompany accompany) {
         member.getAccompanyApplies()
                 .stream()
@@ -110,4 +112,51 @@ public class AccompanyService {
                     return null;
                 });
     }
+
+    //동행 정보 다 가져옴.
+    public List<Accompany>[] getAccompanyByMember(Member member){
+        //전체 리스트 가져옴
+        LocalDate now = LocalDate.now();
+        List<Accompany> accompanies = accompanyRepository.findAccompaniesByMember(member);
+        List<AccompanyApply> accompanyApplies = applyRepository.findAccompanyAppliesByMember(member);
+
+        //0은 모집한 동행 1은 신청한 동행 2는 이미 지난 동행
+        List<Accompany>[] accompaniesList = new List[3];
+        for(int i=0;i<3;i++) accompaniesList[i] = new ArrayList<>();
+
+        for(Accompany accompany : accompanies){
+            if(isFinish(accompany)) accompaniesList[2].add(accompany);
+            else accompaniesList[0].add(accompany);
+        }
+
+        for(AccompanyApply accompanyApply : accompanyApplies){
+            if(isFinish(accompanyApply.getAccompanies())) continue;
+            accompaniesList[1].add(accompanyApply.getAccompanies());
+        }
+
+        return accompaniesList;
+    }
+
+    private boolean isFinish(Accompany accompany){
+        LocalDate endDate = accompany.getEndDate();
+        LocalDate now = LocalDate.now();
+
+        // true면 지난 동행임
+        if(now.compareTo(endDate)>0) return true;
+        return false;
+    }
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
