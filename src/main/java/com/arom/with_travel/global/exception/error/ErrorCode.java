@@ -14,6 +14,7 @@ public enum ErrorCode {
 
     //member
     MEMBER_NOT_FOUND("MEM-0000", "해당 회원이 존재하지 않습니다.", ErrorDisplayType.POPUP),
+    MEMBER_ALREADY_REGISTERED("MEM-0001", "이미 회원가입되어 있습니다.", ErrorDisplayType.POPUP),
 
     //token
     TOKEN_NOT_FOUND("TKN-0000", "refresh token이 존재하지 않습니다.", ErrorDisplayType.POPUP),
