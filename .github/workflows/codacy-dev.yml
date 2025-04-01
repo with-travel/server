@@ -2,8 +2,6 @@ name: Codacy Code Quality Check
 
 # 워크플로우 트리거: develop 브랜치에서 push 또는 PR 발생 시 자동 실행
 on:
-  push:
-    branches: [ "develop" ]
   pull_request:
     branches: [ "develop" ]
 
