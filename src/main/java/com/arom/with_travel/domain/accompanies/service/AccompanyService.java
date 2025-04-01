@@ -1,5 +1,6 @@
 package com.arom.with_travel.domain.accompanies.service;
 
+import com.arom.with_travel.domain.accompanies.dto.event.AccompanyAppliedEvent;
 import com.arom.with_travel.domain.accompanies.dto.response.AccompanyBriefResponse;
 import com.arom.with_travel.domain.accompanies.model.Accompany;
 import com.arom.with_travel.domain.accompanies.model.AccompanyApply;
@@ -17,13 +18,10 @@ import com.arom.with_travel.global.exception.BaseException;
 import com.arom.with_travel.global.exception.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,10 +32,11 @@ public class AccompanyService {
     private final MemberRepository memberRepository;
     private final LikesRepository likesRepository;
     private final AccompanyApplyRepository applyRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public String save(AccompanyPostRequest request, Long memberId) {
-        Member member = findMember(memberId);
+        Member member = loadMemberOrThrow(memberId);
         Accompany accompany = Accompany.from(request);
         accompany.post(member);
         accompanyRepository.save(accompany);
@@ -46,8 +45,8 @@ public class AccompanyService {
 
     @Transactional
     public boolean pressLike(Long accompanyId, Long memberId){
-        Member member = findMember(memberId);
-        Accompany accompany = findAccompany(accompanyId);
+        Member member = loadMemberOrThrow(memberId);
+        Accompany accompany = loadAccompanyOrThrow(accompanyId);
         if(accompany.isAlreadyLikedBy(memberId)) {
             return false;
         }
@@ -59,18 +58,24 @@ public class AccompanyService {
 
     @Transactional
     public AccompanyDetailsResponse showDetails(Long accompanyId){
-        Accompany accompany = findAccompany(accompanyId);
+        Accompany accompany = loadAccompanyOrThrow(accompanyId);
         accompany.addView();
         return AccompanyDetailsResponse.from(accompany);
     }
 
     @Transactional
     public String applyAccompany(Long accompanyId, Long memberId){
-        Accompany accompany = findAccompany(accompanyId);
-        Member member = findMember(memberId);
-        isAlreadyApplied(member, accompany);
-        applyRepository.save(AccompanyApply.apply(accompany, member));
-        // TODO : 동행 작성자에게 참가 수락여부 알림이 가야 함
+        Accompany accompany = loadAccompanyOrThrow(accompanyId);
+        Member proposer = loadMemberOrThrow(memberId);
+        proposer.validateNotAlreadyAppliedTo(accompany);
+        applyRepository.save(AccompanyApply.apply(accompany, proposer));
+        AccompanyAppliedEvent event = new AccompanyAppliedEvent(
+                accompany.getId(),
+                accompany.getOwnerId(),
+                proposer.getId(),
+                proposer.getNickname()
+        );
+        eventPublisher.publishEvent(event);
         return "참가 신청이 완료됐습니다.";
     }
 
@@ -82,23 +87,13 @@ public class AccompanyService {
     }
 
     // 임시 조회 코드
-    private Member findMember(Long memberId){
+    private Member loadMemberOrThrow(Long memberId){
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> BaseException.from(ErrorCode.MEMBER_NOT_FOUND));
     }
 
-    private Accompany findAccompany(Long accompanyId){
+    private Accompany loadAccompanyOrThrow(Long accompanyId){
         return accompanyRepository.findById(accompanyId)
                 .orElseThrow(() -> BaseException.from(ErrorCode.ACCOMPANY_NOT_FOUND));
-    }
-
-    private void isAlreadyApplied(Member member, Accompany accompany) {
-        member.getAccompanyApplies()
-                .stream()
-                .map(accompanyApply ->{
-                    if(accompanyApply.getAccompanies().equals(accompany))
-                        throw BaseException.from(ErrorCode.TMP_ERROR);
-                    return null;
-                });
     }
 }
