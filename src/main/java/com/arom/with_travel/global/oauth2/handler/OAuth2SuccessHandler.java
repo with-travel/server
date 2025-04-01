@@ -11,11 +11,16 @@ import com.arom.with_travel.global.oauth2.util.OAuth2AuthorizationRequestBasedOn
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -39,7 +44,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private final MemberService memberService;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+                                        Authentication authentication) throws IOException {
 
         CustomOAuth2User tmpMember = (CustomOAuth2User) authentication.getPrincipal();
         if(tmpMember.getRole().equals(Member.Role.GUEST)){
@@ -82,8 +88,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         refreshTokenRepository.save(refreshToken);
     }
-    
-    // 쿠키에 리프레시 토큰 등록
+
     private void addRefreshTokenToCookie(HttpServletRequest request, HttpServletResponse response, String refreshToken) {
         int cookieMaxAge = (int) REFRESH_TOKEN_DURATION.toSeconds();
 
@@ -103,11 +108,26 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         log.info("최초 로그인인 경우 추가 정보 입력을 위한 회원가입 페이지로 리다이렉트");
         //response.addHeader(JWT_REFRESH_TOKEN_COOKIE_NAME, JWT_ACCESS_TOKEN_TYPE + accessToken);
         String redirectURL = createRedirectUri(member);
+
+        CustomOAuth2User newPrincipal = new CustomOAuth2User(member.getOAuth2Response(), Member.Role.GUEST);
+
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(newPrincipal, null, newPrincipal.getAuthorities());
+
+        //SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authentication);
+        SecurityContextHolder.setContext(context);
+
+        HttpSession session = request.getSession(true);
+        session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
+
         getRedirectStrategy().sendRedirect(request, response, redirectURL);
     }
 
     private String createRedirectUri(CustomOAuth2User member) {
-        return UriComponentsBuilder.fromUriString("http://localhost:8080/home").toUriString();
+        return UriComponentsBuilder.fromUriString("http://localhost:8080/signup/check").toUriString(); //
 //                .queryParam("email", member.getEmail())
 //                .queryParam("name", member.getName())
 //                .build()

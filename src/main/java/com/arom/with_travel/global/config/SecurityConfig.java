@@ -23,8 +23,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 
-@RequiredArgsConstructor
 @Configuration
+@RequiredArgsConstructor
 @Slf4j
 public class SecurityConfig {
 
@@ -35,7 +35,19 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
         return http
+                //
+                .sessionManagement(management ->
+                        management.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                )
+
+                //
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/signup").authenticated() //
+                        .anyRequest().permitAll()
+                )
+
                 .cors(cors -> {
                     CorsConfiguration configuration = new CorsConfiguration();
                     configuration.addAllowedOrigin("http://localhost:8080");
@@ -45,35 +57,42 @@ public class SecurityConfig {
                     configuration.addAllowedOriginPattern("*");
                     cors.configurationSource(request -> configuration);
                 })
+
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
-                .sessionManagement(management ->
-                        management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers(new AntPathRequestMatcher("/api/token")).permitAll()
-//                        .requestMatchers(new AntPathRequestMatcher("/api/**")).authenticated()
-                        .anyRequest().permitAll())
+
+                // OAuth2 로그인 성공 시
                 .oauth2Login(oauth2 -> oauth2
                         .authorizationEndpoint(authorizationEndpoint ->
                                 authorizationEndpoint.authorizationRequestRepository(
-                                        oAuth2AuthorizationRequestBasedOnCookieRepository()))
-                        .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint.userService(customOAuth2UserService))
-                        .successHandler(oAuth2SuccessHandler())
+                                        oAuth2AuthorizationRequestBasedOnCookieRepository()
+                                )
+                        )
+                        .userInfoEndpoint(userInfoEndpoint ->
+                                userInfoEndpoint.userService(customOAuth2UserService)
+                        )
+                        .successHandler(oAuth2SuccessHandler()) // GUEST or USER 분기
                 )
+
+                // 예외 처리  API 경로 → 401 반환
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .defaultAuthenticationEntryPointFor(
                                 new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
                                 new AntPathRequestMatcher("/api/**")
-                        ))
+                        )
+                )
+
                 .addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+
                 .build();
     }
 
     @Bean
     public OAuth2SuccessHandler oAuth2SuccessHandler() {
-        return new OAuth2SuccessHandler(tokenProvider,
+        return new OAuth2SuccessHandler(
+                tokenProvider,
                 refreshTokenRepository,
                 oAuth2AuthorizationRequestBasedOnCookieRepository(),
                 memberService
