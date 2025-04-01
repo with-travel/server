@@ -5,12 +5,14 @@ import com.arom.with_travel.global.exception.error.ErrorDisplayType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 
 @Getter
 @AllArgsConstructor
 @JsonPropertyOrder({"code", "message", "displayType"})
+@Builder
 public class ErrorResponse {
 
     @JsonProperty("code")
