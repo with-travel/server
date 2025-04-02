@@ -38,9 +38,15 @@ public interface AccompanyRepository extends
         (a.createdAt < :lastCreatedAt) OR 
         (a.createdAt = :lastCreatedAt AND a.id < :lastId)
     )
+    AND (
+            :keyword IS NULL OR
+            LOWER(a.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR
+            LOWER(a.description) LIKE LOWER(CONCAT('%', :keyword, '%'))
+        )
     ORDER BY a.createdAt DESC, a.id DESC
 """)
     Slice<Accompany> findByFiltersWithNoOffset(
+            @Param("keyword") String keyword,
             @Param("continent") Continent continent,
             @Param("country") Country country,
             @Param("city") City city,

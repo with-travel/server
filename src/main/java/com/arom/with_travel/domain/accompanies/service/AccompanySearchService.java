@@ -31,7 +31,9 @@ public class AccompanySearchService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public Slice<AccompanyBriefResponse> getFilteredAccompanies(
+            String keyword,
             Continent continent,
             Country country,
             City city,
@@ -41,6 +43,7 @@ public class AccompanySearchService {
     ) {
         Pageable pageable = PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         return accompanyRepository.findByFiltersWithNoOffset(
+                keyword,
                 continent,
                 country,
                 city,

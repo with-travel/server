@@ -38,7 +38,7 @@ public class AccompanySearchController {
             @RequestParam(required = false) Long lastId,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return accompanySearchService.getFilteredAccompanies(continent, country, city, startDate, lastId, size);
+        return accompanySearchService.getFilteredAccompanies(keyword, continent, country, city, startDate, lastId, size);
     }
 
     // 아직은 대륙별 검색 기능만 제공

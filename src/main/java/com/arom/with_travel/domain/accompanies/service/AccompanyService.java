@@ -2,6 +2,7 @@ package com.arom.with_travel.domain.accompanies.service;
 
 import com.arom.with_travel.domain.accompanies.dto.event.AccompanyAppliedEvent;
 import com.arom.with_travel.domain.accompanies.dto.response.AccompanyBriefResponse;
+import com.arom.with_travel.domain.accompanies.error.AccompanyErrorCode;
 import com.arom.with_travel.domain.accompanies.model.Accompany;
 import com.arom.with_travel.domain.accompanies.model.AccompanyApply;
 import com.arom.with_travel.domain.accompanies.dto.request.AccompanyPostRequest;
@@ -13,6 +14,7 @@ import com.arom.with_travel.domain.accompanies.repository.accompanyApply.Accompa
 import com.arom.with_travel.domain.likes.Likes;
 import com.arom.with_travel.domain.likes.repository.LikesRepository;
 import com.arom.with_travel.domain.member.Member;
+import com.arom.with_travel.domain.member.error.MemberErrorCode;
 import com.arom.with_travel.domain.member.repository.MemberRepository;
 import com.arom.with_travel.global.exception.BaseException;
 import com.arom.with_travel.global.exception.error.ErrorCode;
@@ -89,11 +91,11 @@ public class AccompanyService {
     // 임시 조회 코드
     private Member loadMemberOrThrow(Long memberId){
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> BaseException.from(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> BaseException.from(MemberErrorCode.MEMBER_NOT_FOUND));
     }
 
     private Accompany loadAccompanyOrThrow(Long accompanyId){
         return accompanyRepository.findById(accompanyId)
-                .orElseThrow(() -> BaseException.from(ErrorCode.ACCOMPANY_NOT_FOUND));
+                .orElseThrow(() -> BaseException.from(AccompanyErrorCode.ACCOMPANY_NOT_FOUND));
     }
 }
