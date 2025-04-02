@@ -1,11 +1,11 @@
 package com.arom.with_travel.global.jwt.service;
 
+import com.arom.with_travel.domain.member.Member;
+import com.arom.with_travel.domain.member.service.MemberSignupService;
 import com.arom.with_travel.global.exception.BaseException;
 import com.arom.with_travel.global.exception.error.ErrorCode;
 import com.arom.with_travel.global.jwt.domain.RefreshToken;
 import com.arom.with_travel.global.jwt.repository.RefreshTokenRepository;
-import com.arom.with_travel.domain.member.Member;
-import com.arom.with_travel.domain.member.service.MemberSignupService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ public class TokenService {
         Long userId = refreshTokenService.findByRefreshToken(refreshToken).getMemberId();
         Member member = memberSignupService.getMemberByIdOrElseThrow(userId);
 
-        return tokenProvider.generateToken(member.getId(), Duration.ofHours(2));
+        return tokenProvider.generateToken(member, Duration.ofHours(2));
     }
 
     // 리프레시 토큰 삭제
@@ -39,7 +39,7 @@ public class TokenService {
         Member member = memberSignupService.getMemberByEmailOrElseThrow(loginEmail);
 
         RefreshToken refreshToken = refreshTokenRepository.findByMemberId(member.getId())
-                .orElseThrow(() -> BaseException.from(ErrorCode.REFRESH_TOKEN_NOT_FOUND));
+                .orElseThrow(() -> BaseException.from(ErrorCode.TOKEN_NOT_FOUND));
 
         refreshTokenRepository.delete(refreshToken);
     }

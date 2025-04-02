@@ -17,14 +17,18 @@ public class MemberSignupService {
 
     @Transactional
     public Member registerMember(String email, MemberSignupRequestDto requestDto) {
-        // 기존 회원 불러오기
+
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> BaseException.from(ErrorCode.MEMBER_NOT_FOUND));
 
-        // 기존 회원의 추가 정보 업데이트
+        if (member.getRole() == Member.Role.USER) {
+            throw BaseException.from(ErrorCode.MEMBER_ALREADY_REGISTERED);
+        }
+
         member.setNickname(requestDto.getNickname());
         member.setBirth(requestDto.getBirthdate());
         member.setGender(requestDto.getGender());
+        member.setRole(Member.Role.USER);
 
         return memberRepository.save(member);
     }

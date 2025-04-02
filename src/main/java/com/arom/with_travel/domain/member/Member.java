@@ -14,6 +14,8 @@ import com.arom.with_travel.domain.shorts.Shorts;
 import com.arom.with_travel.domain.shorts_reply.ShortsReply;
 import com.arom.with_travel.domain.survey.Survey;
 import com.arom.with_travel.global.entity.BaseEntity;
+import com.arom.with_travel.global.exception.BaseException;
+import com.arom.with_travel.global.exception.error.ErrorCode;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -36,17 +38,17 @@ public class Member extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull private String oauthId;
-    @NotNull private String email;
-    @NotNull private LocalDate birth;
-    @NotNull @Enumerated(EnumType.STRING) private Gender gender;
-    @NotNull private String phone;
-    @NotNull @Enumerated(EnumType.STRING) private LoginType loginType;
-    @NotNull private String memberName;
-    @NotNull private String nickname;
-    @NotNull @Lob private String introduction;
-    @NotNull @Enumerated(EnumType.STRING) private TravelType travelType;
-    @Enumerated(EnumType.STRING)private Role role;
+    private String oauthId;
+    private String email;
+    private LocalDate birth = LocalDate.now();
+    @Enumerated(EnumType.STRING) private Gender gender;
+    private String phone;
+    @Enumerated(EnumType.STRING) private LoginType loginType;
+    private String memberName;
+    private String nickname;
+    @Lob private String introduction;
+    @Enumerated(EnumType.STRING) private TravelType travelType;
+    @Enumerated(EnumType.STRING) private Role role;
 
     public enum Role {
         USER,
@@ -108,9 +110,6 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member")
     private List<Survey> surveys = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
-    private List<Notification> notifications = new ArrayList<>();
-
     @OneToOne(mappedBy = "member")
     private Image image;
 
@@ -129,5 +128,13 @@ public class Member extends BaseEntity {
         this.introduction = introduction;
         this.travelType = travelType;
         this.role = role;
+    }
+
+    public void validateNotAlreadyAppliedTo(Accompany accompany) {
+        boolean alreadyApplied = accompanyApplies.stream()
+                .anyMatch(apply -> apply.getAccompanies().equals(accompany));
+        if (alreadyApplied) {
+            throw BaseException.from(ErrorCode.TMP_ERROR);
+        }
     }
 }

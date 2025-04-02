@@ -19,6 +19,6 @@ public enum Country {
         return Arrays.stream(values())
                 .filter(type -> type.getName().equals(val))
                 .findAny()
-                .orElse(null);
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 국가명: " + val));
     }
 }
