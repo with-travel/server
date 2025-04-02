@@ -9,13 +9,13 @@ import com.arom.with_travel.domain.community.Community;
 import com.arom.with_travel.domain.community_reply.CommunityReply;
 import com.arom.with_travel.domain.image.Image;
 import com.arom.with_travel.domain.likes.Likes;
+import com.arom.with_travel.domain.member.error.MemberErrorCode;
 import com.arom.with_travel.domain.notification.Notification;
 import com.arom.with_travel.domain.shorts.Shorts;
 import com.arom.with_travel.domain.shorts_reply.ShortsReply;
 import com.arom.with_travel.domain.survey.Survey;
 import com.arom.with_travel.global.entity.BaseEntity;
 import com.arom.with_travel.global.exception.BaseException;
-import com.arom.with_travel.global.exception.error.ErrorCode;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -135,7 +135,7 @@ public class Member extends BaseEntity {
         boolean alreadyApplied = accompanyApplies.stream()
                 .anyMatch(apply -> apply.getAccompanies().equals(accompany));
         if (alreadyApplied) {
-            throw BaseException.from(ErrorCode.TMP_ERROR);
+            throw BaseException.from(MemberErrorCode.MEMBER_ALREADY_REGISTERED);
         }
     }
 }

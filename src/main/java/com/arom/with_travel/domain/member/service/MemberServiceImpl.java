@@ -1,6 +1,7 @@
 package com.arom.with_travel.domain.member.service;
 
 import com.arom.with_travel.domain.member.Member;
+import com.arom.with_travel.domain.member.error.MemberErrorCode;
 import com.arom.with_travel.domain.member.repository.MemberRepository;
 import com.arom.with_travel.global.exception.BaseException;
 import com.arom.with_travel.global.exception.error.ErrorCode;
@@ -21,13 +22,13 @@ public class MemberServiceImpl implements MemberService {
     // userId로 유저 조회, 실패 시 에러 발생
     public Member getUserByUserIdOrElseThrow(Long userId) {
         return memberRepository.findById(userId)
-                .orElseThrow(() ->  BaseException.from(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() ->  BaseException.from(MemberErrorCode.MEMBER_NOT_FOUND));
     }
 
     @Override
     // loginEmail로 유저 조회, 실패 시 에러 발생
     public Member getUserByLoginEmailOrElseThrow(String loginEmail) {
         return memberRepository.findByEmail(loginEmail)
-                .orElseThrow(() -> BaseException.from(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> BaseException.from(MemberErrorCode.MEMBER_NOT_FOUND));
     }
 }

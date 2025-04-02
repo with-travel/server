@@ -23,13 +23,13 @@ public class ErrorResponse {
     public static ErrorResponse generateErrorResponse(BaseException baseException){
         if(baseException.hasCustomMessage()) {
             return new ErrorResponse(
-                    baseException.getErrorCode().getCode(),
+                    baseException.getCode().getCode(),
                     baseException.getCustomErrorMessage(),
-                    baseException.getErrorCode().getDisplayType());
+                    baseException.getCode().getDisplayType());
         }
         return new ErrorResponse(
-                baseException.getErrorCode().getCode(),
-                baseException.getErrorCode().getMessage(),
-                baseException.getErrorCode().getDisplayType());
+                baseException.getCode().getCode(),
+                baseException.getCode().getMessage(),
+                baseException.getCode().getDisplayType());
     }
 }
