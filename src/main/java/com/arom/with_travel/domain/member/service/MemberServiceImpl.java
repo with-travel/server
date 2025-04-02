@@ -3,6 +3,8 @@ package com.arom.with_travel.domain.member.service;
 import com.arom.with_travel.domain.accompanies.model.Accompany;
 import com.arom.with_travel.domain.accompanies.service.AccompanyService;
 import com.arom.with_travel.domain.member.Member;
+import com.arom.with_travel.domain.member.dto.MemberProfileRequestDto;
+import com.arom.with_travel.domain.member.dto.MemberProfileResponseDto;
 import com.arom.with_travel.domain.member.repository.MemberRepository;
 import com.arom.with_travel.global.exception.BaseException;
 import com.arom.with_travel.global.exception.error.ErrorCode;
@@ -47,19 +49,14 @@ public class MemberServiceImpl implements MemberService {
     //멤버별로 동행 가져오기
 
 
-    public void showProfile(Member member){
-        //이름
+    public MemberProfileResponseDto getMemberProfile(String email, MemberProfileRequestDto requestDto){
+        Member member = memberRepository.findByEmail(email).get();
+        Member request = memberRepository.findByEmail(requestDto.memberEmail()).get();
 
-        //여행타입
 
-        //자소서
-        String introduction = member.getIntroduction();
-
-        //동행이 중요 0이 모집 1이 신청 2는 기록
-        List<Accompany>[] accompanies = accompanyService.getAccompanyByMember(member);
-
-        //Todo: 가져온 데이터들 필요에 맞게 response해주기
-
+        return MemberProfileResponseDto.toDto(
+                member.getId() == request.getId()
+                ,request,accompanyService.getAccompanyByMember(member));
     }
 
 }
