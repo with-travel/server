@@ -40,11 +40,11 @@ public class Member extends BaseEntity {
 
     private String oauthId;
     private String email;
-    private LocalDate birth = LocalDate.now();
+    private LocalDate birth;
     @Enumerated(EnumType.STRING) private Gender gender;
     private String phone;
     @Enumerated(EnumType.STRING) private LoginType loginType;
-    private String memberName;
+    private String name;
     private String nickname;
     @Lob private String introduction;
     @Enumerated(EnumType.STRING) private TravelType travelType;
@@ -114,7 +114,7 @@ public class Member extends BaseEntity {
     private Image image;
 
     @Builder
-    public Member(Long id, String oauthId, String email, LocalDate birth, Gender gender,
+    public Member(Long id, String oauthId, String email, String name, LocalDate birth, Gender gender,
                   String phone, LoginType loginType, String nickname, String introduction,
                   TravelType travelType, Role role) {
         this.id = id;
@@ -122,6 +122,7 @@ public class Member extends BaseEntity {
         this.email = email;
         this.birth = birth;
         this.gender = gender;
+        this.name = name;
         this.phone = phone;
         this.loginType = loginType;
         this.nickname = nickname;
