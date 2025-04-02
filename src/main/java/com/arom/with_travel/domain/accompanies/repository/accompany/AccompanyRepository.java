@@ -3,7 +3,10 @@ package com.arom.with_travel.domain.accompanies.repository.accompany;
 import com.arom.with_travel.domain.accompanies.model.Accompany;
 import com.arom.with_travel.domain.accompanies.model.City;
 import com.arom.with_travel.domain.accompanies.model.Continent;
+
+import com.arom.with_travel.domain.member.Member;
 import com.arom.with_travel.domain.accompanies.model.Country;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -21,6 +24,9 @@ public interface AccompanyRepository extends
     @Query("SELECT a FROM Accompany a WHERE a.continent = :continent")
     Page<Accompany> findByContinent(@Param("continent") Continent continent, Pageable pageable);
 
+
+    List<Accompany> findAccompaniesByMember(Member member);
+          
     @Query("SELECT a FROM Accompany a WHERE a.country = :country  AND :lastId IS NULL OR a.id < :lastId")
     Slice<Accompany> findByCountry(
             @Param("country") Country country,
@@ -48,4 +54,5 @@ public interface AccompanyRepository extends
             @Param("lastId") Long lastId,
             Pageable pageable
     );
+
 }

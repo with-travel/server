@@ -18,6 +18,8 @@ public interface ChatService {
 
     ChatroomResponse.ChatroomDto roomInfo(ChatroomRequest.ChatroomDto chatroomDto);
 
+
+
     //test
     ChatroomResponse.ChatroomDto saveChatroom(String roomname);
 
