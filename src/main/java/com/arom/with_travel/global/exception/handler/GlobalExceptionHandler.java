@@ -5,6 +5,7 @@ import com.arom.with_travel.global.exception.error.ErrorCode;
 import com.arom.with_travel.global.exception.error.ErrorDisplayType;
 import com.arom.with_travel.global.exception.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,22 +15,20 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice(annotations = {RestController.class})
 public class GlobalExceptionHandler {
 
-    /**
-     * 클라이언트 에러
-     * 직접 생성한 예외에 대한 처리
-     */
+
     @ExceptionHandler(BaseException.class)
-    public ErrorResponse onThrowException(BaseException baseException) {
-        return ErrorResponse.generateErrorResponse(baseException);
+    public ResponseEntity<ErrorResponse> onThrowException(BaseException baseException) {
+        ErrorResponse response = ErrorResponse.generateErrorResponse(baseException);
+        return ResponseEntity.status(baseException.getCode().getStatus()).body(response);
     }
 
-    // TODO : 바인딩 에러 관련 ErrorCode 작성
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ErrorResponse onThrowException(MethodArgumentNotValidException exception){
-        return ErrorResponse.builder()
+    public ResponseEntity<ErrorResponse> onThrowException(MethodArgumentNotValidException exception){
+        ErrorResponse response = ErrorResponse.builder()
                 .code(ErrorCode.TMP_ERROR.getCode())
                 .message(exception.getBindingResult().getFieldError().getDefaultMessage())
                 .displayType(ErrorDisplayType.POPUP)
                 .build();
+        return ResponseEntity.status(exception.getStatusCode()).body(response);
     }
 }
