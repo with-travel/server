@@ -19,6 +19,8 @@ public class AccompanyPostRequest {
     private Country countryName;
     @Enum(target = City.class, message = "도시를 입력해주세요")
     private City cityName;
+    @Enum(target = AccompanyType.class, message = "동행 종류를 선택해주세요")
+    private AccompanyType accompanyType;
     private String destination;
     private LocalDate startDate;
     private LocalTime startTime;
@@ -26,6 +28,4 @@ public class AccompanyPostRequest {
     private String title;
     private String description;
     private int registerCount;
-    @Enum(target = AccompanyType.class, message = "동행 종류를 선택해주세요")
-    private AccompanyType accompanyType;
 }
