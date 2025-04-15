@@ -59,4 +59,5 @@ public class AccompanyController {
     ){
         return accompanyService.getAccompaniesBrief(country, size, lastId);
     }
+    
 }

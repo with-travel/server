@@ -54,7 +54,7 @@ public class ChatServiceImpl implements ChatService{
             chatRepository.save(Chat.builder()
                     .message(messageDto.message())
                     .type(Chat.Type.TALK)
-                    .sender(member)
+                    .member(member)
                     .chatroom(chatroom)
                     .build());
         }
@@ -165,7 +165,7 @@ public class ChatServiceImpl implements ChatService{
         Chatroom chatroom = chatroomRepository.findChatroomByRoomId(enterroomDto.roomId());
 //        Member member = memberRepository.findMemberByEmail(enterroomDto.memberMail());
         Member member = null;
-        List<Chat> chats = chatRepository.findChatsByChatroomAndSender(chatroom,member);
+        List<Chat> chats = chatRepository.findChatsByChatroomAndMember(chatroom,member);
 
         for(Chat chat : chats){
             messageDtos.add(

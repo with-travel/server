@@ -15,7 +15,7 @@ public record MemberProfileResponseDto(
         List<Accompany>[] accompanies
         //동행 데이터 추가
 ){
-     public static MemberProfileResponseDto toDto(boolean isPrinciple,Member member, List<Accompany>[] accompanies){
+     public static MemberProfileResponseDto from(boolean isPrinciple,Member member, List<Accompany>[] accompanies){
         return new MemberProfileResponseDto(
                 isPrinciple,
                 member.getNickname(),

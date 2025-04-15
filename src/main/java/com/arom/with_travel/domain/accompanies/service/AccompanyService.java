@@ -13,6 +13,7 @@ import com.arom.with_travel.domain.accompanies.repository.accompanyApply.Accompa
 import com.arom.with_travel.domain.likes.Likes;
 import com.arom.with_travel.domain.likes.repository.LikesRepository;
 import com.arom.with_travel.domain.member.Member;
+import com.arom.with_travel.domain.member.dto.MemberProfileRequestDto;
 import com.arom.with_travel.domain.member.repository.MemberRepository;
 import com.arom.with_travel.global.exception.BaseException;
 import com.arom.with_travel.global.exception.error.ErrorCode;
@@ -113,28 +114,43 @@ public class AccompanyService {
                 });
     }
 
-    //동행 정보 다 가져옴.
-    public List<Accompany>[] getAccompanyByMember(Member member){
-        //전체 리스트 가져옴
-        LocalDate now = LocalDate.now();
+    //내가 등록한 동행 정보들
+    public List<AccompanyDetailsResponse> myPostAccompany(String email, MemberProfileRequestDto requestDto){
+        Member member = memberRepository.findByEmail(email).get();
+
         List<Accompany> accompanies = accompanyRepository.findAccompaniesByMember(member);
-        List<AccompanyApply> accompanyApplies = applyRepository.findAccompanyAppliesByMember(member);
+        if(accompanies==null || accompanies.isEmpty()) log.warn("동행 정보 확인 불가");
 
-        //0은 모집한 동행 1은 신청한 동행 2는 이미 지난 동행
-        List<Accompany>[] accompaniesList = new List[3];
-        for(int i=0;i<3;i++) accompaniesList[i] = new ArrayList<>();
-
+        List<AccompanyDetailsResponse> response = new ArrayList<>();
         for(Accompany accompany : accompanies){
-            if(isFinish(accompany)) accompaniesList[2].add(accompany);
-            else accompaniesList[0].add(accompany);
+            if(!isFinish(accompany)) response.add(AccompanyDetailsResponse.from(accompany));
         }
+        return response;
+    }
 
+    //내가 신청한 동행 정보들
+    public List<AccompanyDetailsResponse> myApplyAccompany(String email, MemberProfileRequestDto requestDto){
+        Member member = memberRepository.findByEmail(email).get();
+        List<AccompanyApply> accompanyApplies = applyRepository.findAccompanyAppliesByMember(member);
+        List<AccompanyDetailsResponse> response = new ArrayList<>();
         for(AccompanyApply accompanyApply : accompanyApplies){
             if(isFinish(accompanyApply.getAccompanies())) continue;
-            accompaniesList[1].add(accompanyApply.getAccompanies());
+            response.add(AccompanyDetailsResponse.from(accompanyApply.getAccompanies()));
         }
+        return response;
+    }
 
-        return accompaniesList;
+    //지난 동행 정보들
+    public List<AccompanyDetailsResponse> myPastAccompany(String email, MemberProfileRequestDto requestDto){
+        Member member = memberRepository.findByEmail(email).get();
+        List<Accompany> accompanies = accompanyRepository.findAccompaniesByMember(member);
+        if(accompanies==null || accompanies.isEmpty()) log.warn("동행 정보 확인 불가");
+
+        List<AccompanyDetailsResponse> response = new ArrayList<>();
+        for(Accompany accompany : accompanies){
+            if(isFinish(accompany)) response.add(AccompanyDetailsResponse.from(accompany));
+        }
+        return response;
     }
 
     private boolean isFinish(Accompany accompany){

@@ -1,5 +1,7 @@
 package com.arom.with_travel.domain.member.controller;
 
+import com.arom.with_travel.domain.accompanies.dto.response.AccompanyDetailsResponse;
+import com.arom.with_travel.domain.accompanies.service.AccompanyService;
 import com.arom.with_travel.domain.member.dto.MemberProfileRequestDto;
 import com.arom.with_travel.domain.member.dto.MemberProfileResponseDto;
 import com.arom.with_travel.domain.member.service.MemberService;
@@ -11,16 +13,29 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/profile")
 @RequiredArgsConstructor
 public class MemberProfileController {
 
-    private final MemberService memberService;
     private final TokenProvider tokenProvider;
+    private final AccompanyService accompanyService;
 
-    @GetMapping("/member/profile")
-    public MemberProfileResponseDto getProfile(HttpServletRequest request, @RequestBody MemberProfileRequestDto requestDto){
-        return memberService.getMemberProfile(tokenProvider.getMemberLoginEmail(request),requestDto);
+    @GetMapping("/myPostAccompany")
+    public List<AccompanyDetailsResponse> myPost(HttpServletRequest request, @RequestBody MemberProfileRequestDto requestDto){
+        return accompanyService.myPostAccompany(tokenProvider.getMemberLoginEmail(request),requestDto);
     }
+
+    @GetMapping("/myApplyAccompany")
+    public List<AccompanyDetailsResponse> myApply(HttpServletRequest request, @RequestBody MemberProfileRequestDto requestDto){
+        return accompanyService.myApplyAccompany(tokenProvider.getMemberLoginEmail(request),requestDto);
+    }
+
+    @GetMapping("/myPastAccompany")
+    public List<AccompanyDetailsResponse> myPast(HttpServletRequest request, @RequestBody MemberProfileRequestDto requestDto){
+        return accompanyService.myPastAccompany(tokenProvider.getMemberLoginEmail(request),requestDto);
+    }
+
 }
