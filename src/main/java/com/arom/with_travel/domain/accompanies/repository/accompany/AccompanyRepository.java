@@ -4,6 +4,7 @@ import com.arom.with_travel.domain.accompanies.model.Accompany;
 import com.arom.with_travel.domain.accompanies.model.City;
 import com.arom.with_travel.domain.accompanies.model.Continent;
 import com.arom.with_travel.domain.accompanies.model.Country;
+import com.arom.with_travel.domain.member.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -48,4 +49,6 @@ public interface AccompanyRepository extends
             @Param("lastId") Long lastId,
             Pageable pageable
     );
+
+    List<Accompany> findAccompaniesByMember(Member member);
 }
