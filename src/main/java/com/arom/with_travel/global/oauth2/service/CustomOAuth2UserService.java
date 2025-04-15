@@ -25,6 +25,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
+        log.info(registrationId);
         OAuth2Response oAuth2Response = null;
 
         // 소셜로그인 인증 서버가 카카오인 경우.
@@ -34,14 +35,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         String loginEmail = oAuth2Response.getEmail();
 
-        Member loginUser = memberRepository.findByEmail(loginEmail).orElse(null);
+        Member loginUser = memberRepository.findByEmail(loginEmail)
+                .orElse(Member.create(oAuth2Response.getName(), loginEmail, Member.Role.GUEST));
 
-        // 신규 유저인 경우, DB에 저장
-        if (loginUser == null) {
-            Member user = Member.create(oAuth2Response.getName(), loginEmail, Member.Role.USER);
-            memberRepository.save(user);
-        }
-
-        return new CustomOAuth2User(oAuth2Response, Member.Role.USER);
+        return new CustomOAuth2User(oAuth2Response, Member.Role.GUEST);
     }
 }

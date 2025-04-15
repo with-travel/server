@@ -14,11 +14,14 @@ import org.springframework.stereotype.Service;
 public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
-    private final TokenProvider tokenProvider;
 
     // 리프레시 토큰 조회
     public RefreshToken findByRefreshToken(String refreshToken) {
         return refreshTokenRepository.findByRefreshToken(refreshToken)
-                .orElseThrow(() -> BaseException.from(ErrorCode.REFRESH_TOKEN_NOT_FOUND));
+                .orElseThrow(() -> BaseException.from(ErrorCode.TOKEN_NOT_FOUND));
+    }
+
+    public String refreshAccessToken(String refreshToken) {
+        return "";
     }
 }

@@ -18,6 +18,7 @@ public class AccompanyBriefResponse {
     private String title;
     private int recruitmentCount;
     private String writer;
+    private Long views;
 
     public static AccompanyBriefResponse from(Accompany accompany){
         return AccompanyBriefResponse.builder()
@@ -25,9 +26,10 @@ public class AccompanyBriefResponse {
                 .country(accompany.getCountry())
                 .startDate(accompany.getStartDate())
                 .startTime(accompany.getStartTime())
-                .title(accompany.getAccompanyTitle())
+                .title(accompany.getTitle())
                 .recruitmentCount(accompany.getRecruitmentCount())
                 .writer(accompany.getMember().getNickname())
+                .views(accompany.getViews())
                 .build();
 
     }

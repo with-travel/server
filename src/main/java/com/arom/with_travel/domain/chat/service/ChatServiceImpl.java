@@ -1,5 +1,6 @@
 package com.arom.with_travel.domain.chat.service;
 
+import com.arom.with_travel.domain.accompanies.model.Accompany;
 import com.arom.with_travel.domain.chat.Chat;
 import com.arom.with_travel.domain.chat.ChatPart;
 import com.arom.with_travel.domain.chat.Chatroom;
@@ -15,15 +16,12 @@ import com.arom.with_travel.domain.member.Member;
 import com.arom.with_travel.domain.member.repository.MemberRepository;
 import com.arom.with_travel.domain.redis.RedisPublisher;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

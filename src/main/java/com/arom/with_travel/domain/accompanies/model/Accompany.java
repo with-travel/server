@@ -44,10 +44,10 @@ public class Accompany extends BaseEntity {
     private AccompanyType accompanyType;
 
     @NotNull
-    private String accompanyTitle;
+    private String title;
 
     @NotNull
-    private String accompanyDescription;
+    private String description;
 
     @NotNull
     private LocalDate startDate;
@@ -104,8 +104,8 @@ public class Accompany extends BaseEntity {
         this.startTime = startTime;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.accompanyTitle = accompanyTitle;
-        this.accompanyDescription= accompanyDescription;
+        this.title = accompanyTitle;
+        this.description= accompanyDescription;
         this.accompanyType = accompanyType;
         this.destination = destination;
         this.recruitmentCount = recruitmentCount;
@@ -128,8 +128,8 @@ public class Accompany extends BaseEntity {
         views++;
     }
 
-    private Long showViews(){
-        return views;
+    public Long getOwnerId(){
+        return member.getId();
     }
 
     public int showLikes(){
