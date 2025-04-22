@@ -33,7 +33,7 @@ public class AccompanyController {
     @PostNewAccompany
     @PostMapping
     public String createNewAccompanyPost(@RequestBody AccompanyPostRequest request) {
-        return accompanyService.save(request, 1L);
+        return accompanyService.createAccompany(request, 1L);
     }
 
     @GetMapping("/{accompanyId}")
@@ -42,8 +42,8 @@ public class AccompanyController {
     }
 
     @PatchMapping("/{accompanyId}/like")
-    public boolean doLike(@PathVariable Long accompanyId){
-        return accompanyService.pressLike(accompanyId, 1L);
+    public void doLike(@PathVariable Long accompanyId){
+        accompanyService.pressLike(accompanyId, 1L);
     }
 
     @PostMapping("/{accompanyId}/apply")
