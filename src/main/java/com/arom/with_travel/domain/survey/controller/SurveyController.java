@@ -23,31 +23,25 @@ public class SurveyController {
     private final TokenProvider tokenProvider;
 
     @PostNewSurvey
-    @PostMapping("surveys")
+    @PostMapping("/surveys")
     public SurveyResponseDto createSurvey(
             HttpServletRequest request,
             @RequestBody SurveyRequestDto dto
     ) {
         String email = tokenProvider.getMemberLoginEmail(request);
-
-        Survey survey = surveyService.createSurvey(email, dto);
-        return SurveyResponseDto.from(survey);
+        return surveyService.createSurvey(email, dto);
     }
 
     @GetSingleSurvey
-    @GetMapping("survey/{surveyId}")
+    @GetMapping("/survey/{surveyId}")
     public SurveyResponseDto getSurvey(@PathVariable Long surveyId) {
-        Survey survey = surveyService.getSurvey(surveyId);
-        return SurveyResponseDto.from(survey);
+        return surveyService.getSurvey(surveyId);
     }
 
     @GetMySurveys
-    @GetMapping("surveys/my")
+    @GetMapping("/surveys/my")
     public List<SurveyResponseDto> getMySurveys(HttpServletRequest request) {
         String email = tokenProvider.getMemberLoginEmail(request);
-        List<Survey> surveys = surveyService.getSurveysByEmail(email);
-        return surveys.stream()
-                .map(SurveyResponseDto::from)
-                .toList();
+        return surveyService.getSurveysByEmail(email);
     }
 }
