@@ -34,6 +34,9 @@ import java.util.Optional;
 @Log4j2
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
+    public static final String GUEST_TOKEN_COOKIE = "guest_token";
+    private static final int GUEST_TOKEN_MAX_AGE = 5 * 60;
+
     public static final String REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
     public static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(14);
     public static final Duration ACCESS_TOKEN_DURATION = Duration.ofDays(1);
@@ -47,17 +50,33 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException {
 
-        CustomOAuth2User tmpMember = (CustomOAuth2User) authentication.getPrincipal();
-        if(tmpMember.getRole().equals(Member.Role.GUEST)){
-            redirectToSignupWithUserInfo(request,
-                    response,
-                    tmpMember
-            );
+        CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+
+        if (customOAuth2User.getRole() == Member.Role.GUEST) {
+            // customOAuth2User 에서 email, role 꺼내서 transient Member 객체 생성
+            Member guestMember = Member.builder()
+                    .email(customOAuth2User.getOAuth2Response().getEmail())
+                    .role(Member.Role.GUEST)
+                    .build();
+
+            String guestToken = tokenProvider.generateToken(guestMember, Duration.ofMinutes(5));
+
+            Cookie cookie = new Cookie(GUEST_TOKEN_COOKIE, guestToken);
+            cookie.setHttpOnly(true);
+
+            cookie.setSecure(false);
+            // cookie.setSecure(true);
+            cookie.setPath("/");
+            cookie.setMaxAge(GUEST_TOKEN_MAX_AGE);
+            response.addCookie(cookie);
+
+            getRedirectStrategy().sendRedirect(request, response, "/signup");
             return;
         }
 
+        // 등록된 USER면 -> 기존 로직대로 토큰 발급 + 홈으로
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        
+
         Member member = memberService.getUserByLoginEmailOrElseThrow(oAuth2User.getAttributes().get("email").toString());
 
         // 리프레시 토큰 생성 -> 저장 -> 쿠키에 저장
@@ -72,12 +91,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         // 인증관련 설정 값, 쿠키 제거
         clearAuthenticationAttributes(request, response);
 
-        // 리다이렉트
-        Optional<String> redirectUri = CookieUtil.getCookie(request, "redirect_uri")
-                .map(Cookie::getValue);
-        String targetUrl = "http://localhost:8080/login/oauth2/code/kakao?token=" + accessToken;
-
-        getRedirectStrategy().sendRedirect(request, response, targetUrl);
+        // 기존 가입 회원 → 바로 리다이렉트
+        String target = "http://localhost:8080/login/oauth2/code/kakao?token=" + accessToken;
+        getRedirectStrategy().sendRedirect(request, response, target);
     }
 
     // 리프레시 토큰 DB에 저장
@@ -104,12 +120,14 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     private void redirectToSignupWithUserInfo(HttpServletRequest request,
                                               HttpServletResponse response,
-                                              CustomOAuth2User member) throws IOException {
+                                              CustomOAuth2User member,
+                                              String accessToken) throws IOException {
         log.info("최초 로그인인 경우 추가 정보 입력을 위한 회원가입 페이지로 리다이렉트");
         //response.addHeader(JWT_REFRESH_TOKEN_COOKIE_NAME, JWT_ACCESS_TOKEN_TYPE + accessToken);
-        String redirectURL = createRedirectUri(member);
+        String redirectURL = createRedirectUri(member, accessToken);
 
-        CustomOAuth2User newPrincipal = new CustomOAuth2User(member.getOAuth2Response(), Member.Role.GUEST);
+        CustomOAuth2User newPrincipal = new CustomOAuth2User(member.getOAuth2Response(),
+                Member.Role.GUEST, member.getOauthId());
 
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(newPrincipal, null, newPrincipal.getAuthorities());
@@ -126,12 +144,11 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         getRedirectStrategy().sendRedirect(request, response, redirectURL);
     }
 
-    private String createRedirectUri(CustomOAuth2User member) {
-        return UriComponentsBuilder.fromUriString("http://localhost:8080/signup/check").toUriString(); //
-//                .queryParam("email", member.getEmail())
-//                .queryParam("name", member.getName())
-//                .build()
-//                .encode(StandardCharsets.UTF_8)
-//                .toUriString();
+    private String createRedirectUri(CustomOAuth2User member, String accessToken) {
+        return UriComponentsBuilder
+                .fromUriString("http://localhost:8080/signup")
+                .queryParam("token", accessToken)
+                .build()
+                .toUriString();
     }
 }

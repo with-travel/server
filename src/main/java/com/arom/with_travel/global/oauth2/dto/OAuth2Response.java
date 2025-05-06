@@ -9,4 +9,5 @@ public interface OAuth2Response {
     String getEmail(); //이메일
     String getName(); //사용자 실명 (설정한 이름)
     Map<String, Object> getAttribute();
+    String getOauthId();
 }

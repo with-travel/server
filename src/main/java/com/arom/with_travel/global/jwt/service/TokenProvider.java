@@ -3,6 +3,8 @@ package com.arom.with_travel.global.jwt.service;
 import com.arom.with_travel.domain.member.Member;
 import com.arom.with_travel.domain.member.repository.MemberRepository;
 import com.arom.with_travel.global.jwt.config.JwtProperties;
+import com.arom.with_travel.global.oauth2.dto.CustomOAuth2User;
+import com.arom.with_travel.global.oauth2.dto.OAuth2Response;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Map;
 import java.util.Set;
 
 @Service
@@ -60,19 +63,42 @@ public class TokenProvider {
         }
     }
 
-    // 토큰 인증정보 조회 메서드
     public Authentication getAuthentication(String token) {
         Claims claims = getClaims(token);
-        Set<SimpleGrantedAuthority> authoritySet = Collections.singleton(
-                new SimpleGrantedAuthority(claims.get("role").toString()));
+        String email = claims.getSubject(); // subject = email
+        Member.Role role = Member.Role.valueOf(claims.get("role", String.class));
+
+        // 임시 OAuth2Response (필요한 정보만)
+        OAuth2Response stub = new OAuth2Response() {
+            @Override public Map<String, Object> getAttribute() { return Map.of(); }
+            @Override public String getOauthId()    { return null; }
+            @Override public String getProvider()   { return null; }
+            @Override public String getEmail()      { return email; }
+            @Override public String getName()       { return null; }
+        };
+
+        CustomOAuth2User principal = new CustomOAuth2User(stub, role, null);
 
         return new UsernamePasswordAuthenticationToken(
-                new org.springframework.security.core.userdetails.User(
-                        claims.getSubject(),
-                        "",
-                        authoritySet
-                ), token, authoritySet);
+                principal,
+                token,
+                principal.getAuthorities()
+        );
     }
+
+//    // 토큰 인증정보 조회 메서드
+//    public Authentication getAuthentication(String token) {
+//        Claims claims = getClaims(token);
+//        Set<SimpleGrantedAuthority> authoritySet = Collections.singleton(
+//                new SimpleGrantedAuthority(claims.get("role").toString()));
+//
+//        return new UsernamePasswordAuthenticationToken(
+//                new org.springframework.security.core.userdetails.User(
+//                        claims.getSubject(),
+//                        "",
+//                        authoritySet
+//                ), token, authoritySet);
+//    }
 
     // HttpServletRequest 에서 토큰을 파싱하여 로그인 이메일 반환
     public String getMemberLoginEmail(HttpServletRequest request) {
