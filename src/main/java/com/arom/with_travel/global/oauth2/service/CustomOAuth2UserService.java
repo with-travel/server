@@ -30,14 +30,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         // 소셜로그인 인증 서버가 카카오인 경우.
         if (registrationId.equals("kakao")) {
-            oAuth2Response = new KakaoResponse(oAuth2User.getAttributes());
+            oAuth2Response = new KakaoResponse(oAuth2User.getAttributes().get("id").toString(),
+                    oAuth2User.getAttributes());
         }
 
-        String loginEmail = oAuth2Response.getEmail();
 
-        Member loginUser = memberRepository.findByEmail(loginEmail)
-                .orElse(Member.create(oAuth2Response.getName(), loginEmail, Member.Role.GUEST));
+        Member loginUser = memberRepository.findByEmail(oAuth2Response.getEmail())
+                .orElse(Member.create(oAuth2Response.getName(), oAuth2Response.getEmail(),
+                        Member.Role.GUEST));
 
-        return new CustomOAuth2User(oAuth2Response, Member.Role.GUEST);
+        return new CustomOAuth2User(oAuth2Response, Member.Role.GUEST, oAuth2Response.getOauthId());
     }
 }

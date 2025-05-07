@@ -16,6 +16,7 @@ public class CustomOAuth2User implements OAuth2User {
 
     private final OAuth2Response oAuth2Response;
     private final Member.Role role;
+    private final String oauthId;
 
     @Override
     public Map<String, Object> getAttributes() {
@@ -38,4 +39,6 @@ public class CustomOAuth2User implements OAuth2User {
     public String getName() {
         return oAuth2Response.getName();
     }
+
+    public String getEmail() { return oAuth2Response.getEmail(); }
 }
