@@ -41,7 +41,7 @@ public class AccompanyService {
     private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
-    public String save(AccompanyPostRequest request, Long memberId) {
+    public String createAccompany(AccompanyPostRequest request, Long memberId) {
         Member member = loadMemberOrThrow(memberId);
         Accompany accompany = Accompany.from(request);
         accompany.post(member);
@@ -50,16 +50,12 @@ public class AccompanyService {
     }
 
     @Transactional
-    public boolean pressLike(Long accompanyId, Long memberId){
+    public void pressLike(Long accompanyId, Long memberId){
         Member member = loadMemberOrThrow(memberId);
         Accompany accompany = loadAccompanyOrThrow(accompanyId);
-        if(accompany.isAlreadyLikedBy(memberId)) {
-            return false;
-        }
-        Likes like = Likes.init();
-        like.update(member, accompany);
+        accompany.isAlreadyLikedBy(memberId);
+        Likes like = Likes.create(member, accompany);
         likesRepository.save(like);
-        return true;
     }
 
     @Transactional
@@ -74,13 +70,13 @@ public class AccompanyService {
         Accompany accompany = loadAccompanyOrThrow(accompanyId);
         Member proposer = loadMemberOrThrow(memberId);
         proposer.validateNotAlreadyAppliedTo(accompany);
-        applyRepository.save(AccompanyApply.apply(accompany, proposer));
         AccompanyAppliedEvent event = new AccompanyAppliedEvent(
                 accompany.getId(),
                 accompany.getOwnerId(),
                 proposer.getId(),
                 proposer.getNickname()
         );
+        applyRepository.save(AccompanyApply.apply(accompany, proposer));
         eventPublisher.publishEvent(event);
         return "참가 신청이 완료됐습니다.";
     }
@@ -101,17 +97,6 @@ public class AccompanyService {
     private Accompany loadAccompanyOrThrow(Long accompanyId){
         return accompanyRepository.findById(accompanyId)
                 .orElseThrow(() -> BaseException.from(ErrorCode.ACCOMPANY_NOT_FOUND));
-    }
-
-
-    private void isAlreadyApplied(Member member, Accompany accompany) {
-        member.getAccompanyApplies()
-                .stream()
-                .map(accompanyApply ->{
-                    if(accompanyApply.getAccompanies().equals(accompany))
-                        throw BaseException.from(ErrorCode.TMP_ERROR);
-                    return null;
-                });
     }
 
     //내가 등록한 동행 정보들

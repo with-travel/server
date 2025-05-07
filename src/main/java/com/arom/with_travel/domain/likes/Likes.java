@@ -39,6 +39,8 @@ public class Likes extends BaseEntity {
     public Likes(Member member, Accompany accompanies) {
         this.member = member;
         this.accompanies = accompanies;
+        accompanies.getLikes().add(this);
+        member.getLikes().add(this);
     }
 
     @Builder
@@ -47,15 +49,7 @@ public class Likes extends BaseEntity {
         this.shorts = shorts;
     }
 
-    public void update(Member member, Accompany accompanies){
-        this.member = member;
-        this.accompanies = accompanies;
-        accompanies.getLikes().add(this);
-        member.getLikes().add(this);
-    }
-
-    public static Likes init(){
-        return Likes.builder()
-                .build();
+    public static Likes create(Member member, Accompany accompany){
+        return new Likes(member, accompany);
     }
 }

@@ -1,11 +1,14 @@
 package com.arom.with_travel.domain.accompanies.model;
 
 import com.arom.with_travel.domain.accompanies.dto.request.AccompanyPostRequest;
+import com.arom.with_travel.domain.accompanyComment.AccompanyComment;
 import com.arom.with_travel.domain.accompanyReviews.AccompanyReviews;
 import com.arom.with_travel.domain.image.Image;
 import com.arom.with_travel.domain.likes.Likes;
 import com.arom.with_travel.domain.member.Member;
 import com.arom.with_travel.global.entity.BaseEntity;
+import com.arom.with_travel.global.exception.BaseException;
+import com.arom.with_travel.global.exception.error.ErrorCode;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -89,6 +92,9 @@ public class Accompany extends BaseEntity {
     @OneToMany(mappedBy = "accompanies")
     private List<Likes> likes = new ArrayList<>();
 
+    @OneToMany(mappedBy = "accompany")
+    private List<AccompanyComment> accompanyComments = new ArrayList<>();
+
     @Builder
     public Accompany(LocalTime startTime,
                      LocalDate startDate,
@@ -119,9 +125,11 @@ public class Accompany extends BaseEntity {
         member.getAccompanies().add(this);
     }
 
-    public boolean isAlreadyLikedBy(Long memberId){
-        return likes.stream()
-                .anyMatch(like -> like.getMember().getId().equals(memberId));
+    public void isAlreadyLikedBy(Long memberId){
+        if(likes.stream()
+                .anyMatch(like -> like.getMember().getId().equals(memberId))){
+            throw BaseException.from(ErrorCode.ACCOMPANY_ALREADY_LIKED);
+        }
     }
 
     public void addView(){
