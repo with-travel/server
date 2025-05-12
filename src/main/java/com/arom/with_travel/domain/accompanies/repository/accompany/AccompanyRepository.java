@@ -15,9 +15,7 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface AccompanyRepository extends
-        JpaRepository<Accompany, Long>,
-        AccompaniesRepositoryCustom {
+public interface AccompanyRepository extends JpaRepository<Accompany, Long>{
 
     @Query("SELECT a FROM Accompany a WHERE a.continent = :continent")
     Page<Accompany> findByContinent(@Param("continent") Continent continent, Pageable pageable);

@@ -5,12 +5,13 @@ import com.arom.with_travel.global.annotation.Enum;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Getter
-@Builder
+@NoArgsConstructor
 public class AccompanyPostRequest {
 
     @Enum(target = Continent.class, message = "대륙을 입력해주세요")
