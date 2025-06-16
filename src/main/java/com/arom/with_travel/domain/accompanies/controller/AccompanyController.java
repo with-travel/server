@@ -43,7 +43,7 @@ public class AccompanyController {
 
     @PatchMapping("/{accompanyId}/like")
     public void doLike(@PathVariable Long accompanyId){
-        accompanyService.pressLike(accompanyId, 1L);
+        accompanyService.toggleLike(accompanyId, 1L);
     }
 
     @PostMapping("/{accompanyId}/apply")

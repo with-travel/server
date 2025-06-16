@@ -37,7 +37,7 @@ public class Accompany extends BaseEntity {
     private Long id;
 
     @NotNull
-    private int recruitmentCount;
+    private int maxParticipants;
 
     @NotNull
     private String destination;
@@ -56,13 +56,18 @@ public class Accompany extends BaseEntity {
     private LocalDate startDate;
 
     @NotNull
-    private LocalDate endDate;
-
-    @NotNull
     private LocalTime startTime;
 
     @NotNull
+    private LocalDate endDate;
+
+    @NotNull
+    private LocalTime endTime;
+
+    @NotNull
     private Long views = 0L;
+
+    private Long likeCounts = 0L;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -89,9 +94,6 @@ public class Accompany extends BaseEntity {
     @OneToMany(mappedBy = "accompanies")
     private List<Image> images = new ArrayList<>();
 
-    @OneToMany(mappedBy = "accompanies")
-    private List<Likes> likes = new ArrayList<>();
-
     @OneToMany(mappedBy = "accompany")
     private List<AccompanyComment> accompanyComments = new ArrayList<>();
 
@@ -99,22 +101,24 @@ public class Accompany extends BaseEntity {
     public Accompany(LocalTime startTime,
                      LocalDate startDate,
                      LocalDate endDate,
+                     LocalTime endTime,
                      String accompanyDescription,
                      String accompanyTitle,
                      AccompanyType accompanyType,
                      String destination,
-                     int recruitmentCount,
+                     int maxParticipants,
                      Continent continent,
                      Country country,
                      City city) {
         this.startTime = startTime;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.endTime = endTime;
         this.title = accompanyTitle;
         this.description= accompanyDescription;
         this.accompanyType = accompanyType;
         this.destination = destination;
-        this.recruitmentCount = recruitmentCount;
+        this.maxParticipants = maxParticipants;
         this.continent = continent;
         this.country = country;
         this.city = city;
@@ -125,13 +129,6 @@ public class Accompany extends BaseEntity {
         member.getAccompanies().add(this);
     }
 
-    public void isAlreadyLikedBy(Long memberId){
-        if(likes.stream()
-                .anyMatch(like -> like.getMember().getId().equals(memberId))){
-            throw BaseException.from(ErrorCode.ACCOMPANY_ALREADY_LIKED);
-        }
-    }
-
     public void addView(){
         views++;
     }
@@ -140,23 +137,35 @@ public class Accompany extends BaseEntity {
         return member.getId();
     }
 
-    public int showLikes(){
-        return likes.size();
+    public Long showLikes(){
+        return likeCounts;
+    }
+
+    public void increaseLikeCount() {
+        this.likeCounts++;
+    }
+
+    public void decreaseLikeCount() {
+        if (this.likeCounts <= 0) {
+           throw BaseException.from(ErrorCode.ACCOMPANY_LIKES_UNABLE_DECREASE);
+        }
+        this.likeCounts--;
     }
 
     public static Accompany from(AccompanyPostRequest request){
         return Accompany.builder()
                 .startTime(request.getStartTime())
                 .startDate(request.getStartDate())
-                .endDate(request.getEndTime())
+                .endDate(request.getEndDate())
+                .endTime(request.getEndTime())
                 .accompanyTitle(request.getTitle())
                 .accompanyDescription(request.getDescription())
-                .recruitmentCount(request.getRegisterCount())
+                .maxParticipants(request.getMaxParticipants())
                 .destination(request.getDestination())
                 .accompanyType(request.getAccompanyType())
-                .continent(request.getContinentName())
-                .country(request.getCountryName())
-                .city(request.getCityName())
+                .continent(request.getContinent())
+                .country(request.getCountry())
+                .city(request.getCity())
                 .build();
     }
 }

@@ -17,13 +17,14 @@ public class AccompanyDetailsResponse {
     private LocalDate startDate;
     private LocalTime startTime;
     private LocalDate endDate;
+    private LocalTime endTime;
     private String title;
     private String description;
-    private int recruitmentCount;
+    private int maxParticipants;
     private AccompanyType accompanyType;
     private String writer;
     private Long views;
-    private int likes;
+    private Long likes;
 
     public static AccompanyDetailsResponse from(Accompany accompany){
         return AccompanyDetailsResponse.builder()
@@ -35,9 +36,10 @@ public class AccompanyDetailsResponse {
                 .startDate(accompany.getStartDate())
                 .startTime(accompany.getStartTime())
                 .endDate(accompany.getEndDate())
+                .endTime(accompany.getEndTime())
                 .title(accompany.getTitle())
                 .description(accompany.getDescription())
-                .recruitmentCount(accompany.getRecruitmentCount())
+                .maxParticipants(accompany.getMaxParticipants())
                 .writer(accompany.getMember().getNickname())
                 .views(accompany.getViews())
                 .likes(accompany.showLikes())

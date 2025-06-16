@@ -16,7 +16,7 @@ public class AccompanyBriefResponse {
     private LocalDate startDate;
     private LocalTime startTime;
     private String title;
-    private int recruitmentCount;
+    private int maxParticipants;
     private String writer;
     private Long views;
 
@@ -27,7 +27,7 @@ public class AccompanyBriefResponse {
                 .startDate(accompany.getStartDate())
                 .startTime(accompany.getStartTime())
                 .title(accompany.getTitle())
-                .recruitmentCount(accompany.getRecruitmentCount())
+                .maxParticipants(accompany.getMaxParticipants())
                 .writer(accompany.getMember().getNickname())
                 .views(accompany.getViews())
                 .build();

@@ -6,7 +6,6 @@ import com.arom.with_travel.domain.accompanies.model.Accompany;
 import com.arom.with_travel.domain.accompanies.model.AccompanyApply;
 import com.arom.with_travel.domain.accompanies.dto.request.AccompanyPostRequest;
 import com.arom.with_travel.domain.accompanies.dto.response.AccompanyDetailsResponse;
-import com.arom.with_travel.domain.accompanies.model.Continent;
 import com.arom.with_travel.domain.accompanies.model.Country;
 import com.arom.with_travel.domain.accompanies.repository.accompany.AccompanyRepository;
 import com.arom.with_travel.domain.accompanies.repository.accompanyApply.AccompanyApplyRepository;
@@ -27,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -50,12 +49,18 @@ public class AccompanyService {
     }
 
     @Transactional
-    public void pressLike(Long accompanyId, Long memberId){
+    public void toggleLike(Long accompanyId, Long memberId){
         Member member = loadMemberOrThrow(memberId);
         Accompany accompany = loadAccompanyOrThrow(accompanyId);
-        accompany.isAlreadyLikedBy(memberId);
-        Likes like = Likes.create(member, accompany);
-        likesRepository.save(like);
+        Optional<Likes> like = loadLikes(accompany, member);
+        if (like.isPresent()) {
+            likesRepository.delete(like.get());
+            accompany.decreaseLikeCount();
+            return;
+        }
+        Likes newLike = Likes.create(member, accompany);
+        likesRepository.save(newLike);
+        accompany.increaseLikeCount();
     }
 
     @Transactional
@@ -147,7 +152,9 @@ public class AccompanyService {
         return false;
     }
 
-
+    private Optional<Likes> loadLikes(Accompany accompany, Member member) {
+        return likesRepository.findByAccompanyAndMember(accompany, member);
+    }
 }
 
 

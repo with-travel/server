@@ -33,13 +33,12 @@ public class Likes extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accompanies_id")
-    private Accompany accompanies;
+    private Accompany accompany;
 
     @Builder
-    public Likes(Member member, Accompany accompanies) {
+    public Likes(Member member, Accompany accompany) {
         this.member = member;
-        this.accompanies = accompanies;
-        accompanies.getLikes().add(this);
+        this.accompany = accompany;
         member.getLikes().add(this);
     }
 

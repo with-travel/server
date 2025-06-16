@@ -27,6 +27,7 @@ public enum ErrorCode {
     ACCOMPANY_COMMENT_NOT_FOUND("ACC-0004", "해당 동행 댓글을 찾을 수 없습니다.", ErrorDisplayType.POPUP),
     ACCOMPANY_COMMENT_NO_PERMISSION_UPDATE("ACC-0005", "댓글을 수정할 수 없습니다.", ErrorDisplayType.POPUP),
     // ACCOMPANY_ALREADY_CONFIRMED("ACC-0002", "참가 확정된 동행입니다.", ErrorDisplayType.POPUP)
+    ACCOMPANY_LIKES_UNABLE_DECREASE("ACC-0006", "좋아요 수가 0보다 작습니다.", ErrorDisplayType.POPUP),
 
     //survey
     SURVEY_NOT_FOUND("SVY-0000", "해당 설문이 존재하지 않습니다.", ErrorDisplayType.POPUP),
