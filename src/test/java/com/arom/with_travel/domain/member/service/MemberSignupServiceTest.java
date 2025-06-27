@@ -5,6 +5,8 @@ import com.arom.with_travel.domain.member.Member;
 import com.arom.with_travel.domain.member.dto.MemberSignupRequestDto;
 import com.arom.with_travel.domain.member.dto.MemberSignupResponseDto;
 import com.arom.with_travel.domain.member.repository.MemberRepository;
+import com.arom.with_travel.global.exception.BaseException;
+import com.arom.with_travel.global.exception.error.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,6 +20,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import static com.arom.with_travel.domain.member.Member.Gender.MALE;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -68,6 +71,21 @@ class MemberSignupServiceTest {
         assertThat(응답.getId()).isEqualTo(1L);
         assertThat(응답.getEmail()).isEqualTo("pikachu@kakao.com");
         assertThat(응답.getNickname()).isEqualTo("피카츄");
+    }
+
+    @Test
+    @DisplayName("회원가입 중 저장 실패 시 예외 전파")
+    void 회원가입_실패_저장예외() {
+        // given
+        given(memberRepository.save(any(Member.class)))
+                .willThrow(BaseException.from(ErrorCode.MEMBER_NOT_FOUND));
+
+        // when & then
+        assertThatThrownBy(() ->
+                memberSignupService.registerMember("pikachu@kakao.com", "oauth123", 요청)
+        )
+                .isInstanceOf(BaseException.class)
+                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.MEMBER_NOT_FOUND);
     }
 
     @Test
