@@ -2,6 +2,8 @@ package com.arom.with_travel.global.jwt.service;
 
 import com.arom.with_travel.domain.member.Member;
 import com.arom.with_travel.domain.member.service.MemberSignupService;
+import com.arom.with_travel.global.exception.BaseException;
+import com.arom.with_travel.global.exception.error.ErrorCode;
 import com.arom.with_travel.global.jwt.domain.RefreshToken;
 import com.arom.with_travel.global.jwt.repository.RefreshTokenRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -14,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -51,5 +54,18 @@ class TokenServiceTest {
 
         // then
         assertThat(result).isEqualTo("newAccess.jwt");
+    }
+
+    @Test
+    @DisplayName("유효하지 않은 refresh 토큰이면 예외 발생")
+    void 엑세스_토큰_발급_실패_유효하지않음() {
+        // given
+        String invalidToken = "bad.jwt";
+        given(tokenProvider.validToken(invalidToken)).willReturn(false);
+
+        // when & then
+        assertThatThrownBy(() -> tokenService.createNewAccessToken(invalidToken))
+                .isInstanceOf(BaseException.class)
+                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.INVALID_TOKEN);
     }
 }
