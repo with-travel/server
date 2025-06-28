@@ -29,7 +29,6 @@ class TokenServiceTest {
     @Mock
     RefreshTokenService refreshTokenService;
     @Mock MemberSignupService memberSignupService;
-    @Mock RefreshTokenRepository refreshTokenRepository;
 
     @InjectMocks
     TokenService tokenService;
