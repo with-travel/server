@@ -24,7 +24,7 @@ public class AccompanyFixture {
         setField(accompanyPostRequest, "endTime", LocalTime.of(20, 0, 0));
         setField(accompanyPostRequest, "title", "도쿄 전망대 가자요");
         setField(accompanyPostRequest, "description", "사진 찍기 좋은 곳 위주로");
-        setField(accompanyPostRequest, "maxParticipants", 5);
+        setField(accompanyPostRequest, "maxParticipants", 6);
         return accompanyPostRequest;
     }
 
