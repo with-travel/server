@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberSignupService {
 
     private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
     @Transactional(readOnly = true)
     public boolean existsByEmail(String email) {
@@ -49,8 +50,8 @@ public class MemberSignupService {
                     return memberRepository.save(inserted);
                 });
     }
-
-    private Member getUserByLoginEmailOrElseThrow(String loginEmail) {
+  
+private Member getUserByLoginEmailOrElseThrow(String loginEmail) {
         return memberRepository.findByEmail(loginEmail)
                 .orElseThrow(() -> BaseException.from(ErrorCode.MEMBER_NOT_FOUND));
     }
@@ -59,7 +60,6 @@ public class MemberSignupService {
     public MemberSignupResponseDto fillExtraInfo(String email,
                                                  MemberSignupRequestDto dto) {
         Member member = getUserByLoginEmailOrElseThrow(email);
-
         member.updateExtraInfo(dto.getNickname(),
                 dto.getBirthdate(),
                 dto.getGender());

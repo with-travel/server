@@ -1,7 +1,26 @@
-version: "3.1"
+version: "3.9"
 
 # 실행하려는 컨테이너들 정의
 services:
+  backend:
+    image: "jonghyeoknam/wit-backend:latest"
+    #build: .
+    container_name: wit-backend
+    restart: always
+    ports:
+      - "8080:8080"
+#    environment: # GitHub Secrets → SSH envs 로 넘길 예정
+#      - MYSQLDB_USERNAME=${MYSQLDB_USERNAME}
+#      - MYSQLDB_PASSWORD=${MYSQLDB_PASSWORD}
+#      - MYSQLDB_ROOT_PASSWORD=${MYSQLDB_ROOT_PASSWORD}
+    # my-db의 컨테이너가 생성되고 healthy 하다고 판단 될 때, 해당 컨테이너를 생성한다.
+    depends_on:
+      #      wit-db:
+      #        condition: service_healthy
+      redis_container:
+        condition: service_healthy
+
+
   # 서비스명
   redis_container:
     # 사용할 이미지

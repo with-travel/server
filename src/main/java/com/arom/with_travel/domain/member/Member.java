@@ -2,9 +2,8 @@ package com.arom.with_travel.domain.member;
 
 import com.arom.with_travel.domain.accompanies.model.Accompany;
 import com.arom.with_travel.domain.accompanies.model.AccompanyApply;
-import com.arom.with_travel.domain.accompanies.model.AccompanyReviews;
-import com.arom.with_travel.domain.chat.model.Chat;
-import com.arom.with_travel.domain.chat.model.ChatPart;
+import com.arom.with_travel.domain.chat.Chat;
+import com.arom.with_travel.domain.chat.ChatPart;
 import com.arom.with_travel.domain.community.Community;
 import com.arom.with_travel.domain.community_reply.CommunityReply;
 import com.arom.with_travel.domain.image.Image;
