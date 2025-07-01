@@ -3,9 +3,11 @@ package com.arom.with_travel.domain.member.service;
 import com.arom.with_travel.domain.accompanies.dto.response.AccompanyDetailsResponse;
 import com.arom.with_travel.domain.accompanies.model.Accompany;
 import com.arom.with_travel.domain.accompanies.model.AccompanyApply;
+import com.arom.with_travel.domain.accompanies.repository.accompany.AccompanyApplyRepository;
 import com.arom.with_travel.domain.accompanies.repository.accompany.AccompanyRepository;
 import com.arom.with_travel.domain.accompanies.repository.accompany.AccompanyApplyRepository;
 import com.arom.with_travel.domain.likes.repository.LikesRepository;
+
 import com.arom.with_travel.domain.member.Member;
 import com.arom.with_travel.domain.member.dto.MemberProfileRequestDto;
 import com.arom.with_travel.domain.member.dto.MemberProfileResponseDto;
@@ -41,6 +43,7 @@ public class MemberProfileService {
                 long likes = likesRepository.countByAccompanyId(accompany.getId());
                 response.add(AccompanyDetailsResponse.from(accompany,likes));
             }
+
         }
         return response;
     }
@@ -52,10 +55,10 @@ public class MemberProfileService {
         List<AccompanyDetailsResponse> response = new ArrayList<>();
         for(AccompanyApply accompanyApply : accompanyApplies){
             if(isFinish(accompanyApply.getAccompany())) continue;
-
             Accompany accompany = accompanyApply.getAccompany();
             Long likes = likesRepository.countByAccompanyId(accompany.getId());
             response.add(AccompanyDetailsResponse.from(accompany,likes));
+
         }
         return response;
     }

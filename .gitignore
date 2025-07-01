@@ -16,7 +16,9 @@ src/main/resources/application.yml
 bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
-
+# macOS 시스템 파일 무시
+.DS_Store
+**/.DS_Store
 ### IntelliJ IDEA ###
 .idea
 *.iws
