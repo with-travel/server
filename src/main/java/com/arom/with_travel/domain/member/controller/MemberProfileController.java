@@ -25,18 +25,29 @@ public class MemberProfileController {
     private final MemberProfileService memberProfileService;
 
     @GetMapping("/myPostAccompany")
-    public List<AccompanyDetailsResponse> myPost(HttpServletRequest request, @RequestBody MemberProfileRequestDto requestDto){
-        return memberProfileService.myPostAccompany(tokenProvider.getMemberLoginEmail(request),requestDto);
+    public List<AccompanyDetailsResponse> myPost(HttpServletRequest request){
+        return memberProfileService.myPostAccompany(tokenProvider.getMemberLoginEmail(request));
     }
 
     @GetMapping("/myApplyAccompany")
-    public List<AccompanyDetailsResponse> myApply(HttpServletRequest request, @RequestBody MemberProfileRequestDto requestDto){
-        return memberProfileService.myApplyAccompany(tokenProvider.getMemberLoginEmail(request),requestDto);
+    public List<AccompanyDetailsResponse> myApply(HttpServletRequest request){
+        return memberProfileService.myApplyAccompany(tokenProvider.getMemberLoginEmail(request));
     }
 
     @GetMapping("/myPastAccompany")
-    public List<AccompanyDetailsResponse> myPast(HttpServletRequest request, @RequestBody MemberProfileRequestDto requestDto){
-        return memberProfileService.myPastAccompany(tokenProvider.getMemberLoginEmail(request),requestDto);
+    public List<AccompanyDetailsResponse> myPast(HttpServletRequest request){
+        return memberProfileService.myPastAccompany(tokenProvider.getMemberLoginEmail(request));
     }
 
+    @GetMapping("/main")
+    public MemberProfileResponseDto getProfile(HttpServletRequest request){
+        return memberProfileService.getProfile(tokenProvider.getMemberLoginEmail(request));
+    }
+
+    @GetMapping("/introduction")
+    public String getIntroduction(HttpServletRequest request){
+        return memberProfileService.getIntroduction(tokenProvider.getMemberLoginEmail(request));
+    }
+
+    //note 동행후기, 작성한글, 좋아요 누른 글 => 추가하기
 }

@@ -1,7 +1,7 @@
 package com.arom.with_travel.domain.chat.dto;
 
 
-import com.arom.with_travel.domain.chat.Chat;
+import com.arom.with_travel.domain.chat.model.Chat;
 
 public class ChatResponse {
     public record MessageDto(

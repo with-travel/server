@@ -16,6 +16,11 @@ spring:
     password:
     driver-class-name: org.h2.Driver
 
+  #      fixme url수정
+#  data:
+#    mongodb:
+#      uri: mongodb+srv://wkdrndydtlr:SophistRing123@chat.7p1uuxx.mongodb.net/chat_messages?retryWrites=true&w=majority
+
 jwt:
   secret-key: asnalsdnlansdlalsdlasldnalsndlansdlnalsndlansldnalsnlasnldn
 
