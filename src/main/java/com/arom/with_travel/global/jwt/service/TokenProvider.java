@@ -8,13 +8,18 @@ import com.arom.with_travel.global.oauth2.dto.OAuth2Response;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Date;
@@ -24,6 +29,9 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 public class TokenProvider {
+
+    @Value("${jwt.secret-key}")
+    private String secret;
 
     private final JwtProperties jwtProperties;
     private static final String HEADER_AUTHORIZATION = "Authorization";
@@ -36,17 +44,20 @@ public class TokenProvider {
         return makeToken(new Date(now.getTime() + expiredAt.toMillis()), member);
     }
 
+    private Key getSignKey() {
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
+    }
 
     // 토큰 생성 메서드
     public String makeToken(Date expiry, Member member) {
         Date now = new Date();
-
         return Jwts.builder()
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .setSubject(member.getEmail())
+                .claim("id",   member.getId())
                 .claim("role", member.getRole())
-                .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
+                .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -64,9 +75,10 @@ public class TokenProvider {
     }
 
     public Authentication getAuthentication(String token) {
-        Claims claims = getClaims(token);
-        String email = claims.getSubject(); // subject = email
-        Member.Role role = Member.Role.valueOf(claims.get("role", String.class));
+        Claims c = getClaims(token);
+        Long   id   = c.get("id", Long.class);
+        String email = c.getSubject();
+        Member.Role role = Member.Role.valueOf(c.get("role", String.class));
 
         // 임시 OAuth2Response (필요한 정보만)
         OAuth2Response stub = new OAuth2Response() {
@@ -77,13 +89,11 @@ public class TokenProvider {
             @Override public String getName()       { return null; }
         };
 
-        CustomOAuth2User principal = new CustomOAuth2User(stub, role, null);
+        CustomOAuth2User principal =
+                new CustomOAuth2User(stub, role, null);
 
         return new UsernamePasswordAuthenticationToken(
-                principal,
-                token,
-                principal.getAuthorities()
-        );
+                principal, token, principal.getAuthorities());
     }
 
 //    // 토큰 인증정보 조회 메서드

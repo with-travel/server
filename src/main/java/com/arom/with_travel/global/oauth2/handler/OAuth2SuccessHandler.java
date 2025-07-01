@@ -2,6 +2,7 @@ package com.arom.with_travel.global.oauth2.handler;
 
 import com.arom.with_travel.domain.member.Member;
 import com.arom.with_travel.domain.member.service.MemberService;
+import com.arom.with_travel.domain.member.service.MemberSignupService;
 import com.arom.with_travel.global.jwt.domain.RefreshToken;
 import com.arom.with_travel.global.jwt.repository.RefreshTokenRepository;
 import com.arom.with_travel.global.jwt.service.TokenProvider;
@@ -44,56 +45,42 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository;
-    private final MemberService memberService;
+    private final MemberSignupService memberSignupService;
+
+    private static final Duration REFRESH_TTL = Duration.ofDays(14);
+    private static final Duration ACCESS_TTL  = Duration.ofDays(1);
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                        Authentication authentication) throws IOException {
+    public void onAuthenticationSuccess(HttpServletRequest req,
+                                        HttpServletResponse res,
+                                        Authentication auth) throws IOException {
 
-        CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+        CustomOAuth2User user = (CustomOAuth2User) auth.getPrincipal();
 
-        if (customOAuth2User.getRole() == Member.Role.GUEST) {
-            // customOAuth2User 에서 email, role 꺼내서 transient Member 객체 생성
-            Member guestMember = Member.builder()
-                    .email(customOAuth2User.getOAuth2Response().getEmail())
-                    .role(Member.Role.GUEST)
-                    .build();
+        // 신규 회원이면 등록
+        // 기존이면 조회
+        Member member = memberSignupService.createIfNotExists(user);
 
-            String guestToken = tokenProvider.generateToken(guestMember, Duration.ofMinutes(5));
+        // 토큰 발급
+        String access  = tokenProvider.generateToken(member, ACCESS_TTL);
+        String refresh = tokenProvider.generateToken(member, REFRESH_TTL);
 
-            Cookie cookie = new Cookie(GUEST_TOKEN_COOKIE, guestToken);
-            cookie.setHttpOnly(true);
+        res.setHeader("Authorization", "Bearer " + access);
+        CookieUtil.addCookie(
+                res,
+                "refresh_token",
+                refresh,
+                (int) REFRESH_TTL.toSeconds()
+        );
 
-            cookie.setSecure(false);
-            // cookie.setSecure(true);
-            cookie.setPath("/");
-            cookie.setMaxAge(GUEST_TOKEN_MAX_AGE);
-            response.addCookie(cookie);
-
-            getRedirectStrategy().sendRedirect(request, response, "/signup");
-            return;
+        // 리다이렉트
+        // 신규 회원이면 추가 정보 입력 페이지
+        // 기존 회원이면 홈
+        if (member.needExtraInfo()) {
+            getRedirectStrategy().sendRedirect(req, res, "/signup/register");
+        } else {
+            getRedirectStrategy().sendRedirect(req, res, "/home");
         }
-
-        // 등록된 USER면 -> 기존 로직대로 토큰 발급 + 홈으로
-        OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-
-        Member member = memberService.getUserByLoginEmailOrElseThrow(oAuth2User.getAttributes().get("email").toString());
-
-        // 리프레시 토큰 생성 -> 저장 -> 쿠키에 저장
-        String refreshToken = tokenProvider.generateToken(member, REFRESH_TOKEN_DURATION);
-        saveRefreshToken(member.getId(), refreshToken);
-        addRefreshTokenToCookie(request, response, refreshToken);
-
-        // 액세스 토큰 생성 -> 패스에 액세스 토큰 추가
-        String accessToken = tokenProvider.generateToken(member, ACCESS_TOKEN_DURATION);
-        response.setHeader("Authorization", "Bearer " + accessToken);
-
-        // 인증관련 설정 값, 쿠키 제거
-        clearAuthenticationAttributes(request, response);
-
-        // 기존 가입 회원 → 바로 리다이렉트
-        String target = "http://localhost:8080/login/oauth2/code/kakao?token=" + accessToken;
-        getRedirectStrategy().sendRedirect(request, response, target);
     }
 
     // 리프레시 토큰 DB에 저장

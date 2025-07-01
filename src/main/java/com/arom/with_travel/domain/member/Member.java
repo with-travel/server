@@ -8,6 +8,7 @@ import com.arom.with_travel.domain.community.Community;
 import com.arom.with_travel.domain.community_reply.CommunityReply;
 import com.arom.with_travel.domain.image.Image;
 import com.arom.with_travel.domain.likes.Likes;
+import com.arom.with_travel.domain.member.dto.MemberSignupRequestDto;
 import com.arom.with_travel.domain.shorts.Shorts;
 import com.arom.with_travel.domain.shorts_reply.ShortsReply;
 import com.arom.with_travel.domain.survey.Survey;
@@ -131,5 +132,26 @@ public class Member extends BaseEntity {
         if (alreadyApplied) {
             throw BaseException.from(ErrorCode.TMP_ERROR);
         }
+    }
+
+    // 신규 회원 최초 가입 처리
+    public static Member signUp(String email, String oauthId) {
+        return Member.builder()
+                .email(email)
+                .oauthId(oauthId)
+                .loginType(LoginType.KAKAO)
+                .role(Role.USER)        // 최초 가입 시 USER
+                .build();
+    }
+
+    // 신규 회원 추가 정보 등록; 닉네임/생년월일/성별
+    public void updateExtraInfo(String nickname, LocalDate birth, Gender gender) {
+        this.nickname = nickname;
+        this.birth    = birth;
+        this.gender   = gender;
+    }
+
+    public boolean needExtraInfo() {
+        return nickname == null || birth == null || gender == null;
     }
 }
