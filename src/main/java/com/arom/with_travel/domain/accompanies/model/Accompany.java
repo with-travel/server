@@ -131,6 +131,11 @@ public class Accompany extends BaseEntity {
         return member.getId();
     }
 
+    public boolean isFinish(){
+        LocalDate now = LocalDate.now();
+        return now.isAfter(endDate);
+    }
+
     public static Accompany from(AccompanyPostRequest request){
         return Accompany.builder()
                 .startTime(request.getStartTime())

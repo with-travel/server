@@ -3,6 +3,7 @@ package com.arom.with_travel.domain.chat.controller;
 
 import com.arom.with_travel.domain.chat.dto.ChatroomResponse;
 import com.arom.with_travel.domain.chat.service.ChatService;
+import com.arom.with_travel.domain.chat.service.ChatroomServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,7 +16,7 @@ import java.util.List;
 @RequestMapping("/api/v1/chat")
 public class ChatRoomController {
 
-    private final ChatService chatService;
+    private final ChatroomServiceImpl chatService;
 
     //html 테스트
     @GetMapping("/room")

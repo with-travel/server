@@ -24,7 +24,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ChatroomServiceImpl implements ChatroomService{
+public class ChatroomServiceImpl{
 
     private static final Logger log = LoggerFactory.getLogger(ChatroomServiceImpl.class);
     private final ChatroomRedisRepository chatroomRedisRepository;
