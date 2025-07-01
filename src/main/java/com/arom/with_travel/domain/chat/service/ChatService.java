@@ -1,35 +1,51 @@
 package com.arom.with_travel.domain.chat.service;
 
+
 import com.arom.with_travel.domain.chat.dto.ChatRequest;
-import com.arom.with_travel.domain.chat.dto.ChatResponse;
-import com.arom.with_travel.domain.chat.dto.ChatroomRequest;
-import com.arom.with_travel.domain.chat.dto.ChatroomResponse;
+import com.arom.with_travel.domain.chat.model.Chat;
+import com.arom.with_travel.domain.chat.model.ChatMessageDocument;
+import com.arom.with_travel.domain.chat.model.Chatroom;
+import com.arom.with_travel.domain.chat.repository.ChatMessageRepository;
+import com.arom.with_travel.domain.chat.repository.ChatroomRedisRepository;
+import com.arom.with_travel.domain.chat.repository.ChatroomRepository;
+import com.arom.with_travel.domain.member.Member;
+import com.arom.with_travel.domain.redis.RedisPublisher;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Service
-public interface ChatService {
-    void sendMessage(ChatRequest.MessageDto messageDto);
+@RequiredArgsConstructor
+@Slf4j
+public class ChatService {
+    private final ChatMessageRepository chatRepository;
+    private final ChatroomRedisRepository chatroomRedisRepository;
+    private final ChatroomRepository chatroomRepository;
+    private final RedisPublisher redisPublisher;
 
-    List<ChatroomResponse.ChatroomDto> findAllRoom();
+    //message
+    public void sendMessage(ChatRequest.MessageDto messageDto){
+        log.info("Received message: {}", messageDto);
+        if (Chat.Type.ENTER.equals(messageDto.type())) {
+            chatroomRedisRepository.enterChatRoom(messageDto.roomId());
+            String msg = messageDto.sender() + "님이 입장하셨습니다.";
+            messageDto = messageDto.withMessage(msg);
+            log.info("User {} entered room {}", messageDto.sender(), messageDto.roomId());
+        }
+        else{
+            ChatMessageDocument doc = new ChatMessageDocument(
+                    messageDto.roomId(),
+                    messageDto.sender(),
+                    messageDto.message(),
+                    LocalDateTime.now()
+            );
+            chatRepository.save(doc);
+        }
 
-    ChatroomResponse.ChatroomDto createRoom(ChatroomRequest.ChatroomDto chatroomDto);
 
-    ChatroomResponse.ChatroomDto roomInfo(ChatroomRequest.ChatroomDto chatroomDto);
-
-
-
-    //test
-    ChatroomResponse.ChatroomDto saveChatroom(String roomname);
-
-    List<ChatroomResponse.ChatroomDto> findRoomByMember(String member);
-
-    List<ChatResponse.MessageDto> getMessageList(ChatroomRequest.EnterroomDto enterroomDto);
-
-
-    //삭제 예정
-    ChatroomResponse.ChatroomDto createRoom(String name);
-
-    ChatroomResponse.ChatroomDto roomInfo(String roomId);
+        System.out.println("messageDto: "+messageDto.message());
+        redisPublisher.publish(chatroomRedisRepository.getTopic(messageDto.roomId()), messageDto);
+    }
 }

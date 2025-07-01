@@ -1,4 +1,4 @@
-package com.arom.with_travel.domain.chat;
+package com.arom.with_travel.domain.chat.model;
 
 import com.arom.with_travel.domain.member.Member;
 import com.arom.with_travel.global.entity.BaseEntity;

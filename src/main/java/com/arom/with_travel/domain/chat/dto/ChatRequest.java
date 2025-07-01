@@ -1,6 +1,6 @@
 package com.arom.with_travel.domain.chat.dto;
 
-import com.arom.with_travel.domain.chat.Chat;
+import com.arom.with_travel.domain.chat.model.Chat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

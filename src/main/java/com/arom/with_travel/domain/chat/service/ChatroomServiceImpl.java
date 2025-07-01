@@ -1,9 +1,8 @@
 package com.arom.with_travel.domain.chat.service;
 
-import com.arom.with_travel.domain.accompanies.model.Accompany;
-import com.arom.with_travel.domain.chat.Chat;
-import com.arom.with_travel.domain.chat.ChatPart;
-import com.arom.with_travel.domain.chat.Chatroom;
+import com.arom.with_travel.domain.chat.model.Chat;
+import com.arom.with_travel.domain.chat.model.ChatPart;
+import com.arom.with_travel.domain.chat.model.Chatroom;
 import com.arom.with_travel.domain.chat.dto.ChatRequest;
 import com.arom.with_travel.domain.chat.dto.ChatResponse;
 import com.arom.with_travel.domain.chat.dto.ChatroomRequest;
@@ -25,9 +24,9 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ChatServiceImpl implements ChatService{
+public class ChatroomServiceImpl implements ChatroomService{
 
-    private static final Logger log = LoggerFactory.getLogger(ChatServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(ChatroomServiceImpl.class);
     private final ChatroomRedisRepository chatroomRedisRepository;
     private final ChatroomRepository chatroomRepository;
     private final ChatPartRepository chatPartRepository;
@@ -36,33 +35,6 @@ public class ChatServiceImpl implements ChatService{
     private final RedisPublisher redisPublisher;
     //임시
     private final MemberRepository memberRepository;
-
-    //message
-    public void sendMessage(ChatRequest.MessageDto messageDto){
-        log.info("Received message: {}", messageDto);
-        if (Chat.Type.ENTER.equals(messageDto.type())) {
-            chatroomRedisRepository.enterChatRoom(messageDto.roomId());
-            String msg = messageDto.sender() + "님이 입장하셨습니다.";
-            messageDto = messageDto.withMessage(msg);
-            log.info("User {} entered room {}", messageDto.sender(), messageDto.roomId());
-        }
-        else{
-            //DB에 메세지 저장하기
-//            messageDto.sender()로 멤버 찾기
-            Member member = null;
-            Chatroom chatroom = chatroomRepository.findChatroomByRoomId(messageDto.roomId());
-            chatRepository.save(Chat.builder()
-                    .message(messageDto.message())
-                    .type(Chat.Type.TALK)
-                    .member(member)
-                    .chatroom(chatroom)
-                    .build());
-        }
-
-
-        System.out.println("messageDto: "+messageDto.message());
-        redisPublisher.publish(chatroomRedisRepository.getTopic(messageDto.roomId()), messageDto);
-    }
 
     //Redis사용
     public List<ChatroomResponse.ChatroomDto> findAllRoom(){
