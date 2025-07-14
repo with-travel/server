@@ -80,9 +80,6 @@ public class Accompany extends BaseEntity {
     private Member member;
 
     @OneToMany(mappedBy = "accompany")
-    private List<AccompanyReviews> accompanyReviews = new ArrayList<>();
-
-    @OneToMany(mappedBy = "accompany")
     private List<AccompanyApply> accompanyApplies = new ArrayList<>();
 
     @OneToMany(mappedBy = "accompany")
@@ -132,6 +129,11 @@ public class Accompany extends BaseEntity {
 
     public Long getOwnerId(){
         return member.getId();
+    }
+
+    public boolean isFinish(){
+        LocalDate now = LocalDate.now();
+        return now.isAfter(endDate);
     }
 
     public static Accompany from(AccompanyPostRequest request){

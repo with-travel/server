@@ -1,6 +1,7 @@
 package com.arom.with_travel.global.config;
 
 import com.arom.with_travel.domain.member.service.MemberService;
+import com.arom.with_travel.domain.member.service.MemberSignupService;
 import com.arom.with_travel.global.jwt.filter.TokenAuthenticationFilter;
 import com.arom.with_travel.global.jwt.repository.RefreshTokenRepository;
 import com.arom.with_travel.global.jwt.service.TokenProvider;
@@ -31,7 +32,7 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final MemberService memberService;
+    private final MemberSignupService memberSignupService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -73,7 +74,7 @@ public class SecurityConfig {
                         .userInfoEndpoint(userInfoEndpoint ->
                                 userInfoEndpoint.userService(customOAuth2UserService)
                         )
-                        .successHandler(oAuth2SuccessHandler()) // GUEST or USER 분기
+                        .successHandler(oAuth2SuccessHandler(memberSignupService)) // GUEST or USER 분기
                 )
 
                 // 예외 처리  API 경로 → 401 반환
@@ -90,12 +91,12 @@ public class SecurityConfig {
     }
 
     @Bean
-    public OAuth2SuccessHandler oAuth2SuccessHandler() {
+    public OAuth2SuccessHandler oAuth2SuccessHandler(MemberSignupService memberSignupService) {
         return new OAuth2SuccessHandler(
                 tokenProvider,
                 refreshTokenRepository,
                 oAuth2AuthorizationRequestBasedOnCookieRepository(),
-                memberService
+                memberSignupService
         );
     }
 

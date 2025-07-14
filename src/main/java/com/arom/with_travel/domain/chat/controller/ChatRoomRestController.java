@@ -5,6 +5,7 @@ import com.arom.with_travel.domain.chat.dto.ChatResponse;
 import com.arom.with_travel.domain.chat.dto.ChatroomRequest;
 import com.arom.with_travel.domain.chat.dto.ChatroomResponse;
 import com.arom.with_travel.domain.chat.service.ChatService;
+import com.arom.with_travel.domain.chat.service.ChatroomServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,7 +17,7 @@ import java.util.List;
 @RestController
 public class ChatRoomRestController {
 
-    private final ChatService chatService;
+    private final ChatroomServiceImpl chatService;
 
     //test 방가져오기
     @GetMapping("/room/findChatroomByMember/{membername}")

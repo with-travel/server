@@ -4,7 +4,13 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+
 src/main/resources/application.yml
+src/main/resources/application-test.yml
+
+src/main/resources/application-dev.yml
+src/main/resources/application-local.yml
+docker-compose.yml
 ### STS ###
 .apt_generated
 .classpath
@@ -16,7 +22,9 @@ src/main/resources/application.yml
 bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
-
+# macOS 시스템 파일 무시
+.DS_Store
+**/.DS_Store
 ### IntelliJ IDEA ###
 .idea
 *.iws
