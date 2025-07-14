@@ -87,7 +87,6 @@ dependencies {
 	testImplementation 'org.assertj:assertj-core'                          // 최신 AssertJ
 
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-}
 
 	// security
 	implementation 'org.springframework.boot:spring-boot-starter-security'

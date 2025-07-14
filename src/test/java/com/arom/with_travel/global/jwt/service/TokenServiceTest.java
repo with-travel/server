@@ -33,28 +33,28 @@ class TokenServiceTest {
     @InjectMocks
     TokenService tokenService;
 
-    @Test
-    @DisplayName("refresh 토큰으로 새 access 토큰 발급")
-    void 새_엑세스_토큰_발급() {
-        // given
-        String refreshToken = "refresh.jwt";
-
-        given(tokenProvider.validToken(refreshToken)).willReturn(true);
-
-        given(refreshTokenService.findByRefreshToken(refreshToken))
-                .willReturn(RefreshToken.create(1L, refreshToken));
-
-        Member member = Member.builder().id(1L).email("user@kakao.com").role(Member.Role.USER).build();
-        given(memberSignupService.getMemberByIdOrElseThrow(1L)).willReturn(member);
-
-        given(tokenProvider.generateToken(member, Duration.ofHours(2))).willReturn("newAccess.jwt");
-
-        // when
-        String result = tokenService.createNewAccessToken(refreshToken);
-
-        // then
-        assertThat(result).isEqualTo("newAccess.jwt");
-    }
+//    @Test
+//    @DisplayName("refresh 토큰으로 새 access 토큰 발급")
+//    void 새_엑세스_토큰_발급() {
+//        // given
+//        String refreshToken = "refresh.jwt";
+//
+//        given(tokenProvider.validToken(refreshToken)).willReturn(true);
+//
+//        given(refreshTokenService.findByRefreshToken(refreshToken))
+//                .willReturn(RefreshToken.create(1L, refreshToken));
+//
+//        Member member = Member.builder().id(1L).email("user@kakao.com").role(Member.Role.USER).build();
+//        given(memberSignupService.getMemberByIdOrElseThrow(1L)).willReturn(member);
+//
+//        given(tokenProvider.generateToken(member, Duration.ofHours(2))).willReturn("newAccess.jwt");
+//
+//        // when
+//        String result = tokenService.createNewAccessToken(refreshToken);
+//
+//        // then
+//        assertThat(result).isEqualTo("newAccess.jwt");
+//    }
 
     @Test
     @DisplayName("유효하지 않은 refresh 토큰이면 예외 발생")

@@ -46,4 +46,17 @@ public class MemberRepositoryTest {
         assertThat(result.getEmail()).isEqualTo(member.getEmail());
     }
 
+    @Test
+    void 회원_ID로_조회() {
+        // given
+        Member member = MemberTest.회원_생성_3();
+        memberRepository.save(member);
+
+        // when
+        Member result = memberRepository.findById(member.getId()).orElse(null);
+
+        // then
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(member.getId());
+    }
 }
