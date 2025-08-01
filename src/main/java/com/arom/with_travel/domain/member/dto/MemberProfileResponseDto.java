@@ -1,10 +1,7 @@
 package com.arom.with_travel.domain.member.dto;
 
-import com.arom.with_travel.domain.accompanies.model.Accompany;
 import com.arom.with_travel.domain.image.Image;
 import com.arom.with_travel.domain.member.Member;
-
-import java.util.List;
 
 public record MemberProfileResponseDto(
 //        boolean isPrinciple,

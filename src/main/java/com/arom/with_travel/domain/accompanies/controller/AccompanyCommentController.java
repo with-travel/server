@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/accompanies/{accompanyId}/comments")
-@Tag(name = "동행 후기 CRUD")
+@Tag(name = "동행 후기", description = "동행 후기 글 CRUD api")
 public class AccompanyCommentController {
 
     private final AccompanyCommentService accompanyCommentService;

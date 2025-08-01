@@ -2,17 +2,18 @@ package com.arom.with_travel.domain.member.controller;
 
 import com.arom.with_travel.domain.accompanies.dto.response.AccompanyDetailsResponse;
 import com.arom.with_travel.domain.accompanies.service.AccompanyService;
+import com.arom.with_travel.domain.image.dto.ImageRequest;
 import com.arom.with_travel.domain.member.dto.MemberProfileRequestDto;
 import com.arom.with_travel.domain.member.dto.MemberProfileResponseDto;
 import com.arom.with_travel.domain.member.service.MemberProfileService;
 import com.arom.with_travel.domain.member.service.MemberService;
 import com.arom.with_travel.global.jwt.service.TokenProvider;
+import com.arom.with_travel.global.oauth2.dto.CustomOAuth2User;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -49,5 +50,9 @@ public class MemberProfileController {
         return memberProfileService.getIntroduction(tokenProvider.getMemberLoginEmail(request));
     }
 
+    @PostMapping("/profile-image")
+    public void uploadProfileImage(@AuthenticationPrincipal CustomOAuth2User user, @RequestBody ImageRequest request){
+        memberProfileService.uploadMemberProfileImage(user, request.getImageName(), request.getImageUrl());
+    }
     //note 동행후기, 작성한글, 좋아요 누른 글 => 추가하기
 }

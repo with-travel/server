@@ -4,8 +4,6 @@ import com.arom.with_travel.domain.accompanies.dto.request.AccompanyPostRequest;
 import com.arom.with_travel.domain.accompanies.dto.response.AccompanyBriefResponse;
 import com.arom.with_travel.domain.accompanies.dto.response.AccompanyDetailsResponse;
 import com.arom.with_travel.domain.accompanies.dto.response.CursorSliceResponse;
-import com.arom.with_travel.domain.accompanies.model.City;
-import com.arom.with_travel.domain.accompanies.model.Continent;
 import com.arom.with_travel.domain.accompanies.model.Country;
 import com.arom.with_travel.domain.accompanies.service.AccompanyApplyService;
 import com.arom.with_travel.domain.accompanies.service.AccompanyService;
@@ -15,21 +13,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/accompanies")
-@Tag(name = "동행 모집 글 CRUD 및 부가 기능")
+@Tag(name = "동행 모집 글", description = "동행 모집 글 CRUD api")
 public class AccompanyController {
 
     private final AccompanyService accompanyService;
@@ -70,5 +61,4 @@ public class AccompanyController {
             @RequestParam(defaultValue = "10") int size){
         return accompanyService.showAccompaniesBrief(country, size, lastId);
     }
-    
 }

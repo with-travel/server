@@ -15,8 +15,6 @@ import org.hibernate.annotations.SQLRestriction;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE image SET is_deleted = true, deleted_at = now() where id = ?")
-@SQLRestriction("is_deleted is FALSE")
 public class Image extends BaseEntity {
 
     @Id
@@ -26,6 +24,8 @@ public class Image extends BaseEntity {
     @NotNull private String imageName;
     @NotNull private String imageUrl;
 
+    @Enumerated(EnumType.STRING)
+    private ImageType imageType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "community_id")
@@ -38,4 +38,40 @@ public class Image extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    private Image(String imageName, String imageUrl, Accompany accompany, ImageType imageType) {
+        this.imageName = imageName;
+        this.imageUrl = imageUrl;
+        this.accompany = accompany;
+        this.imageType = imageType;
+        this.accompany.getImages().add(this);
+    }
+
+    private Image(String imageName, String imageUrl, Member member, ImageType imageType){
+        this.imageName = imageName;
+        this.imageUrl = imageUrl;
+        this.member = member;
+        this.imageType = imageType;
+        this.member.uploadImage(this);
+    }
+
+    private Image(String imageName, String imageUrl, Community community, ImageType imageType){
+        this.imageName = imageName;
+        this.imageUrl = imageUrl;
+        this.imageType = imageType;
+        this.community = community;
+        this.community.getImages().add(this);
+    }
+
+    public static Image fromAccompany(String imageName, String imageUrl, Accompany accompany, ImageType imageType) {
+        return new Image(imageName, imageUrl, accompany, imageType);
+    }
+
+    public static Image fromMember(String imageName, String imageUrl, Member member, ImageType imageType) {
+        return new Image(imageName, imageUrl, member, imageType);
+    }
+
+    public static Image fromCommunity(String imageName, String imageUrl, Community community) {
+        return new Image(imageName, imageUrl, community, ImageType.COMMUNITY);
+    }
 }

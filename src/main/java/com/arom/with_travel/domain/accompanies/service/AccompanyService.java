@@ -3,28 +3,25 @@ package com.arom.with_travel.domain.accompanies.service;
 import com.arom.with_travel.domain.accompanies.dto.response.AccompanyBriefResponse;
 import com.arom.with_travel.domain.accompanies.dto.response.CursorSliceResponse;
 import com.arom.with_travel.domain.accompanies.model.Accompany;
-import com.arom.with_travel.domain.accompanies.model.AccompanyApply;
 import com.arom.with_travel.domain.accompanies.dto.request.AccompanyPostRequest;
 import com.arom.with_travel.domain.accompanies.dto.response.AccompanyDetailsResponse;
 import com.arom.with_travel.domain.accompanies.model.Country;
 import com.arom.with_travel.domain.accompanies.repository.accompany.AccompanyRepository;
-import com.arom.with_travel.domain.accompanies.repository.accompany.AccompanyApplyRepository;
+import com.arom.with_travel.domain.image.Image;
+import com.arom.with_travel.domain.image.ImageType;
+import com.arom.with_travel.domain.image.repository.ImageRepository;
 import com.arom.with_travel.domain.likes.Likes;
 import com.arom.with_travel.domain.likes.repository.LikesRepository;
 import com.arom.with_travel.domain.member.Member;
-import com.arom.with_travel.domain.member.dto.MemberProfileRequestDto;
 import com.arom.with_travel.domain.member.repository.MemberRepository;
 import com.arom.with_travel.global.exception.BaseException;
 import com.arom.with_travel.global.exception.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,12 +33,18 @@ public class AccompanyService {
     private final AccompanyRepository accompanyRepository;
     private final MemberRepository memberRepository;
     private final LikesRepository likesRepository;
+    private final ImageRepository imageRepository;
 
     @Transactional
     public String createAccompany(AccompanyPostRequest request, String oauthId) {
         Member member = loadMemberOrThrow(oauthId);
         Accompany accompany = Accompany.from(request);
         accompany.post(member);
+        List<Image> images = request.getImages()
+                .stream()
+                .map(imageReq -> Image.fromAccompany(imageReq.getImageName(), imageReq.getImageUrl(), accompany, ImageType.ACCOMPANY))
+                .toList();
+        imageRepository.saveAll(images);
         accompanyRepository.save(accompany);
         return "등록 되었습니다";
     }
@@ -71,7 +74,9 @@ public class AccompanyService {
     @Transactional(readOnly = true)
     public CursorSliceResponse<AccompanyBriefResponse> showAccompaniesBrief(Country country, int size, Long lastId){
         Pageable pageable = PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        Slice<AccompanyBriefResponse> dtoSlice = accompanyRepository.findByCountry(country, lastId, pageable).map(AccompanyBriefResponse::from);
+        Slice<AccompanyBriefResponse> dtoSlice = accompanyRepository
+                .findByCountry(country, lastId, pageable)
+                .map(AccompanyBriefResponse::from);
         return CursorSliceResponse.of(dtoSlice);
     }
 
@@ -87,10 +92,6 @@ public class AccompanyService {
 
     private Optional<Likes> loadLikes(Accompany accompany, Member member) {
         return likesRepository.findByAccompanyAndMember(accompany, member);
-    }
-
-    private long countLikes(Accompany accompany){
-        return likesRepository.countByAccompanyId(accompany.getId());
     }
 }
 

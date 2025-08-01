@@ -20,7 +20,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 @Operation(
-        summary     = "동행 목록 간단 조회",
+        summary     = "동행 목록 간단 조회, 동행 첫 화면에 사용됨",
         description = """
             동행 목록 첫 페이지는 어느 국가를 기반으로
             국가(country) 필터와 커서(lastId) 기반으로
@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
         name        = "country",
         in          = ParameterIn.QUERY,
         required    = false,
-        description = "국가 코드 (예: KOREA, JAPAN)",
+        description = "국가 (예: 일본)",
         example     = "KOREA"
 )
 @Parameter(
@@ -46,7 +46,7 @@ import java.lang.annotation.Target;
         in          = ParameterIn.QUERY,
         required    = false,
         description = "한 번에 가져올 데이터 개수",
-        schema      = @Schema(defaultValue = "10", minimum = "1", maximum = "50")
+        schema      = @Schema(defaultValue = "10")
 )
 @ApiResponses(value = {
         @ApiResponse(

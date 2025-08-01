@@ -8,7 +8,6 @@ import com.arom.with_travel.domain.community.Community;
 import com.arom.with_travel.domain.community_reply.CommunityReply;
 import com.arom.with_travel.domain.image.Image;
 import com.arom.with_travel.domain.likes.Likes;
-import com.arom.with_travel.domain.member.dto.MemberSignupRequestDto;
 import com.arom.with_travel.domain.shorts.Shorts;
 import com.arom.with_travel.domain.shorts_reply.ShortsReply;
 import com.arom.with_travel.domain.survey.Survey;
@@ -25,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Setter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE member SET is_deleted = true, deleted_at = now() where id = ?")
@@ -130,7 +128,7 @@ public class Member extends BaseEntity {
         boolean alreadyApplied = accompanyApplies.stream()
                 .anyMatch(apply -> apply.getAccompany().equals(accompany));
         if (alreadyApplied) {
-            throw BaseException.from(ErrorCode.TMP_ERROR);
+            throw BaseException.from(ErrorCode.ACCOMPANY_ALREADY_APPLIED);
         }
     }
 
@@ -153,5 +151,9 @@ public class Member extends BaseEntity {
 
     public boolean needExtraInfo() {
         return nickname == null || birth == null || gender == null;
+    }
+
+    public void uploadImage(Image image){
+        this.image = image;
     }
 }

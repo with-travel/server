@@ -5,7 +5,6 @@ import com.arom.with_travel.domain.accompanies.model.AccompanyApply;
 import com.arom.with_travel.domain.accompanies.repository.accompany.AccompanyApplyRepository;
 import com.arom.with_travel.domain.accompanies.repository.accompany.AccompanyRepository;
 import com.arom.with_travel.domain.accompany.model.AccompanyTest;
-import com.arom.with_travel.domain.image.Image;
 import com.arom.with_travel.domain.likes.repository.LikesRepository;
 import com.arom.with_travel.domain.member.Member;
 import com.arom.with_travel.domain.member.model.MemberTest;
@@ -22,7 +21,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ActiveProfiles("test")

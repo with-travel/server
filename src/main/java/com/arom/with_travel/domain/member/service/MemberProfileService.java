@@ -6,6 +6,9 @@ import com.arom.with_travel.domain.accompanies.model.AccompanyApply;
 import com.arom.with_travel.domain.accompanies.repository.accompany.AccompanyApplyRepository;
 import com.arom.with_travel.domain.accompanies.repository.accompany.AccompanyRepository;
 import com.arom.with_travel.domain.accompanies.repository.accompany.AccompanyApplyRepository;
+import com.arom.with_travel.domain.image.Image;
+import com.arom.with_travel.domain.image.ImageType;
+import com.arom.with_travel.domain.image.repository.ImageRepository;
 import com.arom.with_travel.domain.likes.repository.LikesRepository;
 
 import com.arom.with_travel.domain.member.Member;
@@ -14,6 +17,7 @@ import com.arom.with_travel.domain.member.dto.MemberProfileResponseDto;
 import com.arom.with_travel.domain.member.repository.MemberRepository;
 import com.arom.with_travel.global.exception.BaseException;
 import com.arom.with_travel.global.exception.error.ErrorCode;
+import com.arom.with_travel.global.oauth2.dto.CustomOAuth2User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -33,6 +37,7 @@ public class MemberProfileService {
     private final AccompanyRepository accompanyRepository;
     private final AccompanyApplyRepository applyRepository;
     private final LikesRepository likesRepository;
+    private final ImageRepository imageRepository;
 
     //내가 등록한 동행 정보들
     public List<AccompanyDetailsResponse> myPostAccompany(String email){
@@ -77,6 +82,11 @@ public class MemberProfileService {
                 .collect(Collectors.toList());
     }
 
+    public void uploadMemberProfileImage(CustomOAuth2User user, String imageName, String imageUrl){
+        Member member = loadMemberOrThrow(user.getEmail());
+        Image image = Image.fromMember(imageName, imageUrl, member, ImageType.MEMBER_PROFILE);
+        imageRepository.save(image);
+    }
 
     private Member loadMemberOrThrow(String email) {
         return memberRepository.findByEmail(email).orElseThrow(
