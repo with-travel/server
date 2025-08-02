@@ -79,6 +79,6 @@ public class TokenService {
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-        return new AuthTokenResponse(accessToken);
+        return new AuthTokenResponse(accessToken, refreshToken);
     }
 }

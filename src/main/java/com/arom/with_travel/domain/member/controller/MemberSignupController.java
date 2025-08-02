@@ -47,7 +47,7 @@ public class MemberSignupController {
         MemberSignupResponseDto dto = memberSignupService
                 .getSignupInfo(user.getEmail());
         AuthTokenResponse tokenDto = tokenService.issueTokenPair(user.getEmail(), response);
-        MemberSignupTokenResponse signupDto = new MemberSignupTokenResponse(dto, tokenDto.getAccessToken());
+        MemberSignupTokenResponse signupDto = new MemberSignupTokenResponse(dto, tokenDto);
         return ResponseEntity.ok(signupDto);
     }
 }
