@@ -51,11 +51,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
-	//redis
+	// Redis / WebSocket / Mongo
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
-
 
 	/* Swagger / OpenAPI */
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
@@ -81,23 +80,13 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 
 	/* === 테스트 전용 === */
-	testImplementation 'org.springframework.boot:spring-boot-starter-test' // JUnit5 + Mockito(core) + AssertJ 포함
-	testImplementation 'org.springframework.security:spring-security-test'  // SecurityMockMvcRequestPostProcessors 등
-	testImplementation 'org.mockito:mockito-junit-jupiter'                 // MockitoExtension
-	testImplementation 'org.assertj:assertj-core'                          // 최신 AssertJ
-
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-	// security
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-
-	// OAuth2
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-
-	// jwt
-	implementation 'io.jsonwebtoken:jjwt:0.9.1'
-	implementation 'javax.xml.bind:jaxb-api:2.3.1'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'org.mockito:mockito-junit-jupiter'
+	testImplementation 'org.assertj:assertj-core'
+	testRuntimeOnly  'org.junit.platform:junit-platform-launcher'
 }
+
 
 tasks.named('test') {
 	useJUnitPlatform()
