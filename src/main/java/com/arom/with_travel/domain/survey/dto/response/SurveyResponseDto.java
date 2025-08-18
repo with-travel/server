@@ -1,6 +1,7 @@
 package com.arom.with_travel.domain.survey.dto.response;
 
 import com.arom.with_travel.domain.survey.Survey;
+import com.arom.with_travel.domain.survey.enums.EnergyLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,13 +15,24 @@ import java.util.List;
 @Builder
 public class SurveyResponseDto {
     private Long surveyId;
-    private String question;
-    private List<String> answers;
+    private Long memberId;
 
-    public static SurveyResponseDto from(Survey survey) {
+    private EnergyLevel energyLevel;
+    // 나중에 추가되면 주석 해제
+    // private TravelGoal travelGoal;
+    // private TravelPace travelPace;
+    // private CommStyle commStyle;
+    // private Personality personality;
+    // private CompanionStyle companionStyle;
+    // private SpendPattern spendPattern;
+
+    public static SurveyResponseDto from(Survey s) {
         return SurveyResponseDto.builder()
-                .surveyId(survey.getId())
-                .answers(survey.getAnswers())
+                .surveyId(s.getId())
+                .memberId(s.getMember().getId())
+                .energyLevel(s.getEnergyLevel())
+                // .travelGoal(s.getTravelGoal())
+                // ...
                 .build();
     }
 }

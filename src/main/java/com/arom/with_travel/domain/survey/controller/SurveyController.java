@@ -10,6 +10,7 @@ import com.arom.with_travel.domain.survey.swagger.PostNewSurvey;
 import com.arom.with_travel.global.security.domain.AuthenticatedMember;
 import com.arom.with_travel.global.security.domain.PrincipalDetails;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -25,22 +26,18 @@ public class SurveyController {
 
     @PostNewSurvey
     @PostMapping("/surveys")
-    public void createSurvey(@AuthenticationPrincipal PrincipalDetails principal,
-                             @RequestBody SurveyRequestDto dto) {
-        AuthenticatedMember member = principal.getAuthenticatedMember();
-        surveyService.createSurvey(member.getEmail(), dto);
-    }
+    public void saveSurvey(@AuthenticationPrincipal PrincipalDetails principal,
+                             @Valid @RequestBody SurveyRequestDto dto) {
 
-    @GetSingleSurvey
-    @GetMapping("/survey/{surveyId}")
-    public SurveyResponseDto getSurvey(@PathVariable Long surveyId) {
-        return surveyService.getSurvey(surveyId);
+        AuthenticatedMember member = principal.getAuthenticatedMember();
+        surveyService.saveSurvey(member.getEmail(), dto);
     }
 
     @GetMySurveys
     @GetMapping("/surveys/my")
-    public List<SurveyResponseDto> getMySurveys(@AuthenticationPrincipal PrincipalDetails principal) {
+    public SurveyResponseDto getSurvey(@AuthenticationPrincipal PrincipalDetails principal) {
+
         AuthenticatedMember member = principal.getAuthenticatedMember();
-        return surveyService.getSurveysByEmail(member.getEmail());
+        return surveyService.getSurvey(member.getEmail());
     }
 }

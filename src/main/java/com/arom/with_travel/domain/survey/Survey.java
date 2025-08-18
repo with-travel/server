@@ -1,9 +1,8 @@
 package com.arom.with_travel.domain.survey;
 
 import com.arom.with_travel.domain.member.Member;
+import com.arom.with_travel.domain.survey.enums.EnergyLevel;
 import com.arom.with_travel.global.entity.BaseEntity;
-import com.arom.with_travel.global.exception.BaseException;
-import com.arom.with_travel.global.exception.error.ErrorCode;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -11,9 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Entity
@@ -26,28 +22,52 @@ public class Survey extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Survey 엔티티가 answers 문자열 리스트를 갖고 있고, 이 값들을 별도의 테이블에 저장하도록 리팩토링
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "survey_answers",
-            joinColumns = @JoinColumn(name = "survey_id"))
-    @Column(name = "answer")
-    private List<String> answers = new ArrayList<>();
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    public static Survey create(Member member,List<String> answers) {
-        validateAnswers(answers);
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "energy_level", nullable = false, length = 50)
+    private EnergyLevel energyLevel;
 
-        Survey survey = new Survey();
-        survey.member = member;
-        survey.answers = answers;
-        return survey;
+    public static Survey create(
+            Member member,
+            EnergyLevel energyLevel
+//            TravelGoal travelGoal,
+//            TravelPace travelPace,
+//            CommStyle commStyle,
+//            Personality personality,
+//            CompanionStyle companionStyle,
+//            SpendPattern spendPattern
+    ) {
+        Survey s = new Survey();
+        s.member = member;
+        s.energyLevel = energyLevel;
+//        s.travelGoal = travelGoal;
+//        s.travelPace = travelPace;
+//        s.commStyle = commStyle;
+//        s.personality = personality;
+//        s.companionStyle = companionStyle;
+//        s.spendPattern = spendPattern;
+        return s;
     }
 
-    private static void validateAnswers(List<String> answers){
-        if(answers == null || answers.isEmpty())
-            throw BaseException.from(ErrorCode.INVALID_SURVEY_ANSWER);
+    public void update(
+            EnergyLevel energyLevel
+//            TravelGoal travelGoal,
+//            TravelPace travelPace,
+//            CommStyle commStyle,
+//            Personality personality,
+//            CompanionStyle companionStyle,
+//            SpendPattern spendPattern
+    ) {
+        this.energyLevel = energyLevel;
+//        this.travelGoal = travelGoal;
+//        this.travelPace = travelPace;
+//        this.commStyle = commStyle;
+//        this.personality = personality;
+//        this.companionStyle = companionStyle;
+//        this.spendPattern = spendPattern;
     }
 }

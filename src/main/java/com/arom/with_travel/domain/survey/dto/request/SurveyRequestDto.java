@@ -1,20 +1,24 @@
 package com.arom.with_travel.domain.survey.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
+import com.arom.with_travel.domain.survey.enums.EnergyLevel;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor   // <— 모든 필드를 초기화하는 생성자 추가
+@AllArgsConstructor
 @Builder
 public class SurveyRequestDto {
 
-    @NotEmpty(message = "설문 답변은 최소 1개 이상이어야 합니다.")
-    private List<String> answers;
+    @NotNull(message = "energyLevel은 필수입니다.")
+    private EnergyLevel energyLevel;
+//    @NotNull TravelGoal travelGoal,
+//    @NotNull TravelPace travelPace,
+//    @NotNull CommStyle commStyle,
+//    @NotNull Personality personality,
+//    @NotNull CompanionStyle companionStyle,
+//    @NotNull SpendPattern spendPattern
 }

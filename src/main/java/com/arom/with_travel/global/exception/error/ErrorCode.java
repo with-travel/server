@@ -55,6 +55,7 @@ public enum ErrorCode {
     INVALID_SURVEY_ANSWER("SVY-0001", "설문 답변이 비어있습니다.", ErrorDisplayType.POPUP),
     OVER_ANSWER_LIMIT("SVY-0002", "답변 개수가 초과되었습니다..", ErrorDisplayType.POPUP),
     INVALID_SURVEY_QUESTION("SVY-0003", "설문 질문이 비어있습니다.", ErrorDisplayType.POPUP),
+    INVALID_SURVEY_ENERGYLEVEL("SVY-0004", "에너지레벨 설문 답변이 비어있습니다.", ErrorDisplayType.POPUP),
 
     // image
     INVALID_IMG_TYPE("IMG-0000", "지원하지 않는 이미지 형식입니다.", ErrorDisplayType.POPUP),
