@@ -16,6 +16,6 @@ public class SignupWithSurveyRequestDto {
     @NotNull
     private MemberSignupRequestDto extraInfo;   // 닉네임·성별·생년월일
 
-    @NotEmpty
-    private List<SurveyRequestDto> surveys;
+    @NotNull
+    private SurveyRequestDto survey;
 }
