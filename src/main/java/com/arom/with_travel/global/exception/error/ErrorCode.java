@@ -58,6 +58,16 @@ public enum ErrorCode {
 
     // image
     INVALID_IMG_TYPE("IMG-0000", "지원하지 않는 이미지 형식입니다.", ErrorDisplayType.POPUP),
+    IMG_URL_MUST_FILLED("IMG-0001", "이미지 url이 존재해야합니다.", ErrorDisplayType.POPUP),
+
+    // community
+    CONTINENT_NOT_FOUND("COM-0000", "해당 대륙이 존재하지 않습니다.", ErrorDisplayType.POPUP),
+    COMMUNITY_NOT_FOUND("CON-0001", "해당 커뮤니티 게시글이 존재하지 않습니다.", ErrorDisplayType.POPUP),
+    COMMUNITY_FORBIDDEN("CON-0002", "해당 게시글의 수정 및 삭제 권한이 없습니다.", ErrorDisplayType.POPUP),
+
+    // reply
+    REPLY_NOT_FOUND("REP-0000", "해당 댓글이 존재하지 않습니다.", ErrorDisplayType.POPUP),
+    REPLY_FORBIDDEN("REP-0001", "해당 댓글에 수정 및 삭제 권한이 없습니다.", ErrorDisplayType.POPUP)
     ;
 
     private final String code;
