@@ -107,6 +107,29 @@ public class CommunityService {
     }
 
 
+
+    @Transactional
+    public Page<CommunityListItemResponse> search(String continent, String country, String city, String q,
+                                                  Pageable pageable) {
+        Specification<Community> spec = Specification
+                .where(continentEq(continent))
+                .and(countryEq(country))
+                .and(cityEq(city))
+                .and(keywordLike(q));
+
+        return communityRepository.search(spec, pageable)
+                .map(c -> new CommunityListItemResponse(
+                        c.getId(),
+                        c.getTitle(),
+                        c.getContent().length() > 30 ? c.getContent().substring(0, 30) + "..." : c.getContent(),
+                        c.getContinent(), c.getCountry(), c.getCity(),
+                        c.getMember().getId(),
+                        c.getMember().getNickname(),
+                        c.getViewCount(),
+                        c.getCreatedAt().toString()
+                ));
+    }
+
     @Transactional
     public void delete(Long currentMemberId, Long communityId) {
         Community c = communityRepository.findById(communityId)
