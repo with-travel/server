@@ -31,43 +31,26 @@ public class Survey extends BaseEntity {
     @Column(name = "energy_level", nullable = false, length = 50)
     private EnergyLevel energyLevel;
 
-    public static Survey create(
-            Member member,
-            EnergyLevel energyLevel
-//            TravelGoal travelGoal,
-//            TravelPace travelPace,
-//            CommStyle commStyle,
-//            Personality personality,
-//            CompanionStyle companionStyle,
-//            SpendPattern spendPattern
-    ) {
-        Survey s = new Survey();
-        s.member = member;
-        s.energyLevel = energyLevel;
-//        s.travelGoal = travelGoal;
-//        s.travelPace = travelPace;
-//        s.commStyle = commStyle;
-//        s.personality = personality;
-//        s.companionStyle = companionStyle;
-//        s.spendPattern = spendPattern;
-        return s;
+    private Survey(Member member, EnergyLevel energyLevel) {
+        this.energyLevel = energyLevel;
+        linkMember(member);
     }
 
-    public void update(
-            EnergyLevel energyLevel
-//            TravelGoal travelGoal,
-//            TravelPace travelPace,
-//            CommStyle commStyle,
-//            Personality personality,
-//            CompanionStyle companionStyle,
-//            SpendPattern spendPattern
-    ) {
+    public static Survey create(Member member, EnergyLevel energyLevel) {
+        return new Survey(member, energyLevel);
+    }
+
+    private void linkMember(Member newMember) {
+        if (this.member != null && this.member.getSurvey() == this) {
+            this.member.setSurvey(null);
+        }
+        this.member = newMember;
+        if (newMember.getSurvey() != this) {
+            newMember.setSurvey(this);
+        }
+    }
+
+    public void update(EnergyLevel energyLevel) {
         this.energyLevel = energyLevel;
-//        this.travelGoal = travelGoal;
-//        this.travelPace = travelPace;
-//        this.commStyle = commStyle;
-//        this.personality = personality;
-//        this.companionStyle = companionStyle;
-//        this.spendPattern = spendPattern;
     }
 }

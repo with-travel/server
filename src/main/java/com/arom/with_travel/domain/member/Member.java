@@ -175,4 +175,8 @@ public class Member extends BaseEntity {
     public void uploadImage(Image image){
         this.image = image;
     }
+
+    public void setSurvey(Survey survey) {
+        this.survey = survey;
+    }
 }
