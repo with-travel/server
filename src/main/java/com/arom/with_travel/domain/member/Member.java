@@ -117,8 +117,9 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member")
     private List<ChatPart> chatParts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
-    private List<Survey> surveys = new ArrayList<>();
+    // 회원 생성 직후 아직 설문이 없을 수 있어서 optional = true로 처리
+    @OneToOne(mappedBy = "member", optional = true)
+    private Survey survey;
 
     @OneToOne(mappedBy = "member")
     private Image image;
@@ -173,5 +174,9 @@ public class Member extends BaseEntity {
 
     public void uploadImage(Image image){
         this.image = image;
+    }
+
+    public void setSurvey(Survey survey) {
+        this.survey = survey;
     }
 }

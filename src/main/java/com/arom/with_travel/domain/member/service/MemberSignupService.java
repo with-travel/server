@@ -9,6 +9,7 @@ import com.arom.with_travel.domain.member.dto.response.SocialMemberVerificationR
 import com.arom.with_travel.domain.member.dto.request.SocialMemberVerificationRequest;
 import com.arom.with_travel.domain.member.repository.MemberRepository;
 import com.arom.with_travel.domain.survey.Survey;
+import com.arom.with_travel.domain.survey.dto.request.SurveyRequestDto;
 import com.arom.with_travel.domain.survey.repository.SurveyRepository;
 import com.arom.with_travel.global.exception.BaseException;
 import com.arom.with_travel.global.exception.error.ErrorCode;
@@ -54,10 +55,26 @@ public class MemberSignupService {
         MemberSignupRequestDto extra = req.getExtraInfo();
         member.updateExtraInfo(extra.getNickname(), extra.getBirthdate(), extra.getGender(), extra.getIntroduction());
 
-        req.getSurveys().forEach(sdto -> {
-            Survey survey = Survey.create(member, sdto.getAnswers());
-            surveyRepository.save(survey);
-        });
+//        req.getSurveys().forEach(sdto -> {
+//            Survey survey = Survey.create(member, sdto.getAnswers());
+//            surveyRepository.save(survey);
+//        });
+
+        SurveyRequestDto s = req.getSurvey(); // 단일 설문
+        Survey survey = surveyRepository.findByMemberIdAndIsDeletedFalse(member.getId())
+                .map(existing -> {
+                    existing.update(
+                            s.getEnergyLevel()
+                            // 이후 섹션 늘리면 여기에 추가
+                    );
+                    return existing;
+                })
+                .orElseGet(() -> Survey.create(
+                        member,
+                        s.getEnergyLevel()
+                        // 이후 섹션 늘리면 여기에 추가
+                ));
+        surveyRepository.save(survey);
 
         member.markAdditionalDataChecked();
 

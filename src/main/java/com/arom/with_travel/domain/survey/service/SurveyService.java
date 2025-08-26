@@ -9,12 +9,9 @@ import com.arom.with_travel.domain.survey.dto.response.SurveyResponseDto;
 import com.arom.with_travel.domain.survey.repository.SurveyRepository;
 import com.arom.with_travel.global.exception.BaseException;
 import com.arom.with_travel.global.exception.error.ErrorCode;
-import com.arom.with_travel.global.security.domain.AuthenticatedMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,28 +21,45 @@ public class SurveyService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void createSurvey(String email, SurveyRequestDto dto) {
+    public void saveSurvey(String email, SurveyRequestDto dto) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> BaseException.from(ErrorCode.MEMBER_NOT_FOUND));
 
-        Survey survey = Survey.create(member, dto.getAnswers());
+        Survey survey = surveyRepository.findByMemberIdAndIsDeletedFalse(member.getId())
+                .map(existing -> {
+                    existing.update(
+                            dto.getEnergyLevel()
+//                            dto.getTravelGoal(),
+//                            dto.getTravelPace(),
+//                            dto.getCommStyle(),
+//                            dto.getPersonality(),
+//                            dto.getCompanionStyle(),
+//                            dto.getSpendPattern()
+                    );
+                    return existing;
+                })
+                .orElseGet(() -> Survey.create(
+                        member,
+                        dto.getEnergyLevel()
+//                        dto.getTravelGoal(),
+//                        dto.getTravelPace(),
+//                        dto.getCommStyle(),
+//                        dto.getPersonality(),
+//                        dto.getCompanionStyle(),
+//                        dto.getSpendPattern()
+                ));
+
         surveyRepository.save(survey);
     }
 
     @Transactional(readOnly = true)
-    public SurveyResponseDto getSurvey(Long surveyId) {
-        Survey survey = surveyRepository.findById(surveyId)
-                .orElseThrow(() -> BaseException.from(ErrorCode.SURVEY_NOT_FOUND));
-        return SurveyResponseDto.from(survey);
-    }
-
-    @Transactional(readOnly = true)
-    public List<SurveyResponseDto> getSurveysByEmail(String email) {
+    public SurveyResponseDto getSurvey(String email) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> BaseException.from(ErrorCode.MEMBER_NOT_FOUND));
 
-        return surveyRepository.findByMember(member).stream()
-                .map(SurveyResponseDto::from)
-                .toList();
+        Survey survey = surveyRepository.findByMemberIdAndIsDeletedFalse(member.getId())
+                .orElseThrow(() -> BaseException.from(ErrorCode.SURVEY_NOT_FOUND));
+
+        return SurveyResponseDto.from(survey);
     }
 }
