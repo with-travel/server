@@ -75,10 +75,10 @@ public class Community extends BaseEntity {
 
 
     public void update(String title, String content, String continent, String country, String city) {
-        if (title != null) this.title = title;
-        if (content != null) this.content = content;
-        if (continent != null) this.continent = continent;
-        if (country != null) this.country = country;
-        if (city != null) this.city = city;
+        this.title = title;
+        this.content = content;
+        this.continent = continent;
+        this.country = country;
+        this.city = city;
     }
 }
