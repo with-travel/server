@@ -39,6 +39,7 @@ public class Member extends BaseEntity {
     private String oauthId;
 
     private String email;
+    @Column(length = 255) private String password;
 
     private LocalDate birth;
     @Enumerated(EnumType.STRING) private Gender gender;
@@ -129,15 +130,16 @@ public class Member extends BaseEntity {
     private Image image;
 
     @Builder
-    public Member(Long id, String oauthId, String email, String name, LocalDate birth, Gender gender,
-                  String phone, LoginType loginType, String nickname, String introduction,
-                  TravelType travelType, Role role) {
+    public Member(Long id, String oauthId, String email, String password, String name,
+                  LocalDate birth, Gender gender, String phone, LoginType loginType,
+                  String nickname, String introduction, TravelType travelType, Role role) {
         this.id = id;
         this.oauthId = oauthId;
         this.email = email;
+        this.password = password;
+        this.name = name;
         this.birth = birth;
         this.gender = gender;
-        this.name = name;
         this.phone = phone;
         this.loginType = loginType;
         this.nickname = nickname;
