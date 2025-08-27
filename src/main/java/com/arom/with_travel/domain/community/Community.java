@@ -59,8 +59,20 @@ public class Community extends BaseEntity {
                 .country(country)
                 .city(city)
                 .build();
+        c.changeMember(writer);
         return c;
     }
+
+    public void changeMember(Member newMember) {
+        if (this.member != null) {
+            this.member.getCommunities().remove(this);
+        }
+        this.member = newMember;
+        if (newMember != null && !newMember.getCommunities().contains(this)) {
+            newMember.getCommunities().add(this);
+        }
+    }
+
 
     public void update(String title, String content, String continent, String country, String city) {
         if (title != null) this.title = title;

@@ -179,4 +179,9 @@ public class Member extends BaseEntity {
     public void setSurvey(Survey survey) {
         this.survey = survey;
     }
+
+    public void addCommunity(Community community) {
+        if (community == null) return;
+        community.changeMember(this);
+    }
 }
