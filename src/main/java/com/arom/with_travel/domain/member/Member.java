@@ -6,6 +6,7 @@ import com.arom.with_travel.domain.chat.model.Chat;
 import com.arom.with_travel.domain.chat.model.ChatPart;
 import com.arom.with_travel.domain.community.Community;
 import com.arom.with_travel.domain.community_reply.CommunityReply;
+import com.arom.with_travel.domain.community_reply.CommunityReplyLike;
 import com.arom.with_travel.domain.image.Image;
 import com.arom.with_travel.domain.likes.Likes;
 import com.arom.with_travel.domain.shorts.Shorts;
@@ -105,6 +106,9 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member")
     private List<Community> communities = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", orphanRemoval = true)
+    private List<CommunityReplyLike> replyLikes = new ArrayList<>();
+
     @OneToMany(mappedBy = "member")
     private List<CommunityReply> communityReplies = new ArrayList<>();
 
@@ -183,5 +187,19 @@ public class Member extends BaseEntity {
     public void addCommunity(Community community) {
         if (community == null) return;
         community.changeMember(this);
+    }
+
+    public void addReply(CommunityReply reply) {
+        this.communityReplies.add(reply);
+        if (reply.getMember() != this) {
+            reply.setMember(this);
+        }
+    }
+
+    public void addReplyLike(CommunityReplyLike like) {
+        this.replyLikes.add(like);
+        if (like.getMember() != this) {
+            like.setMember(this);
+        }
     }
 }

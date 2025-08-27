@@ -9,7 +9,11 @@ import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
+@Setter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
@@ -33,6 +37,9 @@ public class CommunityReply extends BaseEntity {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
+    @OneToMany(mappedBy = "reply", orphanRemoval = true)
+    private List<CommunityReplyLike> likes = new ArrayList<>();
+
     public static CommunityReply create(Community community, Member writer, String content) {
         return CommunityReply.builder()
                 .community(community)
@@ -45,5 +52,11 @@ public class CommunityReply extends BaseEntity {
         this.content = content;
     }
 
+    public void addLike(CommunityReplyLike like) {
+        this.likes.add(like);
+        if (like.getReply() != this) {
+            like.setReply(this);
+        }
+    }
 
 }

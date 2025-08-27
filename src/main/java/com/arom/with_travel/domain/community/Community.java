@@ -40,7 +40,7 @@ public class Community extends BaseEntity {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @OneToMany(mappedBy = "community")
+    @OneToMany(mappedBy = "community", orphanRemoval = true)
     private List<CommunityReply> communityReplies = new ArrayList<>();
 
     @OneToMany(mappedBy = "community")
@@ -73,6 +73,12 @@ public class Community extends BaseEntity {
         }
     }
 
+    public void addReply(CommunityReply reply) {
+        this.communityReplies.add(reply);
+        if (reply.getCommunity() != this) {
+            reply.setCommunity(this);
+        }
+    }
 
     public void update(String title, String content, String continent, String country, String city) {
         this.title = title;
