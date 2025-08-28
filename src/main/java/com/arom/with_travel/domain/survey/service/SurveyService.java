@@ -26,29 +26,10 @@ public class SurveyService {
                 .orElseThrow(() -> BaseException.from(ErrorCode.MEMBER_NOT_FOUND));
 
         Survey survey = surveyRepository.findByMemberIdAndIsDeletedFalse(member.getId())
-                .map(existing -> {
-                    existing.update(
-                            dto.getEnergyLevel()
-//                            dto.getTravelGoal(),
-//                            dto.getTravelPace(),
-//                            dto.getCommStyle(),
-//                            dto.getPersonality(),
-//                            dto.getCompanionStyle(),
-//                            dto.getSpendPattern()
-                    );
-                    return existing;
-                })
-                .orElseGet(() -> Survey.create(
-                        member,
-                        dto.getEnergyLevel()
-//                        dto.getTravelGoal(),
-//                        dto.getTravelPace(),
-//                        dto.getCommStyle(),
-//                        dto.getPersonality(),
-//                        dto.getCompanionStyle(),
-//                        dto.getSpendPattern()
-                ));
+                .map(existing -> { existing.update(dto); return existing; })
+                .orElseGet(() -> Survey.create(member, dto));
 
+        // 기존 엔티티는 dirty checking으로 flush, 신규는 persist
         surveyRepository.save(survey);
     }
 

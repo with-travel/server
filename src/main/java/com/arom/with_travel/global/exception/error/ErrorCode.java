@@ -55,7 +55,13 @@ public enum ErrorCode {
     INVALID_SURVEY_ANSWER("SVY-0001", "설문 답변이 비어있습니다.", ErrorDisplayType.POPUP),
     OVER_ANSWER_LIMIT("SVY-0002", "답변 개수가 초과되었습니다..", ErrorDisplayType.POPUP),
     INVALID_SURVEY_QUESTION("SVY-0003", "설문 질문이 비어있습니다.", ErrorDisplayType.POPUP),
-    INVALID_SURVEY_ENERGYLEVEL("SVY-0004", "에너지레벨 설문 답변이 비어있습니다.", ErrorDisplayType.POPUP),
+    INVALID_SURVEY_ENERGYLEVEL("SVY-0004", "에너지 레벨 설문 답변이 비어있습니다.", ErrorDisplayType.POPUP),
+    INVALID_SURVEY_TRAVELGOAL("SVY-0005", "여행 목적 설문 답변이 비어있습니다.", ErrorDisplayType.POPUP),
+    INVALID_SURVEY_TRAVELPACE("SVY-0006", "여행 페이스 설문 답변이 비어있습니다.", ErrorDisplayType.POPUP),
+    INVALID_SURVEY_COMMSTYLE("SVY-0007", "소통 스타일 설문 답변이 비어있습니다.", ErrorDisplayType.POPUP),
+    INVALID_SURVEY_RECORDTENDENCY("SVY-0008", "기록 성향 설문 답변이 비어있습니다.", ErrorDisplayType.POPUP),
+    INVALID_SURVEY_COMPANIONSTYLE("SVY-0009", "동행 스타일 설문 답변이 비어있습니다.", ErrorDisplayType.POPUP),
+    INVALID_SURVEY_SPENDPATTERN("SVY-00010", "소비 패턴 설문 답변이 비어있습니다.", ErrorDisplayType.POPUP),
 
     // image
     INVALID_IMG_TYPE("IMG-0000", "지원하지 않는 이미지 형식입니다.", ErrorDisplayType.POPUP),

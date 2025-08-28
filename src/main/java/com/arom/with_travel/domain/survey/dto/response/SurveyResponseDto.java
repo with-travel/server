@@ -1,13 +1,14 @@
 package com.arom.with_travel.domain.survey.dto.response;
 
 import com.arom.with_travel.domain.survey.Survey;
-import com.arom.with_travel.domain.survey.enums.EnergyLevel;
+import com.arom.with_travel.domain.survey.enums.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @NoArgsConstructor
@@ -17,22 +18,28 @@ public class SurveyResponseDto {
     private Long surveyId;
     private Long memberId;
 
-    private EnergyLevel energyLevel;
-    // 나중에 추가되면 주석 해제
-    // private TravelGoal travelGoal;
-    // private TravelPace travelPace;
-    // private CommStyle commStyle;
-    // private Personality personality;
-    // private CompanionStyle companionStyle;
-    // private SpendPattern spendPattern;
+    private Set<EnergyLevel> energyLevels;
+    private Set<TravelGoal> travelGoals;
+    private Set<TravelPace> travelPaces;
+    private Set<CommStyle> commStyles;
+    private Set<RecordTendency> recordTendencies;
+    private Set<CompanionStyle> companionStyles;
+    private Set<SpendPattern> spendPatterns;
+
+//    private String introduction;
 
     public static SurveyResponseDto from(Survey s) {
         return SurveyResponseDto.builder()
                 .surveyId(s.getId())
                 .memberId(s.getMember().getId())
-                .energyLevel(s.getEnergyLevel())
-                // .travelGoal(s.getTravelGoal())
-                // ...
+                .energyLevels(s.getEnergyLevels())
+                .travelGoals(s.getTravelGoals())
+                .travelPaces(s.getTravelPaces())
+                .commStyles(s.getCommStyles())
+                .recordTendencies(s.getRecordTendencies())
+                .companionStyles(s.getCompanionStyles())
+                .spendPatterns(s.getSpendPatterns())
+//                .introduction(s.getIntroduction())
                 .build();
     }
 }
