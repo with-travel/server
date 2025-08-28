@@ -26,7 +26,7 @@ public class SurveyResponseDto {
     private Set<CompanionStyle> companionStyles;
     private Set<SpendPattern> spendPatterns;
 
-    private String bio;
+//    private String introduction;
 
     public static SurveyResponseDto from(Survey s) {
         return SurveyResponseDto.builder()
@@ -39,7 +39,7 @@ public class SurveyResponseDto {
                 .recordTendencies(s.getRecordTendencies())
                 .companionStyles(s.getCompanionStyles())
                 .spendPatterns(s.getSpendPatterns())
-                .bio(s.getIntroduction())
+//                .introduction(s.getIntroduction())
                 .build();
     }
 }

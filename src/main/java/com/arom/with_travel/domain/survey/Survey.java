@@ -71,8 +71,8 @@ public class Survey extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Set<SpendPattern> spendPatterns = new HashSet<>();
 
-    @Column(name = "introduction", length = 1000)
-    private String introduction;
+//    @Column(name = "introduction", length = 1000)
+//    private String introduction;
 
     // ---- 생성/수정 로직 ----
     private Survey(Member member,
@@ -82,8 +82,7 @@ public class Survey extends BaseEntity {
                    Set<CommStyle> commStyles,
                    Set<RecordTendency> recordTendencies,
                    Set<CompanionStyle> companionStyles,
-                   Set<SpendPattern> spendPatterns,
-                   String introduction) {
+                   Set<SpendPattern> spendPatterns) {
         this.energyLevels   = safe(energyLevels);
         this.travelGoals    = safe(travelGoals);
         this.travelPaces    = safe(travelPaces);
@@ -91,7 +90,7 @@ public class Survey extends BaseEntity {
         this.recordTendencies  = safe(recordTendencies);
         this.companionStyles= safe(companionStyles);
         this.spendPatterns  = safe(spendPatterns);
-        this.introduction = introduction;
+//        this.introduction = introduction;
         linkMember(member);
     }
 
@@ -100,7 +99,8 @@ public class Survey extends BaseEntity {
                 member,
                 dto.getEnergyLevels(), dto.getTravelGoals(), dto.getTravelPaces(),
                 dto.getCommStyles(), dto.getRecordTendencies(), dto.getCompanionStyles(),
-                dto.getSpendPatterns(), dto.getIntroduction()
+                dto.getSpendPatterns()
+//                dto.getIntroduction()
         );
     }
 
@@ -112,7 +112,7 @@ public class Survey extends BaseEntity {
         this.recordTendencies   = safe(dto.getRecordTendencies());
         this.companionStyles = safe(dto.getCompanionStyles());
         this.spendPatterns   = safe(dto.getSpendPatterns());
-        this.introduction = dto.getIntroduction();
+//        this.introduction = dto.getIntroduction();
     }
 
     private <T> Set<T> safe(Set<T> in){

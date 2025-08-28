@@ -60,20 +60,14 @@ public class MemberSignupService {
 //            surveyRepository.save(survey);
 //        });
 
-        SurveyRequestDto s = req.getSurvey(); // 단일 설문
+        SurveyRequestDto s = req.getSurvey();
         Survey survey = surveyRepository.findByMemberIdAndIsDeletedFalse(member.getId())
                 .map(existing -> {
-                    existing.update(
-                            s.getEnergyLevel()
-                            // 이후 섹션 늘리면 여기에 추가
-                    );
+                    existing.update(s);
                     return existing;
                 })
-                .orElseGet(() -> Survey.create(
-                        member,
-                        s.getEnergyLevel()
-                        // 이후 섹션 늘리면 여기에 추가
-                ));
+                .orElseGet(() -> Survey.create(member, s));
+
         surveyRepository.save(survey);
 
         member.markAdditionalDataChecked();
