@@ -74,4 +74,7 @@ public class Image extends BaseEntity {
     public static Image fromCommunity(String imageName, String imageUrl, Community community) {
         return new Image(imageName, imageUrl, community, ImageType.COMMUNITY);
     }
+
+    public void attachToCommunity(Community c) { this.community = c; }
+    public void detachFromCommunity() { this.community = null; }
 }
