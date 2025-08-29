@@ -87,10 +87,10 @@ public class LocalAuthService {
     @Transactional(readOnly = true)
     public LoginResponse login(LocalLoginRequest req) {
         Member m = memberRepository.findByEmail(req.getEmail())
-                .orElseThrow(() -> BaseException.from(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> BaseException.from(ErrorCode.LOGIN_FAIL));
 
         if (m.getPassword() == null || !passwordEncoder.matches(req.getPassword(), m.getPassword())) {
-            throw BaseException.from(ErrorCode.INVALID_CREDENTIALS);
+            throw BaseException.from(ErrorCode.LOGIN_FAIL);
         }
 
         String access  = jwtProvider.generateAccessToken(m);
