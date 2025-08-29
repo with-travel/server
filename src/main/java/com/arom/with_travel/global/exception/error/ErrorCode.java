@@ -74,7 +74,11 @@ public enum ErrorCode {
 
     // reply
     REPLY_NOT_FOUND("REP-0000", "해당 댓글이 존재하지 않습니다.", ErrorDisplayType.POPUP),
-    REPLY_FORBIDDEN("REP-0001", "해당 댓글에 수정 및 삭제 권한이 없습니다.", ErrorDisplayType.POPUP)
+    REPLY_FORBIDDEN("REP-0001", "해당 댓글에 수정 및 삭제 권한이 없습니다.", ErrorDisplayType.POPUP),
+
+    // login
+    DUPLICATED_EMAIL("LOGIN-0001", "중복된 이메일이 존재합니다.", ErrorDisplayType.POPUP),
+    INVALID_CREDENTIALS("LOGIN-0002", "비밀번호가 올바르지 않습니다.", ErrorDisplayType.POPUP)
     ;
 
     private final String code;
