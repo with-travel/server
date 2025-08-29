@@ -70,10 +70,17 @@ public class CommunityService {
 
     @Transactional
     public CommunityDetailResponse readAndIncreaseView(Long id) {
-        communityRepository.increaseViewCount(id);
+        if (!communityRepository.existsById(id)) {
+            throw BaseException.from(ErrorCode.COMMUNITY_NOT_FOUND);
+        }
+
+        int updated = communityRepository.increaseViewCount(id);
+
         Community c = communityRepository.findDetailById(id);
-        if (c == null) throw BaseException.from(ErrorCode.COMMUNITY_NOT_FOUND);
-        List<String> urls = c.getImages().stream().map(Image::getImageUrl).collect(Collectors.toList());
+        if (c == null) { throw BaseException.from(ErrorCode.COMMUNITY_NOT_FOUND);}
+
+        List<String> urls = c.getImages().stream().map(Image::getImageUrl).toList();
+
         return new CommunityDetailResponse(
                 c.getId(), c.getTitle(), c.getContent(),
                 c.getContinent(), c.getCountry(), c.getCity(),

@@ -6,6 +6,7 @@ import com.arom.with_travel.domain.chat.model.Chat;
 import com.arom.with_travel.domain.chat.model.ChatPart;
 import com.arom.with_travel.domain.community.Community;
 import com.arom.with_travel.domain.community_reply.CommunityReply;
+import com.arom.with_travel.domain.community_reply.CommunityReplyLike;
 import com.arom.with_travel.domain.image.Image;
 import com.arom.with_travel.domain.likes.Likes;
 import com.arom.with_travel.domain.shorts.Shorts;
@@ -38,6 +39,7 @@ public class Member extends BaseEntity {
     private String oauthId;
 
     private String email;
+    @Column(length = 255) private String password;
 
     private LocalDate birth;
     @Enumerated(EnumType.STRING) private Gender gender;
@@ -105,6 +107,9 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member")
     private List<Community> communities = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", orphanRemoval = true)
+    private List<CommunityReplyLike> replyLikes = new ArrayList<>();
+
     @OneToMany(mappedBy = "member")
     private List<CommunityReply> communityReplies = new ArrayList<>();
 
@@ -125,15 +130,16 @@ public class Member extends BaseEntity {
     private Image image;
 
     @Builder
-    public Member(Long id, String oauthId, String email, String name, LocalDate birth, Gender gender,
-                  String phone, LoginType loginType, String nickname, String introduction,
-                  TravelType travelType, Role role) {
+    public Member(Long id, String oauthId, String email, String password, String name,
+                  LocalDate birth, Gender gender, String phone, LoginType loginType,
+                  String nickname, String introduction, TravelType travelType, Role role) {
         this.id = id;
         this.oauthId = oauthId;
         this.email = email;
+        this.password = password;
+        this.name = name;
         this.birth = birth;
         this.gender = gender;
-        this.name = name;
         this.phone = phone;
         this.loginType = loginType;
         this.nickname = nickname;
@@ -178,5 +184,24 @@ public class Member extends BaseEntity {
 
     public void setSurvey(Survey survey) {
         this.survey = survey;
+    }
+
+    public void addCommunity(Community community) {
+        if (community == null) return;
+        community.changeMember(this);
+    }
+
+    public void addReply(CommunityReply reply) {
+        this.communityReplies.add(reply);
+        if (reply.getMember() != this) {
+            reply.setMember(this);
+        }
+    }
+
+    public void addReplyLike(CommunityReplyLike like) {
+        this.replyLikes.add(like);
+        if (like.getMember() != this) {
+            like.setMember(this);
+        }
     }
 }
