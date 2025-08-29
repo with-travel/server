@@ -53,7 +53,9 @@ public class MemberSignupService {
         Member member = getUserByLoginEmailOrElseThrow(email);
 
         MemberSignupRequestDto extra = req.getExtraInfo();
-        member.updateExtraInfo(extra.getNickname(), extra.getBirthdate(), extra.getGender(), extra.getIntroduction());
+        member.updateExtraInfo(extra.getNickname(), extra.getBirthdate(), extra.getGender(),
+                extra.getIntroduction(), extra.getEmail(), extra.getPassword(),
+                extra.getName(), extra.getPhone());
 
 //        req.getSurveys().forEach(sdto -> {
 //            Survey survey = Survey.create(member, sdto.getAnswers());
@@ -84,7 +86,7 @@ public class MemberSignupService {
                     return memberRepository.save(inserted);
                 });
     }
-  
+
     private Member getUserByLoginEmailOrElseThrow(String loginEmail) {
         return memberRepository.findByEmail(loginEmail)
                 .orElseThrow(() -> BaseException.from(ErrorCode.MEMBER_NOT_FOUND));
@@ -97,7 +99,11 @@ public class MemberSignupService {
         member.updateExtraInfo(dto.getNickname(),
                 dto.getBirthdate(),
                 dto.getGender(),
-                dto.getIntroduction());
+                dto.getIntroduction(),
+                dto.getEmail(),
+                dto.getPassword(),
+                dto.getName(),
+                dto.getPhone());
 
         return MemberSignupResponseDto.from(member);
     }

@@ -9,6 +9,7 @@ import com.arom.with_travel.domain.community_reply.CommunityReply;
 import com.arom.with_travel.domain.community_reply.CommunityReplyLike;
 import com.arom.with_travel.domain.image.Image;
 import com.arom.with_travel.domain.likes.Likes;
+import com.arom.with_travel.domain.member.dto.request.MemberSignupRequestDto;
 import com.arom.with_travel.domain.shorts.Shorts;
 import com.arom.with_travel.domain.shorts_reply.ShortsReply;
 import com.arom.with_travel.domain.survey.Survey;
@@ -29,6 +30,8 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE member SET is_deleted = true, deleted_at = now() where id = ?")
 @SQLRestriction("is_deleted is FALSE")
+@Builder
+@AllArgsConstructor
 public class Member extends BaseEntity {
 
     @Id
@@ -70,7 +73,8 @@ public class Member extends BaseEntity {
     }
 
     public enum LoginType {
-        KAKAO
+        KAKAO,
+        LOCAL
     }
 
     public Member(String memberName, String email, Role role) {
@@ -129,25 +133,6 @@ public class Member extends BaseEntity {
     @OneToOne(mappedBy = "member")
     private Image image;
 
-    @Builder
-    public Member(Long id, String oauthId, String email, String password, String name,
-                  LocalDate birth, Gender gender, String phone, LoginType loginType,
-                  String nickname, String introduction, TravelType travelType, Role role) {
-        this.id = id;
-        this.oauthId = oauthId;
-        this.email = email;
-        this.password = password;
-        this.name = name;
-        this.birth = birth;
-        this.gender = gender;
-        this.phone = phone;
-        this.loginType = loginType;
-        this.nickname = nickname;
-        this.introduction = introduction;
-        this.travelType = travelType;
-        this.role = role;
-    }
-
     public void validateNotAlreadyAppliedTo(Accompany accompany) {
         boolean alreadyApplied = accompanyApplies.stream()
                 .anyMatch(apply -> apply.getAccompany().equals(accompany));
@@ -166,12 +151,17 @@ public class Member extends BaseEntity {
                 .build();
     }
 
-    // 신규 회원 추가 정보 등록; 닉네임/생년월일/성별
-    public void updateExtraInfo(String nickname, LocalDate birth, Gender gender, String introduction) {
+    // 신규 회원 추가 정보 등록;
+    public void updateExtraInfo(String nickname, LocalDate birth, Gender gender, String introduction,
+                                String email, String password, String name, String phone) {
         this.nickname = nickname;
         this.birth    = birth;
         this.gender   = gender;
         this.introduction = introduction;
+        this.email    = email;
+        this.password = password;
+        this.name = name;
+        this.phone = phone;
     }
 
     public void markAdditionalDataChecked() {
