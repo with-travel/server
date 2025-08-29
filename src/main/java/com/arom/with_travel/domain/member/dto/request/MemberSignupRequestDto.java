@@ -46,7 +46,10 @@ public class MemberSignupRequestDto {
     private String name;
 
     @NotBlank(message = "전화번호를 입력해주세요.")
-    @Pattern(regexp = "^[0-9\\-]{8,15}$", message = "전화번호 형식이 올바르지 않습니다.")
+    @Pattern(
+            regexp = "^01[0-9]-\\d{3,4}-\\d{4}$",
+            message = "전화번호 형식이 올바르지 않습니다. (예: 010-1234-5678)"
+    )
     @Schema(description = "전화번호", example = "010-1234-5678")
     private String phone;
 }
