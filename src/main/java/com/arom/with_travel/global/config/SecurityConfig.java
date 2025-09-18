@@ -52,7 +52,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/signup/**").permitAll()
                         .requestMatchers("/", "/index/**", "/index.js", "/favicon.ico",
                                 "/templates", "/error", "/v3/api-docs/**", "/swagger-ui/**", "/api/v1/login",
-                                "/actuator/**","/api/v1/auth/**").permitAll()
+                                "/actuator/**","/api/v1/signup/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling((exceptionHandling) -> exceptionHandling
