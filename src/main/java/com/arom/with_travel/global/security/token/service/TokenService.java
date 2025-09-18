@@ -32,26 +32,10 @@ public class TokenService {
         return jwtProvider.generateAccessToken(member);
     }
 
-    // 리프레시 토큰 삭제
-    public void deleteRefreshToken(String loginEmail) {
-        Member member = memberService.getUserByLoginEmailOrElseThrow(loginEmail);
-        RefreshToken refreshToken = refreshTokenRepository.findByMemberId(member.getId())
-                .orElseThrow(() -> BaseException.from(ErrorCode.TOKEN_NOT_FOUND));
-
-        refreshTokenRepository.delete(refreshToken);
-    }
-
     private void validateRefreshTokenOrElseThrow(String refreshToken) {
         if (!jwtProvider.isRefreshTokenExpired(refreshToken)) {
             throw BaseException.from(ErrorCode.INVALID_TOKEN);
         }
-    }
-
-    public AuthTokenResponse issueTokenPair(String loginEmail) {
-        Member member = memberService.getUserByLoginEmailOrElseThrow(loginEmail);
-        String accessToken = jwtProvider.generateAccessToken(member);
-        String refreshToken = jwtProvider.generateRefreshToken(member);
-        return new AuthTokenResponse(accessToken, refreshToken);
     }
 
     private RefreshToken loadRefreshTokenOrThrow(String refreshToken) {

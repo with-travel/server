@@ -1,7 +1,6 @@
 package com.arom.with_travel.domain.member.dto.response;
 
 import com.arom.with_travel.domain.member.Member;
-import com.arom.with_travel.global.jwt.dto.response.AuthTokenResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,7 +9,7 @@ import java.time.LocalDate;
 
 @Getter
 @AllArgsConstructor
-public class MemberSignupTokenResponse {
+public class MemberInfoResponse {
     @Schema(example = "1")
     private Long id;
 
@@ -28,8 +27,8 @@ public class MemberSignupTokenResponse {
 
     private Boolean infoChecked;
 
-    public static MemberSignupTokenResponse from(Member member) {
-        return new MemberSignupTokenResponse(
+    public static MemberInfoResponse from(Member member) {
+        return new MemberInfoResponse(
                 member.getId(),
                 member.getEmail(),
                 member.getNickname(),

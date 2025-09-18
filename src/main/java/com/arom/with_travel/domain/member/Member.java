@@ -28,9 +28,6 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE member SET is_deleted = true, deleted_at = now() where id = ?")
-@SQLRestriction("is_deleted is FALSE")
-@Builder
 @AllArgsConstructor
 public class Member extends BaseEntity {
 
@@ -133,6 +130,25 @@ public class Member extends BaseEntity {
     @OneToOne(mappedBy = "member")
     private Image image;
 
+    @Builder
+    private Member(String nickname,
+                   LocalDate birth,
+                   Gender gender,
+                   String introduction,
+                   String email,
+                   String password,
+                   String name,
+                   String phone){
+        this.nickname   = nickname;
+        this.birth   = birth;
+        this.gender = gender;
+        this.introduction = introduction;
+        this.email   = email;
+        this.password  = password;
+        this.name = name;
+        this.phone = phone;
+    }
+
     public void validateNotAlreadyAppliedTo(Accompany accompany) {
         boolean alreadyApplied = accompanyApplies.stream()
                 .anyMatch(apply -> apply.getAccompany().equals(accompany));
@@ -141,17 +157,6 @@ public class Member extends BaseEntity {
         }
     }
 
-    // 신규 회원 최초 가입 처리
-    public static Member signUp(String email, String oauthId) {
-        return Member.builder()
-                .email(email)
-                .oauthId(oauthId)
-                .loginType(LoginType.KAKAO)
-                .role(Role.USER)        // 최초 가입 시 USER
-                .build();
-    }
-
-    // 신규 회원 추가 정보 등록;
     public void updateExtraInfo(String nickname, LocalDate birth, Gender gender, String introduction,
                                 String email, String password, String name, String phone) {
         this.nickname = nickname;
@@ -193,5 +198,16 @@ public class Member extends BaseEntity {
         if (like.getMember() != this) {
             like.setMember(this);
         }
+    }
+
+    public static Member create(String nickname,
+                              LocalDate birth,
+                              Gender gender,
+                              String introduction,
+                              String email,
+                              String password,
+                              String name,
+                              String phone){
+        return new Member(nickname, birth, gender, introduction, email, password, name, phone);
     }
 }

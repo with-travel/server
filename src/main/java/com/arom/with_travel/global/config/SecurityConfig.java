@@ -1,6 +1,5 @@
 package com.arom.with_travel.global.config;
 
-import com.arom.with_travel.domain.member.service.MemberSignupService;
 import com.arom.with_travel.global.security.config.CustomAccessDeniedHandler;
 import com.arom.with_travel.global.security.config.CustomAuthenticationEntryPoint;
 import com.arom.with_travel.global.security.filter.JwtFilter;
