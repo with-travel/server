@@ -48,7 +48,7 @@ public class MemberService {
     }
 
     @Transactional
-    public MemberSignupResponseDto signup(SignupWithSurveyRequestDto req) {
+    public void signup(SignupWithSurveyRequestDto req) {
         MemberSignupRequestDto extra = req.getExtraInfo();
         SurveyRequestDto s = req.getSurvey();
         Member member = Member.create(
@@ -70,7 +70,6 @@ public class MemberService {
         member.markAdditionalDataChecked();
         memberRepository.save(member);
         surveyRepository.save(survey);
-        return MemberSignupResponseDto.from(member);
     }
 
     @Transactional

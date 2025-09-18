@@ -29,9 +29,9 @@ public class MemberController {
     }
 
     @PostMapping("/signup")
-    public MemberSignupResponseDto signup(
+    public void signup(
             @RequestBody @Valid SignupWithSurveyRequestDto req) {
-        return memberService.signup(req);
+        memberService.signup(req);
     }
 
     @GetMapping("/user-info")
