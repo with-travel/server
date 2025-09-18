@@ -34,7 +34,7 @@ public class MemberController {
         return memberService.signup(req);
     }
 
-    @GetMapping("/user-info")
+    @GetMapping("/signup/user-info")
     public MemberInfoResponse getMyInfo(@AuthenticationPrincipal PrincipalDetails principal) {
         return memberService.getSignupInfo(principal.getUsername());
     }
