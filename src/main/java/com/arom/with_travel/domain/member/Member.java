@@ -38,7 +38,7 @@ public class Member extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    //@Column(unique = true)
     private String oauthId;
 
     private String email;

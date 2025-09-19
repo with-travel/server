@@ -9,11 +9,13 @@ import lombok.Getter;
 public class AuthenticatedMember {
     private Long memberId;
     private String email;
+    private final String role;
 
     public static AuthenticatedMember from(Member member){
         return new AuthenticatedMember(
                 member.getId(),
-                member.getEmail()
+                member.getEmail(),
+                member.getRole().name()
         );
     }
 }
