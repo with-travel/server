@@ -1,10 +1,15 @@
 package com.arom.with_travel.domain.community;
 
+import com.arom.with_travel.domain.community.enums.CommunityTag;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.StringUtils;
 
 public class CommunitySpecs {
     private CommunitySpecs() {}
+
+    public static Specification<Community> tagEq(CommunityTag tag) {
+        return (root, q, cb) -> (tag != null) ? cb.equal(root.get("tag"), tag) : null;
+    }
 
     public static Specification<Community> continentEq(String continent) {
         return (root, q, cb) -> StringUtils.hasText(continent) ? cb.equal(root.get("continent"), continent) : null;

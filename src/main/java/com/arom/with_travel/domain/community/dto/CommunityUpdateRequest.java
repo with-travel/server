@@ -1,5 +1,6 @@
 package com.arom.with_travel.domain.community.dto;
 
+import com.arom.with_travel.domain.community.enums.CommunityTag;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,7 @@ public class CommunityUpdateRequest {
     private String continent;
     private String country;
     private String city;
+    private CommunityTag tag;
     private List<ImageUpdate> images;
 
     @Getter
