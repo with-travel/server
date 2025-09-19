@@ -1,5 +1,6 @@
 package com.arom.with_travel.domain.community;
 
+import com.arom.with_travel.domain.community.enums.CommunityTag;
 import com.arom.with_travel.domain.community_reply.CommunityReply;
 import com.arom.with_travel.domain.image.Image;
 import com.arom.with_travel.domain.member.Member;
@@ -18,12 +19,17 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE community SET is_deleted = true, deleted_at = now() where id = ?")
-@SQLRestriction("is_deleted is FALSE")
+@SQLDelete(sql = "UPDATE community SET is_deleted = true, deleted_at = now() WHERE id = ?")
+@SQLRestriction("is_deleted = FALSE")
+@Table(indexes = {
+        @Index(name = "idx_community_tag", columnList = "tag"),
+        @Index(name = "idx_community_created_at", columnList = "created_at"),
+        @Index(name = "idx_community_like_count", columnList = "like_count"),
+        @Index(name = "idx_community_view_count", columnList = "view_count")
+})
 public class Community extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull @Column(length = 120)
@@ -31,6 +37,10 @@ public class Community extends BaseEntity {
 
     @NotNull @Lob
     private String content;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20, nullable = false)
+    private CommunityTag tag;
 
     @NotNull private String continent;
     @NotNull private String country;
@@ -43,18 +53,27 @@ public class Community extends BaseEntity {
     @OneToMany(mappedBy = "community", orphanRemoval = true)
     private List<CommunityReply> communityReplies = new ArrayList<>();
 
-    @OneToMany(mappedBy = "community")
+    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Image> images = new ArrayList<>();
 
-    @Column(nullable = false)
+    @Column(name = "view_count", nullable = false)
     private long viewCount = 0L;
 
+    @Column(name = "like_count", nullable = false)
+    private long likeCount = 0L;
+
+    @Column(name = "reply_count", nullable = false)
+    private long replyCount = 0L;
+
     public static Community create(Member writer, String title, String content,
+                                   CommunityTag tag,
                                    String continent, String country, String city) {
         Community c = Community.builder()
                 .member(writer)
                 .title(title)
                 .content(content)
+                .tag(tag)
                 .continent(continent)
                 .country(country)
                 .city(city)
@@ -80,9 +99,16 @@ public class Community extends BaseEntity {
         }
     }
 
-    public void update(String title, String content, String continent, String country, String city) {
+    public void addImage(Image image) {
+        images.add(image);
+        image.attachToCommunity(this);
+    }
+
+    public void update(String title, String content, CommunityTag tag,
+                       String continent, String country, String city) {
         this.title = title;
         this.content = content;
+        this.tag = tag;
         this.continent = continent;
         this.country = country;
         this.city = city;

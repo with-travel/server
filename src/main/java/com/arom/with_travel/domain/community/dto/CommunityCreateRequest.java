@@ -1,5 +1,6 @@
 package com.arom.with_travel.domain.community.dto;
 
+import com.arom.with_travel.domain.community.enums.CommunityTag;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -17,6 +18,7 @@ public class CommunityCreateRequest {
     @NotEmpty String continent;
     @NotEmpty String country;
     @NotEmpty String city;
+    private CommunityTag tag;
     private List<ImageCreate> images;
 
     @Getter

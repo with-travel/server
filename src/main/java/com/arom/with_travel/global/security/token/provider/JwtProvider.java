@@ -22,7 +22,7 @@ import static com.arom.with_travel.global.security.token.properties.JwtPropertie
 @Getter
 @Component
 @Slf4j
-public class JwtProvider{
+public class JwtProvider {
 
     private final SecretKey SECRET_KEY;
     private final String ISS;
@@ -38,58 +38,83 @@ public class JwtProvider{
     }
 
     public String generateAccessToken(Member member) {
-        String token = Jwts.builder()
+        return Jwts.builder()
                 .claim("type", "access")
                 .issuedAt(new Date())
+                .subject(member.getEmail())
                 .issuer(ISS)
-                .audience()
-                    .add(member.getEmail())
-                    .add(String.valueOf(member.getId()))
-                    .add(member.getRole().name()).and()
-                .expiration(new Date(new Date().getTime() + ACCESS_TOKEN_EXPIRE_TIME))
+                .id(java.util.UUID.randomUUID().toString())
+                .expiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRE_TIME))
                 .signWith(SECRET_KEY)
                 .compact();
-        log.info("[generateAccessToken] {}", token);
-        return token;
     }
 
     public String generateRefreshToken(Member member) {
-        String token = Jwts.builder()
+        return Jwts.builder()
                 .claim("type", "refresh")
                 .issuedAt(new Date())
+                .subject(member.getEmail())
                 .issuer(ISS)
                 .audience()
                 .add(String.valueOf(member.getId())).and()
-                .expiration(new Date(new Date().getTime() + REFRESH_TOKEN_EXPIRE_TIME))
+                .id(java.util.UUID.randomUUID().toString())
+                .expiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRE_TIME))
                 .signWith(SECRET_KEY)
                 .compact();
-        log.info("[generateRefreshToken] {}", token);
-        return token;
     }
 
-    public String parseAudience(String token) {
+    public String getEmailFromAccessToken(String token) {
+        Jws<Claims> claims = Jwts.parser().verifyWith(SECRET_KEY).build().parseSignedClaims(token);
+        Claims body = claims.getPayload();
+        if (body.getExpiration().before(new Date())) {
+            throw BaseException.from(EXPIRED_ACCESS_TOKEN);
+        }
+        if (!"access".equals(body.get("type", String.class))) {
+            throw BaseException.from(INVALID_TOKEN);
+        }
+        return body.getSubject();
+    }
+
+    public void validateAudience(String token, String expectedAud) {
         try {
-            Jws<Claims> claims = Jwts.parser()
-                    .verifyWith(SECRET_KEY)
-                    .build()
-                    .parseSignedClaims(token);
-            if (claims.getPayload()
-                    .getExpiration()
-                    .before(new Date())) {
+            Jws<Claims> claims = Jwts.parser().verifyWith(SECRET_KEY).build().parseSignedClaims(token);
+            Claims body = claims.getPayload();
+            if (body.getExpiration().before(new Date())) {
                 throw BaseException.from(EXPIRED_ACCESS_TOKEN);
             }
-            return claims.getPayload()
-                    .getAudience()
-                    .iterator()
-                    .next();
-        } catch (JwtException | IllegalArgumentException e) {
-            log.warn("[parseAudience] {} :{}", INVALID_TOKEN, token);
-            throw BaseException.from(INVALID_TOKEN);
+            var audiences = body.getAudience();
+            if (audiences == null || !audiences.contains(expectedAud)) {
+                throw BaseException.from(INVALID_TOKEN);
+            }
         } catch (BaseException e) {
-            log.warn("[parseAudience] {} :{}", EXPIRED_ACCESS_TOKEN, token);
+            // 만료 등 우리 쪽 예외만 캐치해서 동일 코드로 재던짐(스크린샷 흐름 반영)
             throw BaseException.from(EXPIRED_ACCESS_TOKEN);
         }
     }
+
+//    public String parseAudience(String token) {
+//        try {
+//            Jws<Claims> claims = Jwts.parser()
+//                    .verifyWith(SECRET_KEY)
+//                    .build()
+//                    .parseSignedClaims(token);
+//            if (claims.getPayload()
+//                    .getExpiration()
+//                    .before(new Date())) {
+//                throw BaseException.from(EXPIRED_ACCESS_TOKEN);
+//            }
+//            return claims.getPayload()
+//                    .getAudience()
+//                    .iterator()
+//                    .next();
+//        } catch (JwtException | IllegalArgumentException e) {
+//            log.warn("[parseAudience] {} :{}", INVALID_TOKEN, token);
+//            throw BaseException.from(INVALID_TOKEN);
+//        } catch (BaseException e) {
+//            log.warn("[parseAudience] {} :{}", EXPIRED_ACCESS_TOKEN, token);
+//            throw BaseException.from(EXPIRED_ACCESS_TOKEN);
+//        }
+//    }
 
     public boolean isRefreshTokenExpired(String token) {
         try {
@@ -102,12 +127,12 @@ public class JwtProvider{
             String type = body.get("type", String.class);
 
             if (!"refresh".equals(type)) {
-                throw BaseException.from(INVALID_TOKEN); // 타입이 refresh가 아닐 경우
+                throw BaseException.from(INVALID_TOKEN);
             }
 
             return body.getExpiration().before(new Date());
         } catch (JwtException e) {
-            throw BaseException.from(INVALID_TOKEN); // 구조가 잘못되었거나 서명 불일치
+            throw BaseException.from(INVALID_TOKEN);
         }
     }
 }

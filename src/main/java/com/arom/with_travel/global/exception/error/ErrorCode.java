@@ -66,6 +66,7 @@ public enum ErrorCode {
     // image
     INVALID_IMG_TYPE("IMG-0000", "지원하지 않는 이미지 형식입니다.", ErrorDisplayType.POPUP),
     IMG_URL_MUST_FILLED("IMG-0001", "이미지 url이 존재해야합니다.", ErrorDisplayType.POPUP),
+    IMG_SAVE_FAIL("IMG-0002", "이미지 저장에 실패했습니다.", ErrorDisplayType.POPUP),
 
     // community
     CONTINENT_NOT_FOUND("COM-0000", "해당 대륙이 존재하지 않습니다.", ErrorDisplayType.POPUP),
@@ -79,7 +80,10 @@ public enum ErrorCode {
     // login
     DUPLICATED_EMAIL("LOGIN-0001", "중복된 이메일이 존재합니다.", ErrorDisplayType.POPUP),
     INVALID_CREDENTIALS("LOGIN-0002", "비밀번호가 올바르지 않습니다.", ErrorDisplayType.POPUP),
-    LOGIN_FAIL("LOGIN-0003", "로그인 과정이 정상적으로 이루어지지 않았습니다.", ErrorDisplayType.POPUP)
+    LOGIN_FAIL("LOGIN-0003", "로그인 과정이 정상적으로 이루어지지 않았습니다.", ErrorDisplayType.POPUP),
+
+    // Auth / Security
+    AUTH_UNSUPPORTED_PRINCIPAL("AUTH-0001", "지원하지 않는 인증 주체입니다.", ErrorDisplayType.POPUP)
     ;
 
     private final String code;

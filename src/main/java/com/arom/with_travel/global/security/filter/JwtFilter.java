@@ -40,23 +40,27 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+
         String token = resolveToken(request);
-        String aud = jwtProvider.parseAudience(token);
-        PrincipalDetails principalDetails = memberDetailsService.loadUserByUsername(aud);
-        Authentication authentication
-                = new UsernamePasswordAuthenticationToken(
-                principalDetails,
+        String email = jwtProvider.getEmailFromAccessToken(token);
+        PrincipalDetails pd = memberDetailsService.loadUserByUsername(email);
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                pd,
                 null,
-                principalDetails.getAuthorities());
+                pd.getAuthorities()
+        );
+
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(authentication);
         SecurityContextHolder.setContext(context);
         securityContextRepository.saveContext(context, request, response);
+
         filterChain.doFilter(request, response);
     }
 
-    private String resolveToken(HttpServletRequest httpServletRequest) {
-        String authorization = httpServletRequest.getHeader(HEADER_AUTHORIZATION);
+    private String resolveToken(HttpServletRequest req) {
+        String authorization = req.getHeader(HEADER_AUTHORIZATION);
         if (authorization == null) {
             throw BaseException.from(EMPTY_TOKEN_PROVIDED);
         }
