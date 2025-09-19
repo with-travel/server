@@ -19,8 +19,14 @@ public interface CommunityRepository extends JpaRepository<Community, Long>,
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("update Community c set c.viewCount = c.viewCount + 1 where c.id = :id")
     int increaseViewCount(Long id);
-    
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("update Community c set c.likeCount = c.likeCount + :delta where c.id = :id")
+    int addLikeCount(Long id, long delta);
+
     Page<Community> findByTagOrderByCreatedAtDesc(CommunityTag tag, Pageable pageable);
+
+    List<Community> findTop2ByOrderByLikeCountDescIdDesc();
 
     default Page<Community> search(Specification<Community> spec, Pageable pageable) {
         return this.findAll(spec, pageable);

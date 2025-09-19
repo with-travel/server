@@ -57,6 +57,21 @@ public class CommunityController {
         return communityService.search(continent, country, city, keyword, tag, pageable);
     }
 
+    @GetMapping("/top-liked")
+    public List<CommunityListItemResponse> topLiked() {
+        return communityService.topLiked();
+    }
+
+    @PostMapping("/{id}/like")
+    public Map<String, Object> toggleLike(
+            @PathVariable Long id,
+            @AuthenticationPrincipal PrincipalDetails principal
+    ) {
+        Long me = principal.getAuthenticatedMember().getMemberId();
+        boolean liked = communityService.toggleLike(id, me);
+        return Map.of("liked", liked);
+    }
+
     @PatchMapping("/{id}")
     public CommunityDetailResponse update(
             @PathVariable Long id,

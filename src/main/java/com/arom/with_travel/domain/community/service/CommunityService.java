@@ -197,6 +197,40 @@ public class CommunityService {
                 ));
     }
 
+    @Transactional(readOnly = true)
+    public List<CommunityListItemResponse> topLiked() {
+        return communityRepository.findTop2ByOrderByLikeCountDescIdDesc().stream()
+                .map(c -> new CommunityListItemResponse(
+                        c.getId(), c.getTitle(),
+                        c.getContent().length() > 30 ? c.getContent().substring(0, 30) + "..." : c.getContent(),
+                        c.getTag(), c.getContinent(), c.getCountry(), c.getCity(),
+                        c.getMember().getId(), c.getMember().getNickname(),
+                        c.getViewCount(), c.getLikeCount(), c.getReplyCount(),
+                        c.getCreatedAt().toString()
+                ))
+                .toList();
+    }
+
+    @Transactional
+    public boolean toggleLike(Long communityId, Long currentMemberId) {
+        Community c = communityRepository.findById(communityId)
+                .orElseThrow(() -> BaseException.from(ErrorCode.COMMUNITY_NOT_FOUND));
+        Member m = memberRepository.findById(currentMemberId)
+                .orElseThrow(() -> BaseException.from(ErrorCode.MEMBER_NOT_FOUND));
+
+        return likesRepository.findByCommunityIdAndMemberId(communityId, currentMemberId)
+                .map(existing -> {
+                    likesRepository.delete(existing);
+                    communityRepository.addLikeCount(communityId, -1);
+                    return false;
+                })
+                .orElseGet(() -> {
+                    likesRepository.save(Likes.forCommunity(m, c));
+                    communityRepository.addLikeCount(communityId, +1);
+                    return true;
+                });
+    }
+
     private void validateOwnership(Long currentMemberId, Long ownerId) {
         if (!ownerId.equals(currentMemberId)) {
             throw BaseException.from(ErrorCode.COMMUNITY_FORBIDDEN);
