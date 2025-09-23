@@ -2,6 +2,7 @@ package com.arom.with_travel.global.security.filter;
 
 import com.arom.with_travel.global.exception.BaseException;
 import com.arom.with_travel.global.security.domain.PrincipalDetails;
+import com.arom.with_travel.global.security.error.AuthException;
 import com.arom.with_travel.global.security.service.MemberDetailsService;
 import com.arom.with_travel.global.security.token.provider.JwtProvider;
 import jakarta.servlet.FilterChain;
@@ -19,7 +20,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-import static com.arom.with_travel.global.exception.error.ErrorCode.EMPTY_TOKEN_PROVIDED;
+import static com.arom.with_travel.global.security.error.AuthErrorCode.EMPTY_TOKEN_PROVIDED;
 import static com.arom.with_travel.global.security.token.properties.JwtProperties.HEADER_AUTHORIZATION;
 import static com.arom.with_travel.global.security.token.properties.JwtProperties.TOKEN_PREFIX;
 
@@ -62,11 +63,11 @@ public class JwtFilter extends OncePerRequestFilter {
     private String resolveToken(HttpServletRequest req) {
         String authorization = req.getHeader(HEADER_AUTHORIZATION);
         if (authorization == null) {
-            throw BaseException.from(EMPTY_TOKEN_PROVIDED);
+            throw AuthException.from(EMPTY_TOKEN_PROVIDED);
         }
         if (authorization.startsWith(TOKEN_PREFIX)) {
             return authorization.substring(7);
         }
-        throw BaseException.from(EMPTY_TOKEN_PROVIDED);
+        throw AuthException.from(EMPTY_TOKEN_PROVIDED);
     }
 }

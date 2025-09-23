@@ -1,5 +1,6 @@
 package com.arom.with_travel.domain.survey.enums;
 
+import com.arom.with_travel.domain.survey.error.SurveyException;
 import com.arom.with_travel.global.exception.BaseException;
 import com.arom.with_travel.global.exception.error.ErrorCode;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -7,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 
 import java.util.Arrays;
+
+import static com.arom.with_travel.domain.survey.error.SurveyErrorCode.INVALID_SURVEY_ENERGYLEVEL;
 
 @AllArgsConstructor
 public enum EnergyLevel implements SurveyEnum {
@@ -32,6 +35,6 @@ public enum EnergyLevel implements SurveyEnum {
         return Arrays.stream(values())
                 .filter(v -> v.name().equalsIgnoreCase(value) || v.code.equalsIgnoreCase(value))
                 .findFirst()
-                .orElseThrow(() -> BaseException.from(ErrorCode.INVALID_SURVEY_ENERGYLEVEL));
+                .orElseThrow(() -> SurveyException.from(INVALID_SURVEY_ENERGYLEVEL));
     }
 }

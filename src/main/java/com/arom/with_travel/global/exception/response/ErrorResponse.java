@@ -32,13 +32,13 @@ public class ErrorResponse {
     public static ErrorResponse generateFrom(BaseException baseException){
         if(baseException.hasCustomMessage()) {
             return new ErrorResponse(
-                    baseException.getErrorCode().getCode(),
+                    baseException.getBaseCode().getCode(),
                     baseException.getCustomErrorMessage(),
-                    baseException.getErrorCode().getDisplayType());
+                    baseException.getBaseCode().getDisplayType());
         }
         return new ErrorResponse(
-                baseException.getErrorCode().getCode(),
-                baseException.getErrorCode().getMessage(),
-                baseException.getErrorCode().getDisplayType());
+                baseException.getBaseCode().getCode(),
+                baseException.getBaseCode().getMessage(),
+                baseException.getBaseCode().getDisplayType());
     }
 }

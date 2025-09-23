@@ -2,6 +2,7 @@ package com.arom.with_travel.domain.accompanies.service;
 
 import com.arom.with_travel.domain.accompanies.dto.response.AccompanyBriefResponse;
 import com.arom.with_travel.domain.accompanies.dto.response.CursorSliceResponse;
+import com.arom.with_travel.domain.accompanies.error.AccompanyException;
 import com.arom.with_travel.domain.accompanies.model.Accompany;
 import com.arom.with_travel.domain.accompanies.dto.request.AccompanyPostRequest;
 import com.arom.with_travel.domain.accompanies.dto.response.AccompanyDetailsResponse;
@@ -13,6 +14,7 @@ import com.arom.with_travel.domain.image.repository.ImageRepository;
 import com.arom.with_travel.domain.likes.Likes;
 import com.arom.with_travel.domain.likes.repository.LikesRepository;
 import com.arom.with_travel.domain.member.Member;
+import com.arom.with_travel.domain.member.error.MemberException;
 import com.arom.with_travel.domain.member.repository.MemberRepository;
 import com.arom.with_travel.global.exception.BaseException;
 import com.arom.with_travel.global.exception.error.ErrorCode;
@@ -24,6 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+
+import static com.arom.with_travel.domain.accompanies.error.AccompanyErrorCode.ACCOMPANY_NOT_FOUND;
+import static com.arom.with_travel.domain.member.error.MemberErrorCode.MEMBER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -82,12 +87,12 @@ public class AccompanyService {
 
     private Member loadMemberOrThrow(String oauthId){
         return memberRepository.findByOauthId(oauthId)
-                .orElseThrow(() -> BaseException.from(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> MemberException.from(MEMBER_NOT_FOUND));
     }
 
     private Accompany loadAccompanyOrThrow(Long accompanyId){
         return accompanyRepository.findById(accompanyId)
-                .orElseThrow(() -> BaseException.from(ErrorCode.ACCOMPANY_NOT_FOUND));
+                .orElseThrow(() -> AccompanyException.from(ACCOMPANY_NOT_FOUND));
     }
 
     private Optional<Likes> loadLikes(Accompany accompany, Member member) {

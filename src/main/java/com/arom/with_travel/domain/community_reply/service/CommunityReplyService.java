@@ -1,15 +1,18 @@
 package com.arom.with_travel.domain.community_reply.service;
 
 import com.arom.with_travel.domain.community.Community;
+import com.arom.with_travel.domain.community.error.CommunityException;
 import com.arom.with_travel.domain.community.repository.CommunityRepository;
 import com.arom.with_travel.domain.community_reply.CommunityReply;
 import com.arom.with_travel.domain.community_reply.CommunityReplyLike;
 import com.arom.with_travel.domain.community_reply.dto.ReplyCreateRequest;
 import com.arom.with_travel.domain.community_reply.dto.ReplyResponse;
 import com.arom.with_travel.domain.community_reply.dto.ReplyUpdateRequest;
+import com.arom.with_travel.domain.community_reply.error.CommunityReplyException;
 import com.arom.with_travel.domain.community_reply.repository.CommunityReplyLikeRepository;
 import com.arom.with_travel.domain.community_reply.repository.CommunityReplyRepository;
 import com.arom.with_travel.domain.member.Member;
+import com.arom.with_travel.domain.member.error.MemberException;
 import com.arom.with_travel.domain.member.repository.MemberRepository;
 import com.arom.with_travel.global.exception.BaseException;
 import com.arom.with_travel.global.exception.error.ErrorCode;
@@ -18,6 +21,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static com.arom.with_travel.domain.community.error.CommunityErrorCode.COMMUNITY_NOT_FOUND;
+import static com.arom.with_travel.domain.community_reply.error.CommunityReplyErrorCode.REPLY_FORBIDDEN;
+import static com.arom.with_travel.domain.community_reply.error.CommunityReplyErrorCode.REPLY_NOT_FOUND;
+import static com.arom.with_travel.domain.member.error.MemberErrorCode.MEMBER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -30,9 +38,9 @@ public class CommunityReplyService {
     @Transactional
     public Long write(Long currentMemberId, Long communityId, ReplyCreateRequest req) {
         Member writer = memberRepository.findById(currentMemberId)
-                .orElseThrow(() -> BaseException.from(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> MemberException.from(MEMBER_NOT_FOUND));
         Community community = communityRepository.findById(communityId)
-                .orElseThrow(() -> BaseException.from(ErrorCode.COMMUNITY_NOT_FOUND));
+                .orElseThrow(() -> CommunityException.from(COMMUNITY_NOT_FOUND));
 
         CommunityReply saved = replyRepository.save(CommunityReply.create(community, writer, req.getContent()));
         return saved.getId();
@@ -41,9 +49,9 @@ public class CommunityReplyService {
     @Transactional
     public void update(Long currentMemberId, Long replyId, ReplyUpdateRequest req) {
         CommunityReply reply = replyRepository.findById(replyId)
-                .orElseThrow(() -> BaseException.from(ErrorCode.REPLY_NOT_FOUND));
+                .orElseThrow(() -> CommunityReplyException.from(REPLY_NOT_FOUND));
         if (!reply.getMember().getId().equals(currentMemberId)) {
-            throw BaseException.from(ErrorCode.REPLY_FORBIDDEN);
+            throw CommunityReplyException.from(REPLY_FORBIDDEN);
         }
         reply.changeContent(req.getContent());
     }
@@ -51,9 +59,9 @@ public class CommunityReplyService {
     @Transactional
     public void delete(Long currentMemberId, Long replyId) {
         CommunityReply reply = replyRepository.findById(replyId)
-                .orElseThrow(() -> BaseException.from(ErrorCode.REPLY_NOT_FOUND));
+                .orElseThrow(() -> CommunityReplyException.from(REPLY_NOT_FOUND));
         if (!reply.getMember().getId().equals(currentMemberId)) {
-            throw BaseException.from(ErrorCode.REPLY_FORBIDDEN);
+            throw CommunityReplyException.from(REPLY_FORBIDDEN);
         }
         replyRepository.delete(reply);
     }
@@ -61,7 +69,7 @@ public class CommunityReplyService {
     @Transactional(readOnly = true)
     public Slice<ReplyResponse> listSlice(Long currentMemberIdOrNull, Long communityId, Pageable pageable) {
         Community community = communityRepository.findById(communityId)
-                .orElseThrow(() -> BaseException.from(ErrorCode.COMMUNITY_NOT_FOUND));
+                .orElseThrow(() -> CommunityException.from(COMMUNITY_NOT_FOUND));
 
         return replyRepository.findByCommunityOrderByCreatedAtAsc(community, pageable)
                 .map(r -> new ReplyResponse(
@@ -79,10 +87,10 @@ public class CommunityReplyService {
     @Transactional
     public void like(Long currentMemberId, Long replyId) {
         CommunityReply reply = replyRepository.findById(replyId)
-                .orElseThrow(() -> BaseException.from(ErrorCode.REPLY_NOT_FOUND));
+                .orElseThrow(() -> CommunityReplyException.from(REPLY_NOT_FOUND));
         if (!likeRepository.existsByReplyIdAndMemberId(replyId, currentMemberId)) {
             Member me = memberRepository.findById(currentMemberId)
-                    .orElseThrow(() -> BaseException.from(ErrorCode.MEMBER_NOT_FOUND));
+                    .orElseThrow(() -> MemberException.from(MEMBER_NOT_FOUND));
             likeRepository.save(CommunityReplyLike.of(reply, me));
         }
     }

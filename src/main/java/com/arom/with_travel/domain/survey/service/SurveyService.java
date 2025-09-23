@@ -2,16 +2,21 @@
 package com.arom.with_travel.domain.survey.service;
 
 import com.arom.with_travel.domain.member.Member;
+import com.arom.with_travel.domain.member.error.MemberException;
 import com.arom.with_travel.domain.member.repository.MemberRepository;
 import com.arom.with_travel.domain.survey.Survey;
 import com.arom.with_travel.domain.survey.dto.request.SurveyRequestDto;
 import com.arom.with_travel.domain.survey.dto.response.SurveyResponseDto;
+import com.arom.with_travel.domain.survey.error.SurveyException;
 import com.arom.with_travel.domain.survey.repository.SurveyRepository;
 import com.arom.with_travel.global.exception.BaseException;
 import com.arom.with_travel.global.exception.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static com.arom.with_travel.domain.member.error.MemberErrorCode.MEMBER_NOT_FOUND;
+import static com.arom.with_travel.domain.survey.error.SurveyErrorCode.SURVEY_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +28,7 @@ public class SurveyService {
     @Transactional
     public void saveSurvey(String email, SurveyRequestDto dto) {
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> BaseException.from(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> MemberException.from(MEMBER_NOT_FOUND));
 
         Survey survey = surveyRepository.findByMemberIdAndIsDeletedFalse(member.getId())
                 .map(existing -> { existing.update(dto); return existing; })
@@ -36,10 +41,10 @@ public class SurveyService {
     @Transactional(readOnly = true)
     public SurveyResponseDto getSurvey(String email) {
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> BaseException.from(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> MemberException.from(MEMBER_NOT_FOUND));
 
         Survey survey = surveyRepository.findByMemberIdAndIsDeletedFalse(member.getId())
-                .orElseThrow(() -> BaseException.from(ErrorCode.SURVEY_NOT_FOUND));
+                .orElseThrow(() -> SurveyException.from(SURVEY_NOT_FOUND));
 
         return SurveyResponseDto.from(survey);
     }

@@ -1,5 +1,6 @@
 package com.arom.with_travel.domain.accompanies.service;
 
+import com.arom.with_travel.domain.accompanies.error.AccompanyException;
 import com.arom.with_travel.domain.accompanies.model.Accompany;
 import com.arom.with_travel.domain.accompanies.repository.accompany.AccompanyRepository;
 import com.arom.with_travel.domain.accompanies.model.AccompanyComment;
@@ -8,6 +9,7 @@ import com.arom.with_travel.domain.accompanies.dto.request.AccompanyUpdateCommen
 import com.arom.with_travel.domain.accompanies.dto.response.AccompanyCommentSliceResponse;
 import com.arom.with_travel.domain.accompanies.repository.accompany.AccompanyCommentRepository;
 import com.arom.with_travel.domain.member.Member;
+import com.arom.with_travel.domain.member.error.MemberException;
 import com.arom.with_travel.domain.member.repository.MemberRepository;
 import com.arom.with_travel.global.exception.BaseException;
 import com.arom.with_travel.global.exception.error.ErrorCode;
@@ -20,6 +22,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+
+import static com.arom.with_travel.domain.accompanies.error.AccompanyErrorCode.ACCOMPANY_COMMENT_NOT_FOUND;
+import static com.arom.with_travel.domain.accompanies.error.AccompanyErrorCode.ACCOMPANY_NOT_FOUND;
+import static com.arom.with_travel.domain.member.error.MemberErrorCode.MEMBER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -63,22 +69,22 @@ public class AccompanyCommentService {
 
     private Member loadMemberOrThrow(String oauthId){
         return memberRepository.findByOauthId(oauthId)
-                .orElseThrow(() -> BaseException.from(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> MemberException.from(MEMBER_NOT_FOUND));
     }
 
     private Accompany loadAccompanyOrThrow(Long accompanyId){
         return accompanyRepository.findById(accompanyId)
-                .orElseThrow(() -> BaseException.from(ErrorCode.ACCOMPANY_NOT_FOUND));
+                .orElseThrow(() -> AccompanyException.from(ACCOMPANY_NOT_FOUND));
     }
 
     private AccompanyComment loadAccompanyCommentOrThrow(Long accompanyCommentId){
         return accompanyCommentRepository.findById(accompanyCommentId)
-                .orElseThrow(() -> BaseException.from(ErrorCode.ACCOMPANY_COMMENT_NOT_FOUND));
+                .orElseThrow(() -> AccompanyException.from(ACCOMPANY_COMMENT_NOT_FOUND));
     }
 
     private void isAccompanyExist(Long accompanyId){
         if(!accompanyRepository.existsById(accompanyId)){
-            throw BaseException.from(ErrorCode.ACCOMPANY_NOT_FOUND);
+            throw AccompanyException.from(ACCOMPANY_NOT_FOUND);
         }
     }
 }

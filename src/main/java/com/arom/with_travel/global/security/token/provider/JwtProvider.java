@@ -2,6 +2,7 @@ package com.arom.with_travel.global.security.token.provider;
 
 import com.arom.with_travel.domain.member.Member;
 import com.arom.with_travel.global.exception.BaseException;
+import com.arom.with_travel.global.security.error.AuthException;
 import io.jsonwebtoken.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -14,8 +15,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Date;
 
-import static com.arom.with_travel.global.exception.error.ErrorCode.EXPIRED_ACCESS_TOKEN;
-import static com.arom.with_travel.global.exception.error.ErrorCode.INVALID_TOKEN;
+import static com.arom.with_travel.global.security.error.AuthErrorCode.EXPIRED_ACCESS_TOKEN;
+import static com.arom.with_travel.global.security.error.AuthErrorCode.INVALID_TOKEN;
 import static com.arom.with_travel.global.security.token.properties.JwtProperties.ACCESS_TOKEN_EXPIRE_TIME;
 import static com.arom.with_travel.global.security.token.properties.JwtProperties.REFRESH_TOKEN_EXPIRE_TIME;
 
@@ -67,10 +68,10 @@ public class JwtProvider {
         Jws<Claims> claims = Jwts.parser().verifyWith(SECRET_KEY).build().parseSignedClaims(token);
         Claims body = claims.getPayload();
         if (body.getExpiration().before(new Date())) {
-            throw BaseException.from(EXPIRED_ACCESS_TOKEN);
+            throw AuthException.from(EXPIRED_ACCESS_TOKEN);
         }
         if (!"access".equals(body.get("type", String.class))) {
-            throw BaseException.from(INVALID_TOKEN);
+            throw AuthException.from(INVALID_TOKEN);
         }
         return body.getSubject();
     }
@@ -91,30 +92,6 @@ public class JwtProvider {
             throw BaseException.from(EXPIRED_ACCESS_TOKEN);
         }
     }
-
-//    public String parseAudience(String token) {
-//        try {
-//            Jws<Claims> claims = Jwts.parser()
-//                    .verifyWith(SECRET_KEY)
-//                    .build()
-//                    .parseSignedClaims(token);
-//            if (claims.getPayload()
-//                    .getExpiration()
-//                    .before(new Date())) {
-//                throw BaseException.from(EXPIRED_ACCESS_TOKEN);
-//            }
-//            return claims.getPayload()
-//                    .getAudience()
-//                    .iterator()
-//                    .next();
-//        } catch (JwtException | IllegalArgumentException e) {
-//            log.warn("[parseAudience] {} :{}", INVALID_TOKEN, token);
-//            throw BaseException.from(INVALID_TOKEN);
-//        } catch (BaseException e) {
-//            log.warn("[parseAudience] {} :{}", EXPIRED_ACCESS_TOKEN, token);
-//            throw BaseException.from(EXPIRED_ACCESS_TOKEN);
-//        }
-//    }
 
     public boolean isRefreshTokenExpired(String token) {
         try {

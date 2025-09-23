@@ -1,6 +1,7 @@
 package com.arom.with_travel.domain.accompanies.model;
 
 import com.arom.with_travel.domain.accompanies.dto.request.AccompanyNewCommentRequest;
+import com.arom.with_travel.domain.accompanies.error.AccompanyException;
 import com.arom.with_travel.domain.member.Member;
 import com.arom.with_travel.global.entity.BaseEntity;
 import com.arom.with_travel.global.exception.BaseException;
@@ -10,6 +11,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import static com.arom.with_travel.domain.accompanies.error.AccompanyErrorCode.ACCOMPANY_COMMENT_NO_PERMISSION_UPDATE;
 
 @Entity
 @Getter
@@ -43,7 +46,7 @@ public class AccompanyComment extends BaseEntity {
 
     public void validateIsCommentWriter(String memberId) {
         if(!member.getOauthId().equals(memberId)){
-            throw BaseException.from(ErrorCode.ACCOMPANY_COMMENT_NO_PERMISSION_UPDATE);
+            throw AccompanyException.from(ACCOMPANY_COMMENT_NO_PERMISSION_UPDATE);
         }
     }
 

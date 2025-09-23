@@ -1,5 +1,6 @@
 package com.arom.with_travel.domain.member;
 
+import com.arom.with_travel.domain.accompanies.error.AccompanyException;
 import com.arom.with_travel.domain.accompanies.model.Accompany;
 import com.arom.with_travel.domain.accompanies.model.AccompanyApply;
 import com.arom.with_travel.domain.chat.model.Chat;
@@ -24,6 +25,8 @@ import org.hibernate.annotations.SQLRestriction;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.arom.with_travel.domain.accompanies.error.AccompanyErrorCode.ACCOMPANY_ALREADY_APPLIED;
 
 @Getter
 @Entity
@@ -152,7 +155,7 @@ public class Member extends BaseEntity {
         boolean alreadyApplied = accompanyApplies.stream()
                 .anyMatch(apply -> apply.getAccompany().equals(accompany));
         if (alreadyApplied) {
-            throw BaseException.from(ErrorCode.ACCOMPANY_ALREADY_APPLIED);
+            throw AccompanyException.from(ACCOMPANY_ALREADY_APPLIED);
         }
     }
 

@@ -1,6 +1,7 @@
 package com.arom.with_travel.global.s3.service;
 
 import com.arom.with_travel.domain.image.dto.UploadedImageResponse;
+import com.arom.with_travel.domain.image.error.ImageException;
 import com.arom.with_travel.global.exception.BaseException;
 import com.arom.with_travel.global.exception.error.ErrorCode;
 import com.arom.with_travel.global.s3.properties.S3Properties;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static com.arom.with_travel.domain.image.error.ImageErrorCode.INVALID_IMG_TYPE;
 import static com.arom.with_travel.global.s3.properties.S3Properties.ALLOWED_IMAGE_TYPES;
 
 @Slf4j
@@ -66,7 +68,7 @@ public class S3Service {
     private void validateFileType(MultipartFile file) {
         String contentType = file.getContentType();
         if (contentType == null || !ALLOWED_IMAGE_TYPES.contains(contentType)) {
-            throw BaseException.from(ErrorCode.INVALID_IMG_TYPE);
+            throw ImageException.from(INVALID_IMG_TYPE);
         }
     }
 

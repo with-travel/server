@@ -4,8 +4,11 @@ import com.arom.with_travel.global.exception.BaseException;
 import com.arom.with_travel.global.exception.error.ErrorCode;
 import com.arom.with_travel.global.security.domain.AuthenticatedMember;
 import com.arom.with_travel.global.security.domain.PrincipalDetails;
+import com.arom.with_travel.global.security.error.AuthException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import static com.arom.with_travel.global.security.error.AuthErrorCode.AUTH_UNSUPPORTED_PRINCIPAL;
 
 public final class SecurityUtils {
 
@@ -26,6 +29,6 @@ public final class SecurityUtils {
             return am.getMemberId();
         }
 
-        throw BaseException.from(ErrorCode.AUTH_UNSUPPORTED_PRINCIPAL);
+        throw AuthException.from(AUTH_UNSUPPORTED_PRINCIPAL);
     }
 }

@@ -5,6 +5,7 @@ import com.arom.with_travel.domain.member.service.MemberService;
 import com.arom.with_travel.global.exception.BaseException;
 import com.arom.with_travel.global.exception.error.ErrorCode;
 import com.arom.with_travel.global.jwt.dto.response.AuthTokenResponse;
+import com.arom.with_travel.global.security.error.AuthException;
 import com.arom.with_travel.global.security.token.domain.RefreshToken;
 import com.arom.with_travel.global.security.token.provider.JwtProvider;
 import com.arom.with_travel.global.security.token.repository.RefreshTokenRepository;
@@ -12,6 +13,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import static com.arom.with_travel.global.security.error.AuthErrorCode.INVALID_TOKEN;
+import static com.arom.with_travel.global.security.error.AuthErrorCode.TOKEN_NOT_FOUND;
 
 
 @Service
@@ -34,12 +38,12 @@ public class TokenService {
 
     private void validateRefreshTokenOrElseThrow(String refreshToken) {
         if (!jwtProvider.isRefreshTokenExpired(refreshToken)) {
-            throw BaseException.from(ErrorCode.INVALID_TOKEN);
+            throw AuthException.from(INVALID_TOKEN);
         }
     }
 
     private RefreshToken loadRefreshTokenOrThrow(String refreshToken) {
         return refreshTokenRepository.findByJwtValue(refreshToken)
-                .orElseThrow(() -> BaseException.from(ErrorCode.TOKEN_NOT_FOUND));
+                .orElseThrow(() -> AuthException.from(TOKEN_NOT_FOUND));
     }
 }

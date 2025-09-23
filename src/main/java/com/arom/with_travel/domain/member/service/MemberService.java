@@ -7,6 +7,7 @@ import com.arom.with_travel.domain.member.dto.request.SignupWithSurveyRequestDto
 import com.arom.with_travel.domain.member.dto.response.LoginResponse;
 import com.arom.with_travel.domain.member.dto.response.MemberSignupResponseDto;
 import com.arom.with_travel.domain.member.dto.response.MemberInfoResponse;
+import com.arom.with_travel.domain.member.error.MemberException;
 import com.arom.with_travel.domain.member.repository.MemberRepository;
 import com.arom.with_travel.domain.survey.Survey;
 import com.arom.with_travel.domain.survey.dto.request.SurveyRequestDto;
@@ -14,12 +15,16 @@ import com.arom.with_travel.domain.survey.repository.SurveyRepository;
 import com.arom.with_travel.global.exception.BaseException;
 import com.arom.with_travel.global.exception.error.ErrorCode;
 import com.arom.with_travel.global.jwt.dto.response.AuthTokenResponse;
+import com.arom.with_travel.global.security.error.AuthException;
 import com.arom.with_travel.global.security.token.provider.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static com.arom.with_travel.domain.member.error.MemberErrorCode.MEMBER_NOT_FOUND;
+import static com.arom.with_travel.global.security.error.AuthErrorCode.LOGIN_FAIL;
 
 @Service
 @RequiredArgsConstructor
@@ -41,10 +46,9 @@ public class MemberService {
         return new LoginResponse(access, refresh, Boolean.TRUE.equals(member.getAdditionalDataChecked()));
     }
 
-    // userId로 유저 조회, 실패 시 에러 발생
     public Member getUserByUserIdOrElseThrow(Long userId) {
         return memberRepository.findById(userId)
-                .orElseThrow(() ->  BaseException.from(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() ->  MemberException.from(MEMBER_NOT_FOUND));
     }
 
     @Transactional
@@ -107,84 +111,12 @@ public class MemberService {
 
     private void validMemberLoginRequest(LocalLoginRequest req, Member member) {
         if (member.getPassword() == null || !passwordEncoder.matches(req.getPassword(), member.getPassword())) {
-            throw BaseException.from(ErrorCode.LOGIN_FAIL);
+            throw AuthException.from(LOGIN_FAIL);
         }
     }
 
     private Member loadMemberOrThrow(String loginEmail) {
         return memberRepository.findByEmail(loginEmail)
-                .orElseThrow(() -> BaseException.from(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> MemberException.from(MEMBER_NOT_FOUND));
     }
-
-//    @Transactional
-//    public SocialMemberVerificationResponse verifyMember(SocialMemberVerificationRequest req){
-//        Member member = memberRepository.findByOauthId(req.getOauthId())
-//                .orElseGet(() -> {
-//                    Member newMember = Member.create(req.getName(), req.getEmail(), req.getOauthId());
-//                    return memberRepository.save(newMember);
-//                });
-//        boolean isChecked = member.getAdditionalDataChecked();
-//        String accessToken = jwtProvider.generateAccessToken(member);
-//        String refreshToken = jwtProvider.generateRefreshToken(member);
-//        log.info("[member id] : {}", member.getId());
-//        log.info("[access token] : {}", accessToken);
-//        log.info("[refresh token] : {}", refreshToken);
-//        return new SocialMemberVerificationResponse(isChecked, accessToken, refreshToken);
-//    }
-
-//    public LoginResponse registerWithSurvey(SignupWithSurveyRequestDto req) {
-//
-//        String email = req.getExtraInfo().getEmail();
-//        if(!isEmailAvailable(email)) {
-//            throw BaseException.from(ErrorCode.DUPLICATED_EMAIL);
-//        }
-//
-//        MemberSignupRequestDto extra = req.getExtraInfo();
-//        String encodedPassword = passwordEncoder.encode(extra.getPassword());
-//
-//        Member member = Member.builder()
-//                .email(extra.getEmail())
-//                .password(encodedPassword)
-//                .name(extra.getName())
-//                .phone(extra.getPhone())
-//                .birth(extra.getBirthdate())
-//                .gender(extra.getGender())
-//                .nickname(extra.getNickname())
-//                .introduction(extra.getIntroduction())
-//                .role(Member.Role.USER)
-//                .additionalDataChecked(false)
-//                .build();
-//
-//        member = memberRepository.save(member);
-//
-//        SurveyRequestDto s = req.getSurvey();
-//        Survey survey = Survey.create(member, s);
-//        surveyRepository.save(survey);
-//        member.setSurvey(survey);
-//
-//        member.markAdditionalDataChecked();
-//
-//        AuthTokenResponse tokenPair = tokenService.issueTokenPair(member.getEmail());
-//
-//        return new LoginResponse(
-//                tokenPair.getAccessToken(),
-//                tokenPair.getRefreshToken(),
-//                member.getAdditionalDataChecked()
-//        );
-//    }
-
-    // 로그인: raw, hashed 비번 비교 → 토큰 발급
-//    @Transactional(readOnly = true)
-//    public LoginResponse login(LocalLoginRequest req) {
-//        Member m = memberRepository.findByEmail(req.getEmail())
-//                .orElseThrow(() -> BaseException.from(ErrorCode.LOGIN_FAIL));
-//
-//        if (m.getPassword() == null || !passwordEncoder.matches(req.getPassword(), m.getPassword())) {
-//            throw BaseException.from(ErrorCode.LOGIN_FAIL);
-//        }
-//
-//        String access  = jwtProvider.generateAccessToken(m);
-//        String refresh = jwtProvider.generateRefreshToken(m);
-//        return new LoginResponse(access, refresh, Boolean.TRUE.equals(m.getAdditionalDataChecked()));
-//    }
 }

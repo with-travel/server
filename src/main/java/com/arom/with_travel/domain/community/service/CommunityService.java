@@ -4,12 +4,15 @@ import com.arom.with_travel.domain.community.Community;
 import com.arom.with_travel.domain.community.CommunitySpecs;
 import com.arom.with_travel.domain.community.dto.*;
 import com.arom.with_travel.domain.community.enums.CommunityTag;
+import com.arom.with_travel.domain.community.error.CommunityException;
 import com.arom.with_travel.domain.community.repository.CommunityRepository;
 import com.arom.with_travel.domain.image.Image;
+import com.arom.with_travel.domain.image.error.ImageException;
 import com.arom.with_travel.domain.image.repository.ImageRepository;
 import com.arom.with_travel.domain.likes.Likes;
 import com.arom.with_travel.domain.likes.repository.LikesRepository;
 import com.arom.with_travel.domain.member.Member;
+import com.arom.with_travel.domain.member.error.MemberException;
 import com.arom.with_travel.domain.member.repository.MemberRepository;
 import com.arom.with_travel.global.exception.BaseException;
 import com.arom.with_travel.global.exception.error.ErrorCode;
@@ -24,6 +27,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.arom.with_travel.domain.community.CommunitySpecs.*;
+import static com.arom.with_travel.domain.community.error.CommunityErrorCode.COMMUNITY_FORBIDDEN;
+import static com.arom.with_travel.domain.community.error.CommunityErrorCode.COMMUNITY_NOT_FOUND;
+import static com.arom.with_travel.domain.image.error.ImageErrorCode.IMG_SAVE_FAIL;
+import static com.arom.with_travel.domain.image.error.ImageErrorCode.IMG_URL_MUST_FILLED;
+import static com.arom.with_travel.domain.member.error.MemberErrorCode.MEMBER_NOT_FOUND;
 
 @Slf4j
 @Service
@@ -38,7 +46,7 @@ public class CommunityService {
     @Transactional
     public Long create(String currentMemberEmail, CommunityCreateRequest req) {
         Member writer = memberRepository.findByEmail(currentMemberEmail)
-                .orElseThrow(() -> BaseException.from(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> MemberException.from(MEMBER_NOT_FOUND));
 
         Community community = Community.create(
                 writer,
@@ -65,7 +73,7 @@ public class CommunityService {
                     imageRepository.saveAll(newImages);
                 }
             } catch (Exception e) {
-                throw BaseException.from(ErrorCode.IMG_SAVE_FAIL);
+                throw ImageException.from(IMG_SAVE_FAIL);
             }
         }
 
@@ -80,7 +88,7 @@ public class CommunityService {
 
     private static String requireUrl(String url) {
         if (url == null || url.isBlank()) {
-            throw BaseException.from(ErrorCode.IMG_URL_MUST_FILLED);
+            throw ImageException.from(IMG_URL_MUST_FILLED);
         }
         return url;
     }
@@ -88,14 +96,14 @@ public class CommunityService {
     @Transactional
     public CommunityDetailResponse readAndIncreaseView(Long id) {
         if (!communityRepository.existsById(id)) {
-            throw BaseException.from(ErrorCode.COMMUNITY_NOT_FOUND);
+            throw CommunityException.from(COMMUNITY_NOT_FOUND);
         }
 
         communityRepository.increaseViewCount(id);
 
         Community c = communityRepository.findDetailById(id);
         if (c == null) {
-            throw BaseException.from(ErrorCode.COMMUNITY_NOT_FOUND);
+            throw CommunityException.from(COMMUNITY_NOT_FOUND);
         }
 
         List<String> urls = c.getImages().stream().map(Image::getImageUrl).toList();
@@ -112,7 +120,7 @@ public class CommunityService {
     @Transactional
     public CommunityDetailResponse update(Long currentMemberId, Long communityId, CommunityUpdateRequest req) {
         Community c = communityRepository.findById(communityId)
-                .orElseThrow(() -> BaseException.from(ErrorCode.COMMUNITY_NOT_FOUND));
+                .orElseThrow(() -> CommunityException.from(COMMUNITY_NOT_FOUND));
         validateOwnership(currentMemberId, c.getMember().getId());
 
         c.update(
@@ -147,7 +155,7 @@ public class CommunityService {
     @Transactional
     public void delete(Long currentMemberId, Long communityId) {
         Community c = communityRepository.findById(communityId)
-                .orElseThrow(() -> BaseException.from(ErrorCode.COMMUNITY_NOT_FOUND));
+                .orElseThrow(() -> CommunityException.from(COMMUNITY_NOT_FOUND));
         validateOwnership(currentMemberId, c.getMember().getId());
         communityRepository.delete(c);
     }
@@ -214,9 +222,9 @@ public class CommunityService {
     @Transactional
     public boolean toggleLike(Long communityId, Long currentMemberId) {
         Community c = communityRepository.findById(communityId)
-                .orElseThrow(() -> BaseException.from(ErrorCode.COMMUNITY_NOT_FOUND));
+                .orElseThrow(() -> CommunityException.from(COMMUNITY_NOT_FOUND));
         Member m = memberRepository.findById(currentMemberId)
-                .orElseThrow(() -> BaseException.from(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> MemberException.from(MEMBER_NOT_FOUND));
 
         return likesRepository.findByCommunityIdAndMemberId(communityId, currentMemberId)
                 .map(existing -> {
@@ -233,7 +241,7 @@ public class CommunityService {
 
     private void validateOwnership(Long currentMemberId, Long ownerId) {
         if (!ownerId.equals(currentMemberId)) {
-            throw BaseException.from(ErrorCode.COMMUNITY_FORBIDDEN);
+            throw CommunityException.from(COMMUNITY_FORBIDDEN);
         }
     }
 }

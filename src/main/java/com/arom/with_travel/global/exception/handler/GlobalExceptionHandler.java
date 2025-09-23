@@ -20,68 +20,82 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
-
 @Slf4j
 @RestControllerAdvice(annotations = {RestController.class})
 public class GlobalExceptionHandler {
 
-    // HTTP Method 불일치 에러
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ErrorResponse handleHttpRequestMethodNotSupportedException(
+    public ResponseEntity<ErrorResponse> handleHttpRequestMethodNotSupportedException(
             HttpServletRequest request,
             HttpRequestMethodNotSupportedException e) {
         log.warn("❗ 잘못된 HTTP 메서드 요청 - [{}] {} -> {}", e.getMethod(), request.getRequestURI(), e.getMessage());
-        return ErrorResponse.generateFrom(ErrorCode.METHOD_NOT_ALLOWED);
+        return ResponseEntity
+                .status(HttpStatus.METHOD_NOT_ALLOWED) // 405
+                .body(ErrorResponse.generateFrom(ErrorCode.METHOD_NOT_ALLOWED));
     }
 
-    // @RequestBody JSON 파싱 에러
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ErrorResponse handleJsonParseException(HttpMessageNotReadableException e) {
-        return ErrorResponse.generateFrom(ErrorCode.INVALID_JSON_FORMAT);
+    public ResponseEntity<ErrorResponse> handleJsonParseException(HttpMessageNotReadableException e) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.generateFrom(ErrorCode.INVALID_JSON_FORMAT));
     }
 
-    // 필수 @RequestParam 누락
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ErrorResponse handleMissingParam(MissingServletRequestParameterException e) {
-        return ErrorResponse.generateFrom(ErrorCode.MISSING_PARAMETER);
+    public ResponseEntity<ErrorResponse> handleMissingParam(MissingServletRequestParameterException e) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.generateFrom(ErrorCode.MISSING_PARAMETER));
     }
 
-    // @RequestParam 타입 불일치
     @ExceptionHandler(TypeMismatchException.class)
-    public ErrorResponse handleTypeMismatchException(TypeMismatchException e) {
-        return ErrorResponse.generateFrom(ErrorCode.INVALID_PARAMETER_TYPE);
+    public ResponseEntity<ErrorResponse> handleTypeMismatchException(TypeMismatchException e) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.generateFrom(ErrorCode.INVALID_PARAMETER_TYPE));
     }
 
-    // 데이터 무결성 위반
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ErrorResponse handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
-        return ErrorResponse.generateFrom(ErrorCode.ERR_DATA_INTEGRITY_VIOLATION);
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(ErrorResponse.generateFrom(ErrorCode.ERR_DATA_INTEGRITY_VIOLATION));
     }
 
     @ExceptionHandler(BaseException.class)
-    public ErrorResponse onThrowException(BaseException baseException) {
-        return ErrorResponse.generateFrom(baseException);
+    public ResponseEntity<ErrorResponse> onThrowException(BaseException baseException) {
+        ErrorResponse response = ErrorResponse.generateFrom(baseException);
+        return ResponseEntity
+                .status(baseException.getBaseCode().getStatus())
+                .body(response);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ErrorResponse onThrowException(MethodArgumentNotValidException exception){
+    public ResponseEntity<ErrorResponse> onThrowException(MethodArgumentNotValidException exception){
         String message = exception.getBindingResult().getFieldError().getDefaultMessage();
-        return ErrorResponse.generateWithCustomMessage(ErrorCode.REQ_BODY_ERROR, message);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.generateWithCustomMessage(ErrorCode.REQ_BODY_ERROR, message));
     }
 
     @ExceptionHandler(HandlerMethodValidationException.class)
-    public ErrorResponse onThrowException(HandlerMethodValidationException exception){
+    public ResponseEntity<ErrorResponse> onThrowException(HandlerMethodValidationException exception){
         String message = exception
                 .getAllErrors()
                 .stream()
                 .map(MessageSourceResolvable::getDefaultMessage)
                 .findFirst()
                 .orElse("Validation Failed");
-        return ErrorResponse.generateWithCustomMessage(ErrorCode.REQ_PARAMS_ERROR, message);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.generateWithCustomMessage(ErrorCode.REQ_PARAMS_ERROR, message));
     }
 
     @ExceptionHandler(Exception.class)
-    protected ErrorResponse handleException(Exception e) {
-        return ErrorResponse.generateFrom(ErrorCode.INTERNAL_SERVER_ERROR);
+    protected ResponseEntity<ErrorResponse> handleException(Exception e) {
+        log.error("🔥 서버 에러", e);
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ErrorResponse.generateFrom(ErrorCode.INTERNAL_SERVER_ERROR));
     }
 }

@@ -12,6 +12,7 @@ import com.arom.with_travel.domain.likes.repository.LikesRepository;
 
 import com.arom.with_travel.domain.member.Member;
 import com.arom.with_travel.domain.member.dto.response.MemberProfileResponseDto;
+import com.arom.with_travel.domain.member.error.MemberException;
 import com.arom.with_travel.domain.member.repository.MemberRepository;
 import com.arom.with_travel.global.exception.BaseException;
 import com.arom.with_travel.global.exception.error.ErrorCode;
@@ -24,6 +25,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.arom.with_travel.domain.member.error.MemberErrorCode.MEMBER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -87,7 +90,7 @@ public class MemberProfileService {
 
     private Member loadMemberOrThrow(String email) {
         return memberRepository.findByEmail(email).orElseThrow(
-                () -> BaseException.from(ErrorCode.MEMBER_NOT_FOUND)
+                () -> MemberException.from(MEMBER_NOT_FOUND)
         );
     }
 
