@@ -4,13 +4,16 @@ import com.arom.with_travel.domain.member.Member.Gender;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
 
 @Getter
-@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Schema(description = "회원가입 요청 DTO")
 public class MemberSignupRequestDto {
 

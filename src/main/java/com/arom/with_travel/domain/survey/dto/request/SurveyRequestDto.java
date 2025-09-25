@@ -13,9 +13,7 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class SurveyRequestDto {
-
     private Set<EnergyLevel> energyLevels;
     private Set<TravelGoal> travelGoals;
     private Set<TravelPace> travelPaces;
@@ -23,7 +21,4 @@ public class SurveyRequestDto {
     private Set<RecordTendency> recordTendencies;
     private Set<CompanionStyle> companionStyles;
     private Set<SpendPattern> spendPatterns;
-
-//    @Size(max = 1000, message = "자기소개는 최대 1000자입니다.")
-//    private String introduction;
 }
