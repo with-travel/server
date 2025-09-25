@@ -35,10 +35,11 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ErrorResponse> handleJsonParseException(HttpMessageNotReadableException e) {
+    public ResponseEntity<String> handleJsonParseError(HttpMessageNotReadableException ex, HttpServletRequest request) {
+        log.error("❌ JSON Parse Error at URI: {} | Message: {}", request.getRequestURI(), ex.getMessage());
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse.generateFrom(ErrorCode.INVALID_JSON_FORMAT));
+                .badRequest()
+                .body("Invalid JSON format");
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)

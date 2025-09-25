@@ -31,6 +31,9 @@ public class MemberController {
     @PostMapping("/signup")
     public void signup(
             @RequestBody @Valid SignupWithSurveyRequestDto req) {
+        log.info("📥 SignupWithSurveyRequestDto: {}", req);
+        log.info("📥 extraInfo: {}", req.getExtraInfo());
+        log.info("📥 survey: {}", req.getSurvey());
         memberService.signup(req);
     }
 
