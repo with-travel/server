@@ -14,18 +14,13 @@ import static com.arom.with_travel.domain.survey.error.SurveyErrorCode.*;
 @AllArgsConstructor
 public enum SpendPattern implements SurveyEnum {
 
-    VALUE_FOR_MONEY("VALUE_FOR_MONEY", "가성비추구"),
-    VALUE_INVESTING("VALUE_INVESTING", "가치투자"),
-    FLEX("FLEX", "#플렉스");
+    VALUE_FOR_MONEY("가성비추구"),
+    VALUE_INVESTING("가치투자"),
+    FLEX("플렉스");
 
-    private final String code;
     private final String label;
 
-    @Override public String getCode(){return code;}
     @Override public String getLabel(){return label;}
-
-    @JsonValue
-    public String json(){return code;}
 
     @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
     public static SpendPattern from(String raw) {
@@ -33,11 +28,8 @@ public enum SpendPattern implements SurveyEnum {
         String v = raw.trim();
 
         for (SpendPattern e : values()) {
-            // 영문 name/code
-            if (e.name().equalsIgnoreCase(v) || e.code.equalsIgnoreCase(v)) return e;
-            // 라벨(해시 포함/미포함)
+            if (e.name().equalsIgnoreCase(v)) return e;
             if (e.label.equals(v)) return e;
-            if (e.label.substring(1).equals(v)) return e;
         }
         throw SurveyException.from(INVALID_SURVEY_SPENDPATTERN);
     }

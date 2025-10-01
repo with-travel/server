@@ -11,35 +11,28 @@ import java.util.*;
 
 import static com.arom.with_travel.domain.survey.error.SurveyErrorCode.INVALID_SURVEY_COMPANIONSTYLE;
 import static com.arom.with_travel.domain.survey.error.SurveyErrorCode.INVALID_SURVEY_TRAVELGOAL;
+import static com.fasterxml.jackson.annotation.JsonCreator.Mode.DELEGATING;
 
 @AllArgsConstructor
 public enum CompanionStyle implements SurveyEnum {
 
-    LEADER("LEADER", "리더발휘"),
-    FOLLOWER("FOLLOWER", "따라가는편"),
-    OPINION_GIVER("OPINION_GIVER", "의견제시"),
-    MOOD_MAKER("MOOD_MAKER", "분위기메이커");
+    LEADER("리더쉽발휘"),
+    FOLLOWER("따라가는편"),
+    OPINION_GIVER("의견제시"),
+    MOOD_MAKER("분위기메이커");
 
-    private final String code;
     private final String label;
 
-    @Override public String getCode(){return code;}
     @Override public String getLabel(){return label;}
 
-    @JsonValue
-    public String json(){return code;}
-
-    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
+    @JsonCreator(mode = DELEGATING)
     public static CompanionStyle from(String raw) {
         if (raw == null) throw SurveyException.from(INVALID_SURVEY_COMPANIONSTYLE);
         String v = raw.trim();
 
         for (CompanionStyle e : values()) {
-            // 영문 name/code
-            if (e.name().equalsIgnoreCase(v) || e.code.equalsIgnoreCase(v)) return e;
-            // 라벨(해시 포함/미포함)
+            if (e.name().equalsIgnoreCase(v)) return e;
             if (e.label.equals(v)) return e;
-            if (e.label.substring(1).equals(v)) return e;
         }
         throw SurveyException.from(INVALID_SURVEY_COMPANIONSTYLE);
     }
