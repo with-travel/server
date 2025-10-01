@@ -15,11 +15,11 @@ import static com.arom.with_travel.domain.survey.error.SurveyErrorCode.INVALID_S
 @AllArgsConstructor
 public enum TravelGoal implements SurveyEnum {
 
-    HOTPLACE_HUNTER("HOTPLACE_HUNTER", "#핫플탐방러"),
-    LOCAL_VIBE("LOCAL_VIBE", "#현지감성"),
-    FOOD_LOVER("FOOD_LOVER", "#맛집러버"),
-    ACTIVITY("ACTIVITY", "#액티비티광"),
-    HEALING_FIRST("HEALING_FIRST", "#힐링우선");
+    HOTPLACE_HUNTER("HOTPLACE_HUNTER", "핫플탐방러"),
+    LOCAL_VIBE("LOCAL_VIBE", "현지감성"),
+    FOOD_LOVER("FOOD_LOVER", "맛집러버"),
+    ACTIVITY("ACTIVITY", "액티비티광"),
+    HEALING_FIRST("HEALING_FIRST", "힐링우선");
 
     private final String code;
     private final String label;
@@ -40,7 +40,7 @@ public enum TravelGoal implements SurveyEnum {
             if (e.name().equalsIgnoreCase(v) || e.code.equalsIgnoreCase(v)) return e;
             // 라벨(해시 포함/미포함)
             if (e.label.equals(v)) return e;
-            if (e.label.startsWith("#") && e.label.substring(1).equals(v)) return e;
+            if (e.label.substring(1).equals(v)) return e;
         }
         throw SurveyException.from(INVALID_SURVEY_TRAVELGOAL);
     }

@@ -15,10 +15,10 @@ import static com.arom.with_travel.domain.survey.error.SurveyErrorCode.INVALID_S
 @AllArgsConstructor
 public enum CompanionStyle implements SurveyEnum {
 
-    LEADER("LEADER", "#리더발휘"),
-    FOLLOWER("FOLLOWER", "#따라가는편"),
-    OPINION_GIVER("OPINION_GIVER", "#의견제시"),
-    MOOD_MAKER("MOOD_MAKER", "#분위기메이커");
+    LEADER("LEADER", "리더발휘"),
+    FOLLOWER("FOLLOWER", "따라가는편"),
+    OPINION_GIVER("OPINION_GIVER", "의견제시"),
+    MOOD_MAKER("MOOD_MAKER", "분위기메이커");
 
     private final String code;
     private final String label;
@@ -39,7 +39,7 @@ public enum CompanionStyle implements SurveyEnum {
             if (e.name().equalsIgnoreCase(v) || e.code.equalsIgnoreCase(v)) return e;
             // 라벨(해시 포함/미포함)
             if (e.label.equals(v)) return e;
-            if (e.label.startsWith("#") && e.label.substring(1).equals(v)) return e;
+            if (e.label.substring(1).equals(v)) return e;
         }
         throw SurveyException.from(INVALID_SURVEY_COMPANIONSTYLE);
     }

@@ -9,10 +9,10 @@ import static com.arom.with_travel.domain.survey.error.SurveyErrorCode.INVALID_S
 @AllArgsConstructor
 public enum EnergyLevel implements SurveyEnum {
 
-    MORNING_PERSON("MORNING_PERSON", "#아침형인간"),
-    NIGHT_OWL      ("NIGHT_OWL",      "#밤올빼미"),
-    ENERGIZER      ("ENERGIZER",      "#에너자이저"),
-    HEALING_MODE   ("HEALING_MODE",   "#힐링모드");
+    MORNING_PERSON("MORNING_PERSON", "아침형인간"),
+    NIGHT_OWL      ("NIGHT_OWL",      "밤올빼미"),
+    ENERGIZER      ("ENERGIZER",      "에너자이저"),
+    HEALING_MODE   ("HEALING_MODE",   "힐링모드");
 
     private final String code;
     private final String label;
@@ -30,11 +30,9 @@ public enum EnergyLevel implements SurveyEnum {
         String v = raw.trim();
 
         for (EnergyLevel e : values()) {
-            // 영문 name/code
             if (e.name().equalsIgnoreCase(v) || e.code.equalsIgnoreCase(v)) return e;
-            // 라벨(해시 포함/미포함)
             if (e.label.equals(v)) return e;
-            if (e.label.startsWith("#") && e.label.substring(1).equals(v)) return e;
+            if (e.label.substring(1).equals(v)) return e;
         }
         throw SurveyException.from(INVALID_SURVEY_ENERGYLEVEL);
     }
